@@ -1,5 +1,5 @@
-#ifndef GESTOR_CSV_H
-#define GESTOR_CSV_H
+#ifndef GESTOR_TXT_H
+#define GESTOR_TXT_H
 
 #include <string>
 #include <vector>
@@ -14,10 +14,10 @@
 
 using namespace std;
 
-class GestorCsv : public GestorArchivos
+class GestorTxt : public GestorArchivos
 {
 public:
-    GestorCsv() = default;
+    GestorTxt() = default;
     vector<int> leerProgramas(string &ruta) override;
     vector<vector<string>> leerArchivo(string &rutaBase, string &ano, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) override;
 
