@@ -19,7 +19,7 @@ class GestorJSON : public GestorArchivos
 public:
     GestorJSON() = default;
     vector<int> leerProgramas(string &ruta) override;
-    vector<vector<string>> leerArchivo(string &rutaBase, string &ano, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) override;
+    vector<vector<string>> leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) override;
 
     bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasColumnas) override;
     bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<string> etiquetasColumnas) override;

@@ -4,7 +4,7 @@ vector<int> GestorJSON::leerProgramas(string &ruta)
 {
 }
 
-vector<vector<string>> GestorJSON::leerArchivo(string &rutaBase, string &ano, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
+vector<vector<string>> GestorJSON::leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
 }
 

@@ -4,7 +4,7 @@ vector<int> GestorTxt::leerProgramas(string &ruta)
 {
 }
 
-vector<vector<string>> GestorTxt::leerArchivo(string &rutaBase, string &ano, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
+vector<vector<string>> GestorTxt::leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
 }
 

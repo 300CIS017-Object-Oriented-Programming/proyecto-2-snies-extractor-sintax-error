@@ -19,7 +19,7 @@ public:
     GestorArchivos() = default;
     virtual ~GestorArchivos();
     virtual vector<int> leerProgramas(string &ruta) = 0;
-    virtual vector<vector<string>> leerArchivo(string &rutaBase, string &ano, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) = 0;
+    virtual vector<vector<string>> leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) = 0;
 
     virtual bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasColumnas) = 0;
     virtual bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<string> etiquetasColumnas) = 0;
