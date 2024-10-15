@@ -17,18 +17,19 @@ void ProgramaAcademico:: agregarElementoTipoInt(string& nombreDato, int dato)
     mapaDatosEnteros[nombreDato] = dato;
 }
 
-string ProgramaAcademico::consultarDatoMapaStrings(string& clave)
+string ProgramaAcademico::consultarDatoString(string& clave)
 {
     return mapaDatosString.at(clave);
 }
 
-int ProgramaAcademico::consultarDatoMapaInt(string& clave)
+int ProgramaAcademico::consultarDatoInt(string& clave)
 {
     return mapaDatosEnteros.at(clave);
 }
 
-void ProgramaAcademico::setConsolidado(string& claveConsolidado,Consolidado *nuevoConsolidado)
+void ProgramaAcademico::setConsolidado(string& infoSexo, int infoAno , int infoSemestre,Consolidado *nuevoConsolidado)
 {
+    string claveConsolidado = infoSexo + "-" + to_string(infoAno) + to_string(infoSemestre);
     consolidados[claveConsolidado] = nuevoConsolidado;
 }
 

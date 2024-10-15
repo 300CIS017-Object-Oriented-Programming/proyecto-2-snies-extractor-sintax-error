@@ -26,16 +26,11 @@ public:
    
     void agregarElementoTipoString(string&, string&);
     void agregarElementoTipoInt(string&, int);
-    void setConsolidado(string& , Consolidado *);
-    string consultarDatoMapaStrings(string&);
-    int consultarDatoMapaInt(string&);
-    void buscarConsolidadoPorAno(int , vector<Consolidado*>&);
-    void buscarConsolidadoPorSemestre(int , vector<Consolidado*>&);
-    void buscarConsolidadoPorDato(int, vector<Consolidado*>&);
-    void buscarConsolidadoPorDato(string& , vector<Consolidado*>&);
-    void buscaroConsolidadoPorDato(string& , int, vector<Consolidado*>&);
+    void setConsolidado(string&, int , int, Consolidado *);
+    string consultarDatoString(string&);
+    int consultarDatoInt(string&);
     Consolidado* buscarConsolidadoPorDato(string&, int , int);
-    Consolidado *getConsolidado(string&);
+    Consolidado* getConsolidado(string&);
     ~ProgramaAcademico();
 };
 
