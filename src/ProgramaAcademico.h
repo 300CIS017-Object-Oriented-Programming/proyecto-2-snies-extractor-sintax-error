@@ -6,6 +6,7 @@
 #include <iostream>
 #include <map>
 #include "Consolidado.h"
+#include "Utilidad.h"
 
 using std::cin;
 using std::cout;
@@ -19,8 +20,9 @@ class ProgramaAcademico
     map<string&, string&> mapaDatosString;
     map<string&, int> mapaDatosEnteros;
     map<string,Consolidado*> consolidados;
+    Utilidad ut;
     
-
+    void minusculasSinEspacios(string&);
 public:
     ProgramaAcademico();
    
