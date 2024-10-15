@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <map>
 
 
 using std::cin;
@@ -11,51 +12,21 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::vector;
+using std::map;
 
 
 class Consolidado
 {
 private:
-    int idSexo;
-    string sexo;
-    int ano;
-    int semestre;
-    int inscritos;
-    int admitidos;
-    int matriculados;
-    int matriculadosPrimerSemestre;
-    int graduados;
+    map<string,int> datosIntConsolidados;
+    map<string,string>datosStringConsolidados; 
 
 public:
     Consolidado();
-    Consolidado(int, string, int, int, int, int, int, int, int);
-
-    int getIdSexo();
-    void setIdSexo(int);
-
-    string getSexo();
-    void setSexo(string &);
-
-    int getAno();
-    void setAno(int);
-
-    int getSemestre();
-    void setSemestre(int);
-
-    int getInscritos();
-    void setInscritos(int);
-
-    int getAdmitidos();
-    void setAdmitidos(int);
-
-    int getMatriculados();
-    void setMatriculados(int);
-
-    int getMatriculadosPrimerSemestre();
-    void setMatriculadosPrimerSemestre(int);
-
-    int getGraduados();
-    void setGraduados(int);
+    void agregarDatoIntConsolidado(string&, int);
+    void agregarDatoStringConsolidado(string&,string&);
+    int obtenerDatoIntConsolidado(string&);
+    string obtenerDatoStringConsolidado(string&);
 };
 
 #endif // CONSOLIDADO_H
