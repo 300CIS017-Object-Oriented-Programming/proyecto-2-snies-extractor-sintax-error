@@ -2,22 +2,26 @@
 
 Consolidado::Consolidado() = default;
 
-void Consolidado::agregarDatoIntConsolidado(string& clave,int dato)
+void Consolidado::agregarDatoInt(string& clave,int dato)
 {
-    datosIntConsolidados[clave] = dato;
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    datosIntConsolidados[llave] = dato;
 }
 
-void Consolidado::agregarDatoStringConsolidado(string& clave,string& dato)
+void Consolidado::agregarDatoString(string& clave,string& dato)
 {
-    datosStringConsolidados[clave] = dato;
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    datosStringConsolidados[llave] = dato;
 }
 
-int Consolidado::obtenerDatoIntConsolidado(string& clave)
+int Consolidado::obtenerDatoInt(string& clave)
 {
-    return datosIntConsolidados.at(clave);
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    return datosIntConsolidados.at(llave);
 }
 
-string Consolidado::obtenerDatoStringConsolidado(string& clave)
+string Consolidado::obtenerDatoString(string& clave)
 {
-    return datosStringConsolidados.at(clave);
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    return datosStringConsolidados.at(llave);
 }
