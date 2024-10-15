@@ -17,6 +17,7 @@ class GestorArchivos
 {
 public:
     GestorArchivos() = default;
+    void prueba();
     virtual ~GestorArchivos();
     virtual vector<int> leerProgramas(string &ruta) = 0;
     virtual vector<vector<string>> leerArchivo(string &rutaBase, string &ano, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) = 0;
