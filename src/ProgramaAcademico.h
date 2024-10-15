@@ -30,7 +30,7 @@ public:
     void setConsolidado(string&, int , int, Consolidado *);
     string consultarDatoString(string&);
     int consultarDatoInt(string&);
-    Consolidado* buscarConsolidadoPorDato(string&, int , int);
+    Consolidado* buscarConsolidado(string&, int , int);
     Consolidado* getConsolidado(string&);
     ~ProgramaAcademico();
 };

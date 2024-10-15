@@ -22,18 +22,30 @@ void ProgramaAcademico:: agregarElementoTipoInt(string& nombreDato, int dato)
 string ProgramaAcademico::consultarDatoString(string& clave)
 {
     string llave = utilidadObj.minusculasSinEspacios(clave);
+    if (mapaDatosString.find(llave) == mapaDatosString.end())
+    {
+        string msg = string("Llave No Encontrada: '") + llave + string("'");
+        throw invalid_argument(msg);
+    }
+
     return mapaDatosString.at(llave);
 }
 
 int ProgramaAcademico::consultarDatoInt(string& clave)
 {
     string llave = utilidadObj.minusculasSinEspacios(clave);
+    if (mapaDatosEnteros.find(llave) == mapaDatosEnteros.end())
+    {
+        string msg = string("Llave No Encontrada: '") + llave + string("'");
+        throw invalid_argument(msg);
+    }
+
     return mapaDatosEnteros.at(llave);
 }
 
 void ProgramaAcademico::setConsolidado(string& infoSexo, int infoAno , int infoSemestre, Consolidado *nuevoConsolidado)
 {
-    string claveConsolidado = infoSexo + "-" + to_string(infoAno) + to_string(infoSemestre);
+    string claveConsolidado = infoSexo + string("-") + to_string(infoAno) + string("-") + to_string(infoSemestre);
     claveConsolidado = utilidadObj.minusculasSinEspacios(claveConsolidado);
     consolidados[claveConsolidado] = nuevoConsolidado;
 }
@@ -54,9 +66,16 @@ ProgramaAcademico::~ProgramaAcademico()
 }
 
 
-Consolidado* ProgramaAcademico::buscarConsolidadoPorDato(string& infoSexo, int infoAno , int infoSemestre)
+Consolidado* ProgramaAcademico::buscarConsolidado(string& infoSexo, int infoAno , int infoSemestre)
 {
     map<string,Consolidado*>::iterator iteradorConsolidado = consolidados.begin();
-    string claveConsolidado = infoSexo + "-" + to_string(infoAno) + to_string(infoSemestre);
+    string claveConsolidado = infoSexo + string("-") + to_string(infoAno) + string("-") + to_string(infoSemestre);
+    claveConsolidado = utilidadObj.minusculasSinEspacios(claveConsolidado);
+    if (consolidados.find(claveConsolidado) == consolidados.end())
+    {
+        string msg = string("Llave No Encontrada: '") + claveConsolidado + string("'");
+        throw invalid_argument(msg);
+    }
+
     return consolidados[claveConsolidado];
 }
