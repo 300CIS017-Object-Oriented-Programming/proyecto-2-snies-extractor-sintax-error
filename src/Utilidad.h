@@ -14,7 +14,7 @@ public:
     Utilidad() = default;
     ~Utilidad() = default;
 
-    void minusculasSinEspacios(string &);
+    string minusculasSinEspacios(string &);
 };
 
 

@@ -4,7 +4,7 @@
 
 #include "Utilidad.h"
 
-void Utilidad::minusculasSinEspacios(string& input)
+string Utilidad::minusculasSinEspacios(string& input)
 {
         std::string resultado;
 
@@ -15,5 +15,5 @@ void Utilidad::minusculasSinEspacios(string& input)
             }
         }
 
-        input = resultado;
+        return resultado;
 }

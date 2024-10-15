@@ -17,12 +17,11 @@ using std::map;
 
 class ProgramaAcademico
 {
-    map<string&, string&> mapaDatosString;
-    map<string&, int> mapaDatosEnteros;
+    map<string, string> mapaDatosString;
+    map<string, int> mapaDatosEnteros;
     map<string,Consolidado*> consolidados;
-    Utilidad ut;
-    
-    void minusculasSinEspacios(string&);
+    Utilidad utilidadObj;
+
 public:
     ProgramaAcademico();
    

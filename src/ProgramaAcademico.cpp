@@ -7,37 +7,41 @@ ProgramaAcademico::ProgramaAcademico()
     //consolidados = vector<Consolidado *>(8);
 }
 
-void Pro
-
 void ProgramaAcademico:: agregarElementoTipoString(string& nombreDato, string& dato)
 {
-    mapaDatosString[nombreDato] = dato;
+    string llave = utilidadObj.minusculasSinEspacios(nombreDato);
+    mapaDatosString[llave] = dato;
 }
 
 void ProgramaAcademico:: agregarElementoTipoInt(string& nombreDato, int dato)
 {
-    mapaDatosEnteros[nombreDato] = dato;
+    string llave = utilidadObj.minusculasSinEspacios(nombreDato);
+    mapaDatosEnteros[llave] = dato;
 }
 
 string ProgramaAcademico::consultarDatoString(string& clave)
 {
-    return mapaDatosString.at(clave);
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    return mapaDatosString.at(llave);
 }
 
 int ProgramaAcademico::consultarDatoInt(string& clave)
 {
-    return mapaDatosEnteros.at(clave);
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    return mapaDatosEnteros.at(llave);
 }
 
-void ProgramaAcademico::setConsolidado(string& infoSexo, int infoAno , int infoSemestre,Consolidado *nuevoConsolidado)
+void ProgramaAcademico::setConsolidado(string& infoSexo, int infoAno , int infoSemestre, Consolidado *nuevoConsolidado)
 {
     string claveConsolidado = infoSexo + "-" + to_string(infoAno) + to_string(infoSemestre);
+    claveConsolidado = utilidadObj.minusculasSinEspacios(claveConsolidado);
     consolidados[claveConsolidado] = nuevoConsolidado;
 }
 
-Consolidado *ProgramaAcademico::getConsolidado(string& claveConsolidados)
+Consolidado *ProgramaAcademico::getConsolidado(string& claveConsolidado)
 {
-    return consolidados[claveConsolidados];
+    string llave = utilidadObj.minusculasSinEspacios(claveConsolidado);
+    return consolidados[llave];
 }
 
 ProgramaAcademico::~ProgramaAcademico()
