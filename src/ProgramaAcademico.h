@@ -18,18 +18,18 @@ class ProgramaAcademico
 {
     map<string&, string&> mapaDatosString;
     map<string&, int> mapaDatosEnteros;
-   
-    vector<Consolidado *> consolidados;
+    map<string,Consolidado*> consolidados;
+    
 
 public:
     ProgramaAcademico();
    
     void agregarElementoTipoString(string&, string&);
     void agregarElementoTipoInt(string&, int);
-    void setConsolidado(Consolidado *, int);
+    void setConsolidado(string& , Consolidado *);
     string consultarDatoMapaStrings(string&);
     int consultarDatoMapaInt(string&);
-    Consolidado *getConsolidado(int);
+    Consolidado *getConsolidado(string&);
     ~ProgramaAcademico();
 };
 

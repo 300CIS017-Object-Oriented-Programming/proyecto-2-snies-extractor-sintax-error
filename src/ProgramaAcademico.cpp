@@ -4,7 +4,7 @@ using namespace std;
 
 ProgramaAcademico::ProgramaAcademico()
 {
-    consolidados = vector<Consolidado *>(8);
+    //consolidados = vector<Consolidado *>(8);
 }
 
 void ProgramaAcademico:: agregarElementoTipoString(string& nombreDato, string& dato)
@@ -27,20 +27,21 @@ int ProgramaAcademico::consultarDatoMapaInt(string& clave)
     return mapaDatosEnteros.at(clave);
 }
 
-void ProgramaAcademico::setConsolidado(Consolidado *nuevoConsolidado, int pos)
+void ProgramaAcademico::setConsolidado(string& claveConsolidado,Consolidado *nuevoConsolidado)
 {
-    consolidados[pos] = nuevoConsolidado;
+    consolidados[claveConsolidado] = nuevoConsolidado;
 }
 
-Consolidado *ProgramaAcademico::getConsolidado(int posicionConsolidado)
+Consolidado *ProgramaAcademico::getConsolidado(string& claveConsolidados)
 {
-    return consolidados[posicionConsolidado];
+    return consolidados[claveConsolidados];
 }
 
 ProgramaAcademico::~ProgramaAcademico()
 {
-    for (Consolidado *consolidado : consolidados)
+    for (auto& pair : consolidados)
     {
-        delete consolidado;
+        delete pair.second;
     }
+    consolidados.clear();
 }
