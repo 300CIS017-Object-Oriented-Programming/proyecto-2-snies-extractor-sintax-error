@@ -45,3 +45,11 @@ ProgramaAcademico::~ProgramaAcademico()
     }
     consolidados.clear();
 }
+
+
+Consolidado* ProgramaAcademico::buscarConsolidadoPorDato(string& infoSexo, int infoAno , int infoSemestre)
+{
+    map<string,Consolidado*>::iterator iteradorConsolidado = consolidados.begin();
+    string claveConsolidado = infoSexo + "-" + to_string(infoAno) + to_string(infoSemestre);
+    return consolidados[claveConsolidado];
+}

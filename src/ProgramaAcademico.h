@@ -29,6 +29,12 @@ public:
     void setConsolidado(string& , Consolidado *);
     string consultarDatoMapaStrings(string&);
     int consultarDatoMapaInt(string&);
+    void buscarConsolidadoPorAno(int , vector<Consolidado*>&);
+    void buscarConsolidadoPorSemestre(int , vector<Consolidado*>&);
+    void buscarConsolidadoPorDato(int, vector<Consolidado*>&);
+    void buscarConsolidadoPorDato(string& , vector<Consolidado*>&);
+    void buscaroConsolidadoPorDato(string& , int, vector<Consolidado*>&);
+    Consolidado* buscarConsolidadoPorDato(string&, int , int);
     Consolidado *getConsolidado(string&);
     ~ProgramaAcademico();
 };
