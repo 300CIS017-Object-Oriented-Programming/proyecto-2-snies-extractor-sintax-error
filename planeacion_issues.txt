@@ -1,16 +1,16 @@
-- Hacer que las clases programaAcademico tenga un mapa con sus atributos donde la llave sea el nombre del atributo.
+Done- Hacer que las clases programaAcademico tenga un mapa con sus atributos donde la llave sea el nombre del atributo.
 
-- Permitir consultar un atributo especifico del programaAcademico mediante el mapa
+Done- Permitir consultar un atributo especifico del programaAcademico mediante el mapa
 
-- Hacer que la clase consolidado tenga un mapa con sus atributos donde la llave sea el nombre del atributo.
+Done- Hacer que la clase consolidado tenga un mapa con sus atributos donde la llave sea el nombre del atributo.
 
-- Permitir consultar un atributo especifico del consolidado mediante el mapa
+Done- Permitir consultar un atributo especifico del consolidado mediante el mapa
 
-- Hacer que la relación programaAcademico -> consolidado no sea mediante un vector sino mediante un mapa.
+Done- Hacer que la relación programaAcademico -> consolidado no sea mediante un vector sino mediante un mapa.
 
-- Generar manejo de excepciones en la clase programaAcademico
+Done- Generar manejo de excepciones en la clase programaAcademico
 
-- Generar manejo de excepciones en la clase consolidado
+Done- Generar manejo de excepciones en la clase consolidado
 
 Ejemplo:
 "Mujeres" "2022" "1"
@@ -18,24 +18,24 @@ Ejemplo:
 string("mujeres-2022-1")
 consolidados[string]
 
-- Permitir mediante metodos publicos que se pueda iterar sobre los consolidados de un programa
+Removed- Permitir mediante metodos publicos que se pueda iterar sobre los consolidados de un programa
 academico segun solo el genero, o el año, o el semestre (1 o 2), o cualquier combinacion de estas.
 El objetivo es devolver todos los consolidados que cumplan los criterios de busqueda.
 
-- Convertir el GestorCsv en una clase abstracta GestorArchivos y plantear sus clases hijas:
+Done- Convertir el GestorCsv en una clase abstracta GestorArchivos y plantear sus clases hijas:
  ->GestorCsv, GestorTxt, GestorJSON
 
-- Plantear el diseño de los Gestor de Archivos para que reciban como parámetros las etiquetas de programasAcademicos y consolidados que deben buscar
+Done- Plantear el diseño de los Gestor de Archivos para que reciban como parámetros las etiquetas de programasAcademicos y consolidados que deben buscar
+
+Done- Permitir que las clases tipo GestorArchivos puedan utilizar cualquier delimitador
+Ej: En el proyecto 1, siempre era el ";" de los csv, y eso se dejó constante en el código
+,la idea sería hacer que eso fuera una variable
 
 - Implementar la clase GestorCsv
 
 - Implementar la clase GestorTxt
 
 - Implementar la clase GestorJSON
-
-- Permitir que las clases tipo GestorArchivos puedan utilizar cualquier delimitador
-Ej: En el proyecto 1, siempre era el ";" de los csv, y eso se dejó constante en el código
-,la idea sería hacer que eso fuera una variable
 
 - Implementar Gestion de excepciones para las clases de GestorArchivos y sus hijos
 
