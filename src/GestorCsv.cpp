@@ -26,7 +26,7 @@ vector<int> GestorCsv::leerProgramas(string &ruta)
     return codigosSniesRetorno;
 }
 // FIXME: falta la nueva implementacion de leerArchivo para que todo se pueda relizar en una sola funcion y no se necesiten 3
-vector<vector<string>> GestorCsv::leerArchivo(string &rutaBase, string &ano, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
+vector<vector<string>> GestorCsv::leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
     vector<vector<string>> matrizResultado;
     string rutaCompleta = rutaBase + ano + ".csv";
