@@ -19,7 +19,7 @@ int Consolidado::obtenerDatoInt(string& clave)
     string llave = utilidadObj.minusculasSinEspacios(clave);
     if (datosIntConsolidados.find(llave) == datosIntConsolidados.end())
     {
-        string msg = string("Llave No Encontrada");
+        string msg = string("Llave No Encontrada") + llave + string("'");
         throw invalid_argument(msg);
     }
     return datosIntConsolidados.at(llave);

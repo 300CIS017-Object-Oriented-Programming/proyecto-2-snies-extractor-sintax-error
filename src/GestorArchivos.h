@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "ProgramaAcademico.h"
 #include "Consolidado.h"
+#include "Settings.h"
 
 using namespace std;
 
@@ -17,7 +18,6 @@ class GestorArchivos
 {
 public:
     GestorArchivos() = default;
-    void prueba();
     virtual ~GestorArchivos();
     virtual vector<int> leerProgramas(string &ruta) = 0;
     virtual vector<vector<string>> leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) = 0;
