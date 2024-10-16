@@ -2,94 +2,37 @@
 
 Consolidado::Consolidado() = default;
 
-Consolidado::Consolidado(int idSexo, string sexo, int ano, int semestre, int inscritos, int admitidos, int primeraMatricula, int totalMatriculados, int graduados)
-    : idSexo(idSexo), sexo(sexo), ano(ano), semestre(semestre), inscritos(inscritos), admitidos(admitidos), matriculados(primeraMatricula), matriculadosPrimerSemestre(totalMatriculados), graduados(graduados) {}
-
-int Consolidado::getIdSexo()
+void Consolidado::agregarDatoInt(string& clave, int dato)
 {
-    return idSexo;
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    datosIntConsolidados[llave] = dato;
 }
 
-void Consolidado::setIdSexo(int idSexo)
+void Consolidado::agregarDatoString(string& clave, string& dato)
 {
-    this->idSexo = idSexo;
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    datosStringConsolidados[llave] = dato;
 }
 
-string Consolidado::getSexo()
+int Consolidado::obtenerDatoInt(string& clave)
 {
-    return sexo;
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    if (datosIntConsolidados.find(llave) == datosIntConsolidados.end())
+    {
+        string msg = string("Llave No Encontrada");
+        throw invalid_argument(msg);
+    }
+    return datosIntConsolidados.at(llave);
 }
 
-void Consolidado::setSexo(string &sexo)
+string Consolidado::obtenerDatoString(string& clave)
 {
-    this->sexo = sexo;
-}
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    if (datosStringConsolidados.find(llave) == datosStringConsolidados.end())
+    {
+        string msg = string("Llave No Encontrada: '") + llave + string("'");
+        throw invalid_argument(msg);
+    }
 
-int Consolidado::getAno()
-{
-    return ano;
-}
-
-void Consolidado::setAno(int ano)
-{
-    this->ano = ano;
-}
-
-int Consolidado::getSemestre()
-{
-    return semestre;
-}
-void Consolidado::setSemestre(int semestre)
-{
-    this->semestre = semestre;
-}
-
-int Consolidado::getInscritos()
-{
-    return inscritos;
-}
-
-void Consolidado::setInscritos(int inscritos)
-{
-    this->inscritos = inscritos;
-}
-
-int Consolidado::getAdmitidos()
-{
-    return admitidos;
-}
-
-void Consolidado::setAdmitidos(int admitidos)
-{
-    this->admitidos = admitidos;
-}
-
-int Consolidado::getMatriculados()
-{
-    return matriculados;
-}
-
-void Consolidado::setMatriculados(int matriculados)
-{
-    this->matriculados = matriculados;
-}
-
-int Consolidado::getMatriculadosPrimerSemestre()
-{
-    return matriculadosPrimerSemestre;
-}
-
-void Consolidado::setMatriculadosPrimerSemestre(int matriculadosPrimerSemestre)
-{
-    this->matriculadosPrimerSemestre = matriculadosPrimerSemestre;
-}
-
-int Consolidado::getGraduados()
-{
-    return graduados;
-}
-
-void Consolidado::setGraduados(int graduados)
-{
-    this->graduados = graduados;
+    return datosStringConsolidados.at(llave);
 }
