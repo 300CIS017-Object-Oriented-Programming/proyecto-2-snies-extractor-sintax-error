@@ -25,86 +25,94 @@ vector<int> GestorCsv::leerProgramas(string &ruta)
     archivoProgramasCsv.close();
     return codigosSniesRetorno;
 }
+
 // FIXME: falta la nueva implementacion de leerArchivo para que todo se pueda relizar en una sola funcion y no se necesiten 3
-vector<vector<string>> GestorCsv::leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
+vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
     vector<vector<string>> matrizResultado;
-    string rutaCompleta = rutaBase + ano + ".csv";
-    ifstream archivoPrimero(rutaCompleta);
-    if (!(archivoPrimero.is_open()))
+    vector<string> etiquetas;
+    ifstream archivoPrimero(ruta);
+
+    // Verificar si el archivo se abre correctamente
+    if (!archivoPrimero.is_open())
     {
-        cout << "Archivo " << rutaCompleta << " no se pudo abrir correctamente" << endl;
+        cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
+        return matrizResultado; // Retornar matriz vacía
     }
-    else
+
+    map<int, string> mapa; // Mapa para almacenar la posición y etiqueta
+    string fila;
+    string dato;
+    int columna;
+
+    // Primera iteración del ciclo para guardar las etiquetas
+    getline(archivoPrimero, fila);
+    columna = 0;
+    stringstream streamFila(fila);
+
+    // Procesar etiquetas
+    while (getline(streamFila, dato, ';'))
     {
-        string fila;
-        string dato;
-        vector<string> vectorFila;
-        stringstream streamFila;
-        int columna;
-        vector<int>::iterator it;
-
-        // Primera iteracion del ciclo para guardar las etiquetas
-        getline(archivoPrimero, fila);
-        vectorFila = vector<string>(39);
-        streamFila = stringstream(fila);
-        columna = 0;
-        while ((getline(streamFila, dato, ';')))
+        auto it = std::find(etiquetasColumnas.begin(), etiquetasColumnas.end(), dato);
+        if (it != etiquetasColumnas.end())
         {
-            vectorFila[columna] = dato;
-            columna++;
+            mapa[columna] = dato; // Almacena la posición y la etiqueta en el mapa
         }
-        matrizResultado.push_back(vectorFila);
+        ++columna;
+    }
+    for (const auto &par : mapa)
+    {
+        etiquetas.push_back(par.second); // Añadir el valor (second) al vector
+    }
+    matrizResultado.push_back(etiquetas);
 
-        // Leer el resto del archivo
-        while (getline(archivoPrimero, fila))
+    // Leer el resto del archivo
+    while (getline(archivoPrimero, fila))
+    {
+        stringstream streamFila(fila);
+        bool codigoCoincide = false;
+        columna = 0;
+        bool flag = false;
+        while (getline(streamFila, dato, ';') && !flag)
         {
-            streamFila = stringstream(fila);
-            columna = 0;
-            while ((getline(streamFila, dato, ';')) && (columna < 13))
+            try
             {
-                vectorFila[columna] = dato;
-                columna++;
-            }
-
-            // Verificamos que la fila no sea una fila de error
-            if (vectorFila[12] != "Sin programa especifico")
-            {
-                it = find(codigosSnies.begin(), codigosSnies.end(), stoi(vectorFila[12]));
-            }
-            else
-            {
-                it = codigosSnies.end();
-            }
-
-            // Verificar si hace parte de los programas que me interesan
-            if (it != codigosSnies.end()) // Caso donde si estaba dentro de los programas que me interesan
-            {
-                // Termino de leer y guardar primera fila
-                vectorFila[columna] = dato; // Guardamos el dato que habiamos geteado justo antes de hacer la verificacion
-                columna++;
-                while ((getline(streamFila, dato, ';')))
+                int numero = std::stoi(dato); // Intenta convertir a int
+                if (std::find(codigosSnies.begin(), codigosSnies.end(), numero) != codigosSnies.end())
                 {
-                    vectorFila[columna] = dato;
-                    columna++;
-                }
-                matrizResultado.push_back(vectorFila);
-
-                // Leo y guardo filas restantes
-                for (int j = 0; j < 3; j++)
-                {
-                    getline(archivoPrimero, fila);
-                    streamFila = stringstream(fila);
-                    columna = 0;
-                    while ((getline(streamFila, dato, ';')))
-                    {
-                        vectorFila[columna] = dato;
-                        columna++;
-                    }
-                    matrizResultado.push_back(vectorFila);
+                    codigoCoincide = true; // Se encontró el código
+                    flag = true;           // Salir del bucle de columnas
                 }
             }
-            // Si es de los programas que no me interesan, sigo a la siguiente fila, sin guardar la fila en la matriz de resultados
+            catch (const std::invalid_argument &)
+            {
+                continue;
+            }
+            catch (const std::out_of_range &)
+            {
+                continue;
+            }
+            ++columna; // Incrementar el contador de columnas
+        }
+
+        // Procesar la fila si se encontró un código
+        if (codigoCoincide)
+        {
+            vector<string> filaResultado; // Almacena la fila procesada
+            streamFila.clear();           // Limpiar el estado de la cadena
+            streamFila.seekg(0);          // Volver al inicio de la fila
+            columna = 0;                  // Reiniciar contador de columnas
+
+            // Leer la fila nuevamente para acceder a las columnas de interés
+            while (getline(streamFila, dato, ';'))
+            {
+                if (mapa.find(columna) != mapa.end())
+                {
+                    filaResultado.push_back(dato); // Guardar el dato
+                }
+                ++columna; // Incrementar el contador de columnas
+            }
+            matrizResultado.push_back(filaResultado); // Agregar fila a matrizResultado
         }
     }
 
