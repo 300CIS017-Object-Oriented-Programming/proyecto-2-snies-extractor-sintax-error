@@ -12,6 +12,7 @@
 #include "Consolidado.h"
 #include "GestorArchivos.h"
 #include "Utilidad.h"
+#include "Settings.h"
 
 using namespace std;
 

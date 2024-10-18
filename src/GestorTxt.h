@@ -21,8 +21,8 @@ public:
     vector<int> leerProgramas(string &ruta) override;
     vector<vector<string>> leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) override;
 
-    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasColumnas) override;
-    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<string> etiquetasColumnas) override;
+    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasProgramaString, vector<string> etiquetasProgramaInt, vector<string> etiquetasConsolidadoString, vector<string> etiquetasConsolidadoInt) override;
+    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<string> etiquetasProgramaString, vector<string> etiquetasProgramaInt, vector<string> etiquetasConsolidadoString, vector<string> etiquetasConsolidadoInt) override;
     bool crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) override;
 };
 
