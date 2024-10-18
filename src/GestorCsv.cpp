@@ -1,5 +1,4 @@
 #include "GestorCsv.h"
-#include "Utilidad.h"
 
 vector<int> GestorCsv::leerProgramas(string &ruta)
 {
@@ -45,6 +44,7 @@ vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiq
     string dato;
     int columna = 0;
     int indiceColumnaCodigo = -1; // Índice de la columna con los códigos SNIES
+    string datoMinusculasSinEspacios;
 
     // Primera iteración del ciclo para guardar las etiquetas
     getline(archivoPrimero, fila);
@@ -53,14 +53,14 @@ vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiq
     // Procesar etiquetas
     while (getline(streamFila, dato, ';'))
     {
-        minusculasSinEspacios(dato);
-        auto it = find(etiquetasColumnas.begin(), etiquetasColumnas.end(), dato);
+        datoMinusculasSinEspacios = utilidadObj.minusculasSinEspacios(dato);
+        auto it = find(etiquetasColumnas.begin(), etiquetasColumnas.end(), datoMinusculasSinEspacios);
         if (it != etiquetasColumnas.end())
         {
-            mapa[columna] = dato; // Almacena la posición y la etiqueta en el mapa
+            mapa[columna] = datoMinusculasSinEspacios; // Almacena la posición y la etiqueta en el mapa
         }
         // Verificar si esta es la columna de los códigos SNIES
-        if (dato == minusculasSinEspacios("CÓDIGO SNIES DEL PROGRAMA"))
+        if (datoMinusculasSinEspacios == minusculasSinEspacios("CÓDIGO SNIES DEL PROGRAMA"))
         {
             indiceColumnaCodigo = columna;
         }
@@ -93,7 +93,7 @@ vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiq
         // Procesar fila
         while (getline(streamFila, dato, ';'))
         {
-            
+
             // Verificar si esta es la columna del código SNIES
             if (columna == indiceColumnaCodigo)
             {

@@ -11,11 +11,15 @@
 #include "ProgramaAcademico.h"
 #include "Consolidado.h"
 #include "GestorArchivos.h"
+#include "Utilidad.h"
 
 using namespace std;
 
 class GestorCsv : public GestorArchivos
 {
+private:
+    Utilidad utilidadobj;
+
 public:
     GestorCsv() = default;
     vector<int> leerProgramas(string &ruta) override;
