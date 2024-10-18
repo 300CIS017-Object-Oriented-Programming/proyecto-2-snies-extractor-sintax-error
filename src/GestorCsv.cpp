@@ -1,4 +1,5 @@
 #include "GestorCsv.h"
+#include "Utilidad.h"
 
 vector<int> GestorCsv::leerProgramas(string &ruta)
 {
@@ -30,7 +31,6 @@ vector<int> GestorCsv::leerProgramas(string &ruta)
 vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
     vector<vector<string>> matrizResultado;
-    vector<string> etiquetas;
     ifstream archivoPrimero(ruta);
 
     // Verificar si el archivo se abre correctamente
@@ -43,26 +43,42 @@ vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiq
     map<int, string> mapa; // Mapa para almacenar la posición y etiqueta
     string fila;
     string dato;
-    int columna;
+    int columna = 0;
+    int indiceColumnaCodigo = -1; // Índice de la columna con los códigos SNIES
 
     // Primera iteración del ciclo para guardar las etiquetas
     getline(archivoPrimero, fila);
-    columna = 0;
     stringstream streamFila(fila);
 
     // Procesar etiquetas
     while (getline(streamFila, dato, ';'))
     {
-        auto it = std::find(etiquetasColumnas.begin(), etiquetasColumnas.end(), dato);
+        minusculasSinEspacios(dato);
+        auto it = find(etiquetasColumnas.begin(), etiquetasColumnas.end(), dato);
         if (it != etiquetasColumnas.end())
         {
             mapa[columna] = dato; // Almacena la posición y la etiqueta en el mapa
         }
+        // Verificar si esta es la columna de los códigos SNIES
+        if (dato == minusculasSinEspacios("CÓDIGO SNIES DEL PROGRAMA"))
+        {
+            indiceColumnaCodigo = columna;
+        }
         ++columna;
     }
+
+    // Si no se encontró la columna de códigos SNIES, retornar matriz vacía
+    if (indiceColumnaCodigo == -1)
+    {
+        cout << "No se encontró la columna de Código SNIES en el archivo." << endl;
+        return matrizResultado;
+    }
+
+    // Añadir etiquetas a la matriz de resultados
+    vector<string> etiquetas;
     for (const auto &par : mapa)
     {
-        etiquetas.push_back(par.second); // Añadir el valor (second) al vector
+        etiquetas.push_back(par.second);
     }
     matrizResultado.push_back(etiquetas);
 
@@ -70,49 +86,36 @@ vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiq
     while (getline(archivoPrimero, fila))
     {
         stringstream streamFila(fila);
+        vector<string> filaActual;
         bool codigoCoincide = false;
         columna = 0;
-        bool flag = false;
-        while (getline(streamFila, dato, ';') && !flag)
+
+        // Procesar fila
+        while (getline(streamFila, dato, ';'))
         {
-            try
+            
+            // Verificar si esta es la columna del código SNIES
+            if (columna == indiceColumnaCodigo)
             {
-                int numero = std::stoi(dato); // Intenta convertir a int
+                int numero = std::stoi(dato); // Convertir a entero
                 if (std::find(codigosSnies.begin(), codigosSnies.end(), numero) != codigosSnies.end())
                 {
-                    codigoCoincide = true; // Se encontró el código
-                    flag = true;           // Salir del bucle de columnas
+                    codigoCoincide = true; // Código SNIES coincide
                 }
             }
-            catch (const std::invalid_argument &)
+
+            // Solo almacenamos las columnas de interés (las que están en el mapa)
+            if (mapa.find(columna) != mapa.end())
             {
-                continue;
+                filaActual.push_back(dato); // Guardar el dato de la columna de interés
             }
-            catch (const std::out_of_range &)
-            {
-                continue;
-            }
-            ++columna; // Incrementar el contador de columnas
+            ++columna;
         }
 
-        // Procesar la fila si se encontró un código
+        // Solo añadir la fila si el código coincide
         if (codigoCoincide)
         {
-            vector<string> filaResultado; // Almacena la fila procesada
-            streamFila.clear();           // Limpiar el estado de la cadena
-            streamFila.seekg(0);          // Volver al inicio de la fila
-            columna = 0;                  // Reiniciar contador de columnas
-
-            // Leer la fila nuevamente para acceder a las columnas de interés
-            while (getline(streamFila, dato, ';'))
-            {
-                if (mapa.find(columna) != mapa.end())
-                {
-                    filaResultado.push_back(dato); // Guardar el dato
-                }
-                ++columna; // Incrementar el contador de columnas
-            }
-            matrizResultado.push_back(filaResultado); // Agregar fila a matrizResultado
+            matrizResultado.push_back(filaActual);
         }
     }
 
