@@ -55,3 +55,5 @@ Ej: En el proyecto 1, siempre era el ";" de los csv, y eso se dejó constante en
 - Generar gestion de excepciones dentro de la clase View
 
 - Generar un archivo de constantes para generar los textos de View
+
+-  vector<string> etiquetasProgramaString, vector<string> etiquetasProgramaInt, vector<string> etiquetasConsolidadoString, vector<string> etiquetasConsolidadoInt, vector<string> SEXO_AÑO_SEMESTRE
