@@ -30,7 +30,7 @@ vector<int> GestorCsv::leerProgramas(string &ruta)
 vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
     vector<vector<string>> matrizResultado;
-    ifstream archivoPrimero(ruta);
+    ifstream archivoPrimero(ruta + string(".csv"));
 
     // Verificar si el archivo se abre correctamente
     if (!archivoPrimero.is_open())
@@ -137,7 +137,7 @@ vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiq
     return matrizResultado;
 }
 
-bool GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasColumnas)
+bool GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasProgramaString, vector<string> etiquetasProgramaInt, vector<string> etiquetasConsolidadoString, vector<string> etiquetasConsolidadoInt)
 {
     // Este bool nos ayudará a saber si se creo exitosamente el archivo
     bool estadoCreacion = false;
