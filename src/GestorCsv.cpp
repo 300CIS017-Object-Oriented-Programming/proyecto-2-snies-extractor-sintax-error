@@ -25,86 +25,97 @@ vector<int> GestorCsv::leerProgramas(string &ruta)
     archivoProgramasCsv.close();
     return codigosSniesRetorno;
 }
+
 // FIXME: falta la nueva implementacion de leerArchivo para que todo se pueda relizar en una sola funcion y no se necesiten 3
-vector<vector<string>> GestorCsv::leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
+vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
     vector<vector<string>> matrizResultado;
-    string rutaCompleta = rutaBase + ano + ".csv";
-    ifstream archivoPrimero(rutaCompleta);
-    if (!(archivoPrimero.is_open()))
+    ifstream archivoPrimero(ruta);
+
+    // Verificar si el archivo se abre correctamente
+    if (!archivoPrimero.is_open())
     {
-        cout << "Archivo " << rutaCompleta << " no se pudo abrir correctamente" << endl;
+        cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
+        return matrizResultado; // Retornar matriz vacía
     }
-    else
+
+    map<int, string> mapa; // Mapa para almacenar la posición y etiqueta
+    string fila;
+    string dato;
+    int columna = 0;
+    int indiceColumnaCodigo = -1; // Índice de la columna con los códigos SNIES
+    string datoMinusculasSinEspacios;
+
+    // Primera iteración del ciclo para guardar las etiquetas
+    getline(archivoPrimero, fila);
+    stringstream streamFila(fila);
+
+    // Procesar etiquetas
+    while (getline(streamFila, dato, ';'))
     {
-        string fila;
-        string dato;
-        vector<string> vectorFila;
-        stringstream streamFila;
-        int columna;
-        vector<int>::iterator it;
-
-        // Primera iteracion del ciclo para guardar las etiquetas
-        getline(archivoPrimero, fila);
-        vectorFila = vector<string>(39);
-        streamFila = stringstream(fila);
-        columna = 0;
-        while ((getline(streamFila, dato, ';')))
+        datoMinusculasSinEspacios = utilidadObj.minusculasSinEspacios(dato);
+        auto it = find(etiquetasColumnas.begin(), etiquetasColumnas.end(), datoMinusculasSinEspacios);
+        if (it != etiquetasColumnas.end())
         {
-            vectorFila[columna] = dato;
-            columna++;
+            mapa[columna] = datoMinusculasSinEspacios; // Almacena la posición y la etiqueta en el mapa
         }
-        matrizResultado.push_back(vectorFila);
-
-        // Leer el resto del archivo
-        while (getline(archivoPrimero, fila))
+        // Verificar si esta es la columna de los códigos SNIES
+        if (datoMinusculasSinEspacios == minusculasSinEspacios("CÓDIGO SNIES DEL PROGRAMA"))
         {
-            streamFila = stringstream(fila);
-            columna = 0;
-            while ((getline(streamFila, dato, ';')) && (columna < 13))
-            {
-                vectorFila[columna] = dato;
-                columna++;
-            }
+            indiceColumnaCodigo = columna;
+        }
+        ++columna;
+    }
 
-            // Verificamos que la fila no sea una fila de error
-            if (vectorFila[12] != "Sin programa especifico")
-            {
-                it = find(codigosSnies.begin(), codigosSnies.end(), stoi(vectorFila[12]));
-            }
-            else
-            {
-                it = codigosSnies.end();
-            }
+    // Si no se encontró la columna de códigos SNIES, retornar matriz vacía
+    if (indiceColumnaCodigo == -1)
+    {
+        cout << "No se encontró la columna de Código SNIES en el archivo." << endl;
+        return matrizResultado;
+    }
 
-            // Verificar si hace parte de los programas que me interesan
-            if (it != codigosSnies.end()) // Caso donde si estaba dentro de los programas que me interesan
+    // Añadir etiquetas a la matriz de resultados
+    vector<string> etiquetas;
+    for (const auto &par : mapa)
+    {
+        etiquetas.push_back(par.second);
+    }
+    matrizResultado.push_back(etiquetas);
+
+    // Leer el resto del archivo
+    while (getline(archivoPrimero, fila))
+    {
+        stringstream streamFila(fila);
+        vector<string> filaActual;
+        bool codigoCoincide = false;
+        columna = 0;
+
+        // Procesar fila
+        while (getline(streamFila, dato, ';'))
+        {
+
+            // Verificar si esta es la columna del código SNIES
+            if (columna == indiceColumnaCodigo)
             {
-                // Termino de leer y guardar primera fila
-                vectorFila[columna] = dato; // Guardamos el dato que habiamos geteado justo antes de hacer la verificacion
-                columna++;
-                while ((getline(streamFila, dato, ';')))
+                int numero = std::stoi(dato); // Convertir a entero
+                if (std::find(codigosSnies.begin(), codigosSnies.end(), numero) != codigosSnies.end())
                 {
-                    vectorFila[columna] = dato;
-                    columna++;
-                }
-                matrizResultado.push_back(vectorFila);
-
-                // Leo y guardo filas restantes
-                for (int j = 0; j < 3; j++)
-                {
-                    getline(archivoPrimero, fila);
-                    streamFila = stringstream(fila);
-                    columna = 0;
-                    while ((getline(streamFila, dato, ';')))
-                    {
-                        vectorFila[columna] = dato;
-                        columna++;
-                    }
-                    matrizResultado.push_back(vectorFila);
+                    codigoCoincide = true; // Código SNIES coincide
                 }
             }
-            // Si es de los programas que no me interesan, sigo a la siguiente fila, sin guardar la fila en la matriz de resultados
+
+            // Solo almacenamos las columnas de interés (las que están en el mapa)
+            if (mapa.find(columna) != mapa.end())
+            {
+                filaActual.push_back(dato); // Guardar el dato de la columna de interés
+            }
+            ++columna;
+        }
+
+        // Solo añadir la fila si el código coincide
+        if (codigoCoincide)
+        {
+            matrizResultado.push_back(filaActual);
         }
     }
 
