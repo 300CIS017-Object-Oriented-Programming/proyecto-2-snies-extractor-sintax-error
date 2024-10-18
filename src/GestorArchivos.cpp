@@ -28,7 +28,7 @@ vector<int> GestorArchivos::leerProgramas(string &ruta)
 
 vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
-    string delimitador = Settings::DELIMITADOR[0];
+    char delimitador = Settings::DELIMITADOR[0];
     vector<vector<string>> matrizResultado;
     ifstream archivoPrimero(ruta + string(".csv"));
 
