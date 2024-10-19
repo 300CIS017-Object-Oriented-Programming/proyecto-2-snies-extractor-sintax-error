@@ -16,11 +16,13 @@ using namespace std;
 
 class GestorTxt : public GestorArchivos
 {
+private:
+    void escribirEtiquetas(string& strCodigoSNIES, string& strnombrePrograma, string& fila, string& delimitador, , int minPosEtiquetas, int maxPosEtiquetas);
 public:
     GestorTxt() = default;
 
-    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> matrizEtiquetas) override;
-    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> matrizEtiquetas) override;
+    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas) override;
+    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>>& matrizEtiquetas) override;
     bool crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) override;
 };
 
