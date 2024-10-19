@@ -73,7 +73,7 @@ Consolidado* ProgramaAcademico::buscarConsolidado(string& infoSexo, int infoAno 
     claveConsolidado = utilidadObj.minusculasSinEspacios(claveConsolidado);
     if (consolidados.find(claveConsolidado) == consolidados.end())
     {
-        string msg = string("Llave No Encontrada: '") + claveConsolidado + string("'");
+        string msg = string("Consolidado No Encontrada: '") + claveConsolidado + string("'");
         throw invalid_argument(msg);
     }
 

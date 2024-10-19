@@ -19,7 +19,8 @@ class GestorTxt : public GestorArchivos
 private:
     //Metodos privados auxiliares
     void escribirEtiquetas(string& strCodigoSNIES, string& strnombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
-    void
+    void escribirPrograma(string& strCodigoSNIES, string& strnombrePrograma, string& fila, string& delimitador , vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual);
+    void escribirConsolidado();
 public:
     GestorTxt() = default;
 
