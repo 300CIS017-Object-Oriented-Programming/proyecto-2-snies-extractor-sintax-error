@@ -147,6 +147,14 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
                 escribirConsolidado(fila, delimitador, consolidadoActual,matrizEtiquetas);
                 //Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
                 archivoResultados << fila << endl;
+
+                //Escribimos el consolidado del segundo semestre del año e imprimimos al archivo
+                consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_SEGUNDO_SEMESTRE);
+                fila = infoPrograma;
+                //FIXME: Implementar este metodo
+                escribirConsolidado(fila, delimitador, consolidadoActual,matrizEtiquetas);
+                //Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
+                archivoResultados << fila << endl;
             } catch (invalid_argument& e)
             {
                 //De no existir el consolidado, se sigue adelante
