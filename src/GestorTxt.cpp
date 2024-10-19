@@ -37,12 +37,15 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
             escribirPrograma(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, programaActual);
         } catch (invalid_argument& e)
         {
+            //En caso que se produzca este error se intentará seguir imrpimiendo el resto de programa
             cout << "Programa SNIES '" << itProgramas->first << "' tiene atributos faltantes. " << e.what() << endl;
             consolidadoValido = false;
         }
         //FIXME: Añadir la iteracion de los consolidados por medio de los sexos, años y semestres para ir imprimiendo las filas
-
-        escribirConsolidados(fila, delimitador, matrizEtiquetas, programaActual);
+        if (consolidadoValido)
+        {
+            imprimirConsolidados(fila, archivoResultados,delimitador, matrizEtiquetas, programaActual);
+        }
 
     }
 
@@ -120,14 +123,41 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
 {
     int FILA_VALORES_SEXO = 4;
     int FILA_VALORES_ANO = 5;
+    int LLAVE_PRIMER_SEMESTRE = 1;
+    int LLAVE_SEGUNDO_SEMESTRE = 2;
     int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
     int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
     //Vamos a seleccionar el consolidado apropiado con base en el sexo y año
     int anoActual;
+    string sexoActual;
+    Consolidado* consolidadoActual;
+    string infoPrograma = fila;
     for (int posVectorAnos = 0; posVectorAnos < matrizEtiquetas[FILA_VALORES_ANO].size(); posVectorAnos++)
     {
         anoActual = stoi(matrizEtiquetas[FILA_VALORES_ANO][posVectorAnos]);
-        for () {}
+        for (int posVectorSexos = 0; posVectorSexos < matrizEtiquetas[FILA_VALORES_SEXO].size(); posVectorSexos++)
+        {
+            sexoActual = matrizEtiquetas[FILA_VALORES_SEXO][posVectorSexos];
+            try
+            {
+                //Escribimos el consolidado del primer semestre del año e imprimimos al archivo
+                consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_PRIMER_SEMESTRE);
+                fila = infoPrograma;
+                //FIXME: Implementar este metodo
+                escribirConsolidado(fila, delimitador, consolidadoActual,matrizEtiquetas);
+                //Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
+                archivoResultados << fila << endl;
+            } catch (invalid_argument& e)
+            {
+                //De no existir el consolidado, se sigue adelante
+                cout << e.what() << endl;
+            }
+            catch (out_of_range& e)
+            {
+                //Caso donde no tiene todos los atributos el consolidado
+                cout << e.what() << endl;
+            }
+        }
     }
 }
 

@@ -21,6 +21,7 @@ private:
     void escribirEtiquetas(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
     void escribirPrograma(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador , vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual);
     void imprimirConsolidados(string& fila, ofstream& archivoResultados, string& delimitador, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual);
+    void escribirConsolidado(string& fila, string& delimitador, Consolidado* consolidadoActual,vector<vector<string>>& matrizEtiquetas);
 public:
     GestorTxt() = default;
 
