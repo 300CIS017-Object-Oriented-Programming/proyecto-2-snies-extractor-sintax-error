@@ -17,7 +17,7 @@ using namespace std;
 
 class GestorArchivos
 {
-private:
+protected:
     Utilidad utilidadObj;
 
 public:
