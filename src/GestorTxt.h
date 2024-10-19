@@ -20,7 +20,7 @@ private:
     //Metodos privados auxiliares
     void escribirEtiquetas(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
     void escribirPrograma(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador , vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual);
-    void escribirConsolidados();
+    void imprimirConsolidados(string& fila, ofstream& archivoResultados, string& delimitador, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual);
 public:
     GestorTxt() = default;
 

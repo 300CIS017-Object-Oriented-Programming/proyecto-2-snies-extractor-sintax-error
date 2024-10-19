@@ -20,8 +20,6 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     string fila;
     int MIN_POS_ETIQUETAS = 0;
     int MAX_POS_ETIQUETAS = 3;
-    int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
-    int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
     //Metodo privado auxiliar para escribir las etiquetas de las columnas
     escribirEtiquetas(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
     archivoResultados << fila << endl;
@@ -44,7 +42,7 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
         }
         //FIXME: Añadir la iteracion de los consolidados por medio de los sexos, años y semestres para ir imprimiendo las filas
 
-        escribirCon;
+        escribirConsolidados(fila, delimitador, matrizEtiquetas, programaActual);
 
     }
 
@@ -118,6 +116,20 @@ void GestorTxt::escribirPrograma(string& strCodigoSNIES, string& strNombreProgra
     }
 }
 
+void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, string& delimitador, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual)
+{
+    int FILA_VALORES_SEXO = 4;
+    int FILA_VALORES_ANO = 5;
+    int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
+    int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
+    //Vamos a seleccionar el consolidado apropiado con base en el sexo y año
+    int anoActual;
+    for (int posVectorAnos = 0; posVectorAnos < matrizEtiquetas[FILA_VALORES_ANO].size(); posVectorAnos++)
+    {
+        anoActual = stoi(matrizEtiquetas[FILA_VALORES_ANO][posVectorAnos]);
+        for () {}
+    }
+}
 
 
 bool GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>>& matrizEtiquetas)
