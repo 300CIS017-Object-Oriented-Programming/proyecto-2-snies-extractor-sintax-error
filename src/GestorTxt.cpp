@@ -10,6 +10,7 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     if (!(archivoResultados.is_open()))
     {
         string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
+        archivoResultados.close();
         throw out_of_range(errorMsg);
     }
 
@@ -27,15 +28,23 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
 
     //Iteramos sobre el mapa de los programasAcademicos para imprimir en cada fila 1 consolidado
     ProgramaAcademico * programaActual;
+    bool consolidadoValido = true;
     for (map<int, ProgramaAcademico *>::iterator itProgramas = mapadeProgramasAcademicos.begin(); itProgramas != mapadeProgramasAcademicos.end(); ++itProgramas)
     {
         fila.clear();
         programaActual = itProgramas->second;
-        //escribirPrograma
+        try
+        {
+            escribirPrograma(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, programaActual);
+        } catch (invalid_argument& e)
+        {
+            cout << "Programa " << itProgramas->first << "tiene atributos faltantes. " << e.what() << endl;
+        }
 
     }
 
-
+    estadoCreacion = true;
+    archivoResultados.close();
     return estadoCreacion;
 }
 
@@ -78,7 +87,8 @@ void GestorTxt::escribirPrograma(string& strCodigoSNIES, string& strnombreProgra
         }
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS].size(); columnaEtiquetas++)
         {
-            fila += matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS][columnaEtiquetas] + delimitador;
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS][columnaEtiquetas];
+            fila += to_string(programaActual->consultarDatoInt(nombreAtributo)) + delimitador;
         }
     } catch (invalid_argument& e)
     {

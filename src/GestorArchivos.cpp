@@ -6,7 +6,9 @@ vector<int> GestorArchivos::leerProgramas(string &ruta)
     ifstream archivoProgramasCsv(ruta);
     if (!(archivoProgramasCsv.is_open()))
     {
-        cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
+        string errorMsg = string("Archivo ") + ruta + string(" no se pudo abrir correctamente");
+        throw out_of_range(errorMsg);
+        //cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
     }
     else
     {
@@ -35,8 +37,12 @@ vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> 
     // Verificar si el archivo se abre correctamente
     if (!archivoPrimero.is_open())
     {
-        cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
+        //FIX: Manejo del error con gestion de excepciones
+        string errorMsg = string("Archivo ") + ruta + string(" no se pudo abrir correctamente");
+        throw out_of_range(errorMsg);
+        /*cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
         return matrizResultado; // Retornar matriz vacía
+        */
     }
 
     map<int, string> mapa; // Mapa para almacenar la posición y etiqueta
@@ -60,7 +66,9 @@ vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> 
             mapa[columna] = datoMinusculasSinEspacios; // Almacena la posición y la etiqueta en el mapa
         }
         // Verificar si esta es la columna de los códigos SNIES
-        if (datoMinusculasSinEspacios == minusculasSinEspacios("CÓDIGO SNIES DEL PROGRAMA"))
+        string strCodigoSNIES = string("CÓDIGO SNIES DEL PROGRAMA");
+        //FIX: Ahora se utiliza bien el objeto de clase Utilidad
+        if (datoMinusculasSinEspacios == utilidadObj.minusculasSinEspacios(strCodigoSNIES))
         {
             indiceColumnaCodigo = columna;
         }
