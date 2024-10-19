@@ -17,7 +17,9 @@ using namespace std;
 class GestorTxt : public GestorArchivos
 {
 private:
-    void escribirEtiquetas(string& strCodigoSNIES, string& strnombrePrograma, string& fila, string& delimitador, , int minPosEtiquetas, int maxPosEtiquetas);
+    //Metodos privados auxiliares
+    void escribirEtiquetas(string& strCodigoSNIES, string& strnombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
+    void
 public:
     GestorTxt() = default;
 

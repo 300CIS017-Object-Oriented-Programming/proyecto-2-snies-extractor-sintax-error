@@ -16,25 +16,15 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     //Imprimir las etiquetas de las columnas en la primera fila
     string strCodigoSNIES = string("Codigo SNIES del programa");
     string strnombrePrograma =  string("Programa Academico");
-    string fila = strCodigoSNIES + delimitador + strnombrePrograma;
+    string fila;
     int MIN_POS_ETIQUETAS = 0;
     int MAX_POS_ETIQUETAS = 3;
     int FILA_ETIQUETAS_STRING_PROGRAMAS = 0;
     int FILA_ETIQUETAS_INT_PROGRAMAS = 1;
     int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
     int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
-    for (int filaEtiquetas = MIN_POS_ETIQUETAS; filaEtiquetas < MAX_POS_ETIQUETAS; filaEtiquetas++)
-    {
-        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[filaEtiquetas].size(); columnaEtiquetas++)
-        {
-            fila += matrizEtiquetas[filaEtiquetas][columnaEtiquetas];
-            if (columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1)
-            {
-                fila += delimitador;
-            }
-        }
-    }
-
+    //Metodo privado auxiliar para escribir el resto de etiquetas
+    escribirEtiquetas(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
     archivoResultados << fila << endl;
 
     //Iteramos sobre el mapa de los programasAcademicos para imprimir en cada fila 1 consolidado
@@ -55,7 +45,24 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     return estadoCreacion;
 }
 
-bool GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> matrizEtiquetas)
+void GestorTxt::escribirEtiquetas(string& strCodigoSNIES, string& strnombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
+{
+    fila = strCodigoSNIES + delimitador + strnombrePrograma;
+    for (int filaEtiquetas = minPosEtiquetas; filaEtiquetas < maxPosEtiquetas; filaEtiquetas++)
+    {
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[filaEtiquetas].size(); columnaEtiquetas++)
+        {
+            fila += matrizEtiquetas[filaEtiquetas][columnaEtiquetas];
+            if (columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1)
+            {
+                fila += delimitador;
+            }
+        }
+    }
+}
+
+
+bool GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>>& matrizEtiquetas)
 {
 }
 
