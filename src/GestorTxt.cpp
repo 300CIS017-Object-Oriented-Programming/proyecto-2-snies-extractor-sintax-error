@@ -22,7 +22,7 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     int MAX_POS_ETIQUETAS = 3;
     int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
     int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
-    //Metodo privado auxiliar para escribir el resto de etiquetas
+    //Metodo privado auxiliar para escribir las etiquetas de las columnas
     escribirEtiquetas(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
     archivoResultados << fila << endl;
 
@@ -44,6 +44,8 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
         }
         //FIXME: Añadir la iteracion de los consolidados por medio de los sexos, años y semestres para ir imprimiendo las filas
 
+        escribirCon;
+
     }
 
     estadoCreacion = true;
@@ -51,18 +53,27 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     return estadoCreacion;
 }
 
-void GestorTxt::escribirEtiquetas(string& strCodigoSNIES, string& strnombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
+void GestorTxt::escribirEtiquetas(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
 {
     /*Orden de las Etiquetas
      CodigoSnies, Nombre Programa, (etiquetas Tipo String Programa), ...
     ... (etiquetas Tipo String Programa), (etiquetas Tipo String Consolidado)
      */
-    fila = strCodigoSNIES + delimitador + strnombrePrograma;
+    fila = strCodigoSNIES + delimitador + strNombrePrograma;
+    string nombreAtributo;
+    bool etiquetaValida;
     for (int filaEtiquetas = minPosEtiquetas; filaEtiquetas < maxPosEtiquetas; filaEtiquetas++)
     {
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[filaEtiquetas].size(); columnaEtiquetas++)
         {
-            fila += matrizEtiquetas[filaEtiquetas][columnaEtiquetas];
+            nombreAtributo = matrizEtiquetas[filaEtiquetas][columnaEtiquetas];
+            //Verificamos que la etiqueta que vamos a escribir no sea el codigo snies o nombre que ya escribimos
+            etiquetaValida = utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES);
+            etiquetaValida = etiquetaValida && (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma));
+            if (etiquetaValida)
+            {
+                fila += nombreAtributo;
+            }
             if (columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1)
             {
                 fila += delimitador;
@@ -71,13 +82,13 @@ void GestorTxt::escribirEtiquetas(string& strCodigoSNIES, string& strnombreProgr
     }
 }
 
-void GestorTxt::escribirPrograma(string& strCodigoSNIES, string& strnombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual)
+void GestorTxt::escribirPrograma(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual)
 {
     try
     {
         //Empezamos por imprimir el codigo SNIES y el nombre del programa en la fila
         fila = to_string(programaActual->consultarDatoInt(strCodigoSNIES)) + delimitador;
-        fila += to_string(programaActual->consultarDatoInt(strnombrePrograma)) + delimitador;
+        fila += programaActual->consultarDatoString(strNombrePrograma) + delimitador;
 
         //Seguimos por imprimir la informacion string e int del programa en la fila, respectivamente
         int FILA_ETIQUETAS_STRING_PROGRAMAS = 0;
@@ -86,12 +97,20 @@ void GestorTxt::escribirPrograma(string& strCodigoSNIES, string& strnombreProgra
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_PROGRAMAS].size(); columnaEtiquetas++)
         {
             nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_PROGRAMAS][columnaEtiquetas];
-            fila += programaActual->consultarDatoString(nombreAtributo) + delimitador;
+            //Verificamos que el dato que vamos a escribir no sea el nombre del programa que ya escribimos
+            if (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma))
+            {
+                fila += programaActual->consultarDatoString(nombreAtributo) + delimitador;
+            }
         }
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS].size(); columnaEtiquetas++)
         {
             nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS][columnaEtiquetas];
-            fila += to_string(programaActual->consultarDatoInt(nombreAtributo)) + delimitador;
+            //Verificamos que el dato que vamos a escribir no sea el codigo SNIES que ya escribimos
+            if (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES))
+            {
+                fila += to_string(programaActual->consultarDatoInt(nombreAtributo)) + delimitador;
+            }
         }
     } catch (invalid_argument& e)
     {
