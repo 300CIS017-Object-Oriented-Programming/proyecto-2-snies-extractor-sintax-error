@@ -33,13 +33,16 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     {
         fila.clear();
         programaActual = itProgramas->second;
+        //Tratamos de escribir en la fila la informacion del programa
         try
         {
             escribirPrograma(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, programaActual);
         } catch (invalid_argument& e)
         {
-            cout << "Programa " << itProgramas->first << "tiene atributos faltantes. " << e.what() << endl;
+            cout << "Programa SNIES '" << itProgramas->first << "' tiene atributos faltantes. " << e.what() << endl;
+            consolidadoValido = false;
         }
+        //FIXME: Añadir la iteracion de los consolidados por medio de los sexos, años y semestres para ir imprimiendo las filas
 
     }
 
