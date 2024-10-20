@@ -28,9 +28,39 @@ void GestorJSON::escribirEtiquetasJson(json& etiquetasJson, string& strCodigoSNI
     }
 }
 
-void GestorJSON:: escribirProgramaJson(json& jsonData, string& nombrePrograma, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual)
+void GestorJSON:: escribirProgramaJson(json& jsonData, string& nombrePrograma, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual, string& strCodigoSNIES)
 {
+    try{
+        jsonData[nombrePrograma] = to_string(programaActual->consultarDatoInt(strCodigoSNIES));
+        jsonData[nombrePrograma].push_back(nombrePrograma);
+        int FILA_ETIQUETAS_STRING_PROGRAMAS = 0;
+        int FILA_ETIQUETAS_INT_PROGRAMAS = 1;
+        string nombreAtributo;
+        string strNombrePrograma =  string("Programa Academico");
+        string strCodigoSNIES = string("Codigo SNIES del programa");
+
+        for(int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_PROGRAMAS].size();columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_PROGRAMAS][columnaEtiquetas];
+            if(utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma))
+            {
+                jsonData[nombrePrograma].push_back(programaActual->consultarDatoString(nombreAtributo));
+            }
+        }
+        for(int columnaEtiqueta = 0; columnaEtiqueta < matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS].size(); columnaEtiqueta++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS][columnaEtiqueta];
+            if(utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES))
+            {
+                jsonData[escribirEtiquetasJson].push_back(programaActual->consultarDatoInt(nombreAtributo));
+            }
+        }
+    }catch (invalid_argument& e)
+    {
+        throw invalid_argument(e.what());
+    }
     
+
 }
 
 bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas)
@@ -73,7 +103,7 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
         string nombrePrograma = programaAcademicoActual->consultarDatoString(strNombrePrograma);
         try
         {
-            escribirProgramaJson(jsonData,nombrePrograma,matrizEtiquetas,programaAcademicoActual);
+            escribirProgramaJson(jsonData,nombrePrograma,matrizEtiquetas,programaAcademicoActual,strCodigoSNIES);
         }
         catch(const std::exception& e)
         {
