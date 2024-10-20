@@ -1,342 +1,270 @@
 #include "GestorCsv.h"
 
-vector<int> GestorCsv::leerProgramas(string &ruta)
+bool GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
 {
-    vector<int> codigosSniesRetorno;
-    ifstream archivoProgramasCsv(ruta);
-    if (!(archivoProgramasCsv.is_open()))
-    {
-        cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
-    }
-    else
-    {
-        string linea;
-        string dato;
-        // Saltarse la primera linea
-        getline(archivoProgramasCsv, linea);
-        // Leer los programas
-        while (getline(archivoProgramasCsv, linea))
-        {
-            stringstream streamLinea(linea);
-            getline(streamLinea, dato, ';');
-            codigosSniesRetorno.push_back(stoi(dato));
-        }
-    }
-    archivoProgramasCsv.close();
-    return codigosSniesRetorno;
-}
-
-// FIXME: falta la nueva implementacion de leerArchivo para que todo se pueda relizar en una sola funcion y no se necesiten 3
-vector<vector<string>> GestorCsv::leerArchivo(string &ruta, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
-{
-    vector<vector<string>> matrizResultado;
-    ifstream archivoPrimero(ruta + string(".csv"));
-
-    // Verificar si el archivo se abre correctamente
-    if (!archivoPrimero.is_open())
-    {
-        cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
-        return matrizResultado; // Retornar matriz vacía
-    }
-
-    map<int, string> mapa; // Mapa para almacenar la posición y etiqueta
-    string fila;
-    string dato;
-    int columna = 0;
-    int indiceColumnaCodigo = -1; // Índice de la columna con los códigos SNIES
-    string datoMinusculasSinEspacios;
-
-    // Primera iteración del ciclo para guardar las etiquetas
-    getline(archivoPrimero, fila);
-    stringstream streamFila(fila);
-
-    // Procesar etiquetas
-    while (getline(streamFila, dato, ';'))
-    {
-        datoMinusculasSinEspacios = utilidadObj.minusculasSinEspacios(dato);
-        auto it = find(etiquetasColumnas.begin(), etiquetasColumnas.end(), datoMinusculasSinEspacios);
-        if (it != etiquetasColumnas.end())
-        {
-            mapa[columna] = datoMinusculasSinEspacios; // Almacena la posición y la etiqueta en el mapa
-        }
-        // Verificar si esta es la columna de los códigos SNIES
-        if (datoMinusculasSinEspacios == minusculasSinEspacios("CÓDIGO SNIES DEL PROGRAMA"))
-        {
-            indiceColumnaCodigo = columna;
-        }
-        ++columna;
-    }
-
-    // Si no se encontró la columna de códigos SNIES, retornar matriz vacía
-    if (indiceColumnaCodigo == -1)
-    {
-        cout << "No se encontró la columna de Código SNIES en el archivo." << endl;
-        return matrizResultado;
-    }
-
-    // Añadir etiquetas a la matriz de resultados
-    vector<string> etiquetas;
-    for (const auto &par : mapa)
-    {
-        etiquetas.push_back(par.second);
-    }
-    matrizResultado.push_back(etiquetas);
-
-    // Leer el resto del archivo
-    while (getline(archivoPrimero, fila))
-    {
-        stringstream streamFila(fila);
-        vector<string> filaActual;
-        bool codigoCoincide = false;
-        columna = 0;
-
-        // Procesar fila
-        while (getline(streamFila, dato, ';'))
-        {
-
-            // Verificar si esta es la columna del código SNIES
-            if (columna == indiceColumnaCodigo)
-            {
-                int numero = std::stoi(dato); // Convertir a entero
-                if (std::find(codigosSnies.begin(), codigosSnies.end(), numero) != codigosSnies.end())
-                {
-                    codigoCoincide = true; // Código SNIES coincide
-                }
-            }
-
-            // Solo almacenamos las columnas de interés (las que están en el mapa)
-            if (mapa.find(columna) != mapa.end())
-            {
-                filaActual.push_back(dato); // Guardar el dato de la columna de interés
-            }
-            ++columna;
-        }
-
-        // Solo añadir la fila si el código coincide
-        if (codigoCoincide)
-        {
-            matrizResultado.push_back(filaActual);
-        }
-    }
-
-    archivoPrimero.close();
-
-    /*// Imprimir matriz resultado para verificaciones
-    for (int h = 0; h < matrizResultado.size(); h++)
-    {
-        for (int k = 0; k < matrizResultado[h].size(); k++)
-        {
-            cout << matrizResultado[h][k];
-            if (k != (matrizResultado[h].size() - 1))
-            {
-                cout << ";";
-            }
-        }
-        cout << endl;
-    }*/
-    return matrizResultado;
-}
-
-bool GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasProgramaString, vector<string> etiquetasProgramaInt, vector<string> etiquetasConsolidadoString, vector<string> etiquetasConsolidadoInt)
-{
-    // Este bool nos ayudará a saber si se creo exitosamente el archivo
     bool estadoCreacion = false;
     string rutaCompleta = ruta + "resultados.csv";
     ofstream archivoResultados(rutaCompleta);
-    if (archivoResultados.is_open())
+    string delimitador = Settings::DELIMITADOR;
+    if (!(archivoResultados.is_open()))
     {
-        // Imprimimos en el archivo las etiquetas (Primera fila)
-        for (int i = 0; i < etiquetasColumnas.size(); i++)
-        {
-            archivoResultados << etiquetasColumnas[i] << ";";
-        }
-        archivoResultados << "GRADUADOS;INSCRITOS;MATRICULADOS;NEOS" << endl;
-
-        map<int, ProgramaAcademico *>::iterator it;
-        // Leemos todos los programas del mapa para imprimirlos en el archivo
-        for (it = mapadeProgramasAcademicos.begin(); it != mapadeProgramasAcademicos.end(); it++)
-        {
-            // Imprimimos cada uno de los 8 consolidados por programa
-            for (int i = 0; i < 8; i++)
-            {
-                // Imprimimos toda la información base del programa academico
-                archivoResultados << (it->second)->getCodigoDeLaInstitucion() << ";";
-                archivoResultados << (it->second)->getIesPadre() << ";";
-                archivoResultados << (it->second)->getInstitucionDeEducacionSuperiorIes() << ";";
-                archivoResultados << (it->second)->getPrincipalOSeccional() << ";";
-                archivoResultados << (it->second)->getIdSectorIes() << ";";
-                archivoResultados << (it->second)->getSectorIes() << ";";
-                archivoResultados << (it->second)->getIdCaracter() << ";";
-                archivoResultados << (it->second)->getCaracterIes() << ";";
-                archivoResultados << (it->second)->getCodigoDelDepartamentoIes() << ";";
-                archivoResultados << (it->second)->getDepartamentoDeDomicilioDeLaIes() << ";";
-                archivoResultados << (it->second)->getCodigoDelMunicipioIes() << ";";
-                archivoResultados << (it->second)->getMunicipioDeDomicilioDeLaIes() << ";";
-                archivoResultados << (it->second)->getCodigoSniesDelPrograma() << ";";
-                archivoResultados << (it->second)->getProgramaAcademico() << ";";
-                archivoResultados << (it->second)->getIdNivelAcademico() << ";";
-                archivoResultados << (it->second)->getNivelAcademico() << ";";
-                archivoResultados << (it->second)->getIdNivelDeFormacion() << ";";
-                archivoResultados << (it->second)->getNivelDeFormacion() << ";";
-                archivoResultados << (it->second)->getIdMetodologia() << ";";
-                archivoResultados << (it->second)->getMetodologia() << ";";
-                archivoResultados << (it->second)->getIdArea() << ";";
-                archivoResultados << (it->second)->getAreaDeConocimiento() << ";";
-                archivoResultados << (it->second)->getIdNucleo() << ";";
-                archivoResultados << (it->second)->getNucleoBasicoDelConocimientoNbc() << ";";
-                archivoResultados << (it->second)->getIdCineCampoAmplio() << ";";
-                archivoResultados << (it->second)->getDescCineCampoAmplio() << ";";
-                archivoResultados << (it->second)->getIdCineCampoEspecifico() << ";";
-                archivoResultados << (it->second)->getDescCineCampoEspecifico() << ";";
-                archivoResultados << (it->second)->getIdCineCodigoDetallado() << ";";
-                archivoResultados << (it->second)->getDescCineCodigoDetallado() << ";";
-                archivoResultados << (it->second)->getCodigoDelDepartamentoPrograma() << ";";
-                archivoResultados << (it->second)->getDepartamentoDeOfertaDelPrograma() << ";";
-                archivoResultados << (it->second)->getCodigoDelMunicipioPrograma() << ";";
-                archivoResultados << (it->second)->getMunicipioDeOfertaDelPrograma() << ";";
-
-                // Imprimimos la información del consolidado: (ID SEXO;SEXO;AÑO;SEMESTRE;ADMITIDOS;GRADUADOS;INSCRITOS;MATRICULADOS;NEOS)
-                Consolidado *consolidadoActual = (it->second)->getConsolidado(i);
-                archivoResultados << consolidadoActual->getIdSexo() << ";";
-                archivoResultados << consolidadoActual->getSexo() << ";";
-                archivoResultados << consolidadoActual->getAno() << ";";
-                archivoResultados << consolidadoActual->getSemestre() << ";";
-                archivoResultados << consolidadoActual->getAdmitidos() << ";";
-                archivoResultados << consolidadoActual->getGraduados() << ";";
-                archivoResultados << consolidadoActual->getInscritos() << ";";
-                archivoResultados << consolidadoActual->getMatriculados() << ";";
-                archivoResultados << consolidadoActual->getMatriculadosPrimerSemestre();
-                // Saltamos de linea para la siguiente fila
-                archivoResultados << endl;
-            }
-        }
-
-        // Cambiamos el valor del booleano si logramos llegar hasta este punto
-        estadoCreacion = true;
-        // Imprimimos ruta donde quedo el archivo
-        cout << "Archivo Creado en: " << rutaCompleta << endl;
+        string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
+        archivoResultados.close();
+        throw out_of_range(errorMsg);
     }
 
+    // Imprimir las etiquetas de las columnas en la primera fila
+    string strCodigoSNIES = string("Codigo SNIES del programa");
+    string strnombrePrograma = string("Programa Academico");
+    string fila;
+    int MIN_POS_ETIQUETAS = 0;
+    int MAX_POS_ETIQUETAS = 3;
+    // Metodo privado auxiliar para escribir las etiquetas de las columnas
+    escribirEtiquetas(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
+    archivoResultados << fila << endl;
+
+    // Iteramos sobre el mapa de los programasAcademicos para imprimir en cada fila 1 consolidado
+    ProgramaAcademico *programaActual;
+    bool consolidadoValido;
+    for (map<int, ProgramaAcademico *>::iterator itProgramas = mapadeProgramasAcademicos.begin(); itProgramas != mapadeProgramasAcademicos.end(); ++itProgramas)
+    {
+        fila.clear();
+        programaActual = itProgramas->second;
+        consolidadoValido = true;
+        // Tratamos de escribir en la fila la informacion del programa
+        try
+        {
+            escribirPrograma(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, programaActual);
+        }
+        catch (invalid_argument &e)
+        {
+            // En caso que se produzca este error se intentará seguir imrpimiendo el resto de programa
+            cout << "Programa SNIES '" << itProgramas->first << "' tiene atributos faltantes. " << e.what() << endl;
+            consolidadoValido = false;
+        }
+        if (consolidadoValido)
+        {
+            imprimirConsolidados(fila, archivoResultados, delimitador, matrizEtiquetas, programaActual);
+        }
+    }
+
+    // Cerramos el archivo una vez terminamos de iterar sobre los programas
+    estadoCreacion = true;
     archivoResultados.close();
     return estadoCreacion;
 }
 
-bool GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<string> etiquetasColumnas)
+void GestorCsv::escribirEtiquetas(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
 {
-    // Este bool nos ayudará a saber si se creo exitosamente el archivo
+    /*Orden de las Etiquetas
+     CodigoSnies, Nombre Programa, (etiquetas Tipo String Programa), (etiquetas Tipo Int Programa)...
+    ... (etiquetas Tipo String Consolidado), (etiquetas Tipo Int Consolidado)
+     */
+    fila = strCodigoSNIES + delimitador + strNombrePrograma;
+    string nombreAtributo;
+    bool etiquetaValida;
+    for (int filaEtiquetas = minPosEtiquetas; filaEtiquetas < maxPosEtiquetas; filaEtiquetas++)
+    {
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[filaEtiquetas].size(); columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[filaEtiquetas][columnaEtiquetas];
+            // Verificamos que la etiqueta que vamos a escribir no sea el codigo snies o nombre que ya escribimos
+            etiquetaValida = utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES);
+            etiquetaValida = etiquetaValida && (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma));
+            if (etiquetaValida)
+            {
+                fila += nombreAtributo;
+            }
+            if (columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1)
+            {
+                fila += delimitador;
+            }
+        }
+    }
+}
+
+void GestorCsv::escribirPrograma(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual)
+{
+    try
+    {
+        // Empezamos por imprimir el codigo SNIES y el nombre del programa en la fila
+        fila = to_string(programaActual->consultarDatoInt(strCodigoSNIES)) + delimitador;
+        fila += programaActual->consultarDatoString(strNombrePrograma) + delimitador;
+
+        // Seguimos por imprimir la informacion string e int del programa en la fila, respectivamente
+        int FILA_ETIQUETAS_STRING_PROGRAMAS = 0;
+        int FILA_ETIQUETAS_INT_PROGRAMAS = 1;
+        string nombreAtributo;
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_PROGRAMAS].size(); columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_PROGRAMAS][columnaEtiquetas];
+            // Verificamos que el dato que vamos a escribir no sea el nombre del programa que ya escribimos
+            if (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma))
+            {
+                fila += programaActual->consultarDatoString(nombreAtributo) + delimitador;
+            }
+        }
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS].size(); columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS][columnaEtiquetas];
+            // Verificamos que el dato que vamos a escribir no sea el codigo SNIES que ya escribimos
+            if (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES))
+            {
+                fila += to_string(programaActual->consultarDatoInt(nombreAtributo)) + delimitador;
+            }
+        }
+    }
+    catch (invalid_argument &e)
+    {
+        throw invalid_argument(e.what());
+    }
+}
+
+void GestorCsv::imprimirConsolidados(string &fila, ofstream &archivoResultados, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual)
+{
+    int FILA_VALORES_SEXO = 4;
+    int FILA_VALORES_ANO = 5;
+    int LLAVE_PRIMER_SEMESTRE = 1;
+    int LLAVE_SEGUNDO_SEMESTRE = 2;
+    // Vamos a seleccionar el consolidado apropiado con base en el sexo y año
+    int anoActual;
+    string sexoActual;
+    Consolidado *consolidadoActual;
+    string infoPrograma = fila;
+    for (int posVectorAnos = 0; posVectorAnos < matrizEtiquetas[FILA_VALORES_ANO].size(); posVectorAnos++)
+    {
+        anoActual = stoi(matrizEtiquetas[FILA_VALORES_ANO][posVectorAnos]);
+        for (int posVectorSexos = 0; posVectorSexos < matrizEtiquetas[FILA_VALORES_SEXO].size(); posVectorSexos++)
+        {
+            sexoActual = matrizEtiquetas[FILA_VALORES_SEXO][posVectorSexos];
+            // Escribimos el consolidado del primer semestre del año e imprimimos al archivo
+            try
+            {
+                consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_PRIMER_SEMESTRE);
+                fila = infoPrograma;
+                escribirConsolidado(fila, delimitador, consolidadoActual, matrizEtiquetas);
+                // Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
+                archivoResultados << fila << endl;
+            }
+            catch (invalid_argument &e)
+            {
+                // De no existir el consolidado, se sigue adelante
+                cout << e.what() << endl;
+            }
+            catch (out_of_range &e)
+            {
+                // Caso donde no tiene todos los atributos el consolidado
+                cout << e.what() << endl;
+            }
+
+            // Escribimos el consolidado del segundo semestre del año e imprimimos al archivo
+            try
+            {
+                // Manda invalid argument si no existe el consolidado
+                consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_SEGUNDO_SEMESTRE);
+                fila = infoPrograma;
+                // Manda out of range si no tiene todos los atributos
+                escribirConsolidado(fila, delimitador, consolidadoActual, matrizEtiquetas);
+                // Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
+                archivoResultados << fila << endl;
+            }
+            catch (invalid_argument &e)
+            {
+                // De no existir el consolidado, se sigue adelante
+                cout << e.what() << endl;
+            }
+            catch (out_of_range &e)
+            {
+                // Caso donde no tiene todos los atributos el consolidado
+                cout << e.what() << endl;
+            }
+        }
+    }
+}
+
+void GestorCsv::escribirConsolidado(string &fila, string &delimitador, Consolidado *consolidadoActual, vector<vector<string>> &matrizEtiquetas)
+{
+    int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
+    int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
+    // Procedemos a escribir la informacion string e int del consolidado, respectivamente
+    try
+    {
+        // Cualquier atributo faltante arroja invalid argument
+        string nombreAtributo;
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO].size(); columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO][columnaEtiquetas];
+            fila += consolidadoActual->obtenerDatoString(nombreAtributo) + delimitador;
+        }
+
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size(); columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO][columnaEtiquetas];
+            fila += to_string(consolidadoActual->obtenerDatoInt(nombreAtributo));
+
+            if (columnaEtiquetas != matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size() - 1)
+            {
+                fila += delimitador;
+            }
+        }
+    }
+    catch (invalid_argument &e)
+    {
+        // Transformamos el invalid argument a out_of_range para la impresion de consolidados
+        throw out_of_range(e.what());
+    }
+}
+
+bool GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
+{
     bool estadoCreacion = false;
     string rutaCompleta = ruta + "buscados.csv";
     ofstream archivoBuscados(rutaCompleta);
-    if (archivoBuscados.is_open())
+    string delimitador = Settings::DELIMITADOR;
+    if (!(archivoBuscados.is_open()))
     {
-
-        // Imprimimos en el archivo las etiquetas (Primera fila)
-        for (int i = 0; i < etiquetasColumnas.size(); i++)
-        {
-            archivoBuscados << etiquetasColumnas[i] << ";";
-        }
-        archivoBuscados << "GRADUADOS;INSCRITOS;MATRICULADOS;NEOS" << endl;
-
-        list<ProgramaAcademico *>::iterator it;
-        // Leemos todos los programas de la lista de los programas buscados para imprimirlos
-        for (it = programasBuscados.begin(); it != programasBuscados.end(); it++)
-        {
-            // Imprimimos los 8 consolidados del programa
-            for (int i = 0; i < 8; i++)
-            {
-                // Imprimimos la informacion base del programa
-                archivoBuscados << (*it)->getCodigoDeLaInstitucion() << ";";
-                archivoBuscados << (*it)->getIesPadre() << ";";
-                archivoBuscados << (*it)->getInstitucionDeEducacionSuperiorIes() << ";";
-                archivoBuscados << (*it)->getPrincipalOSeccional() << ";";
-                archivoBuscados << (*it)->getIdSectorIes() << ";";
-                archivoBuscados << (*it)->getSectorIes() << ";";
-                archivoBuscados << (*it)->getIdCaracter() << ";";
-                archivoBuscados << (*it)->getCaracterIes() << ";";
-                archivoBuscados << (*it)->getCodigoDelDepartamentoIes() << ";";
-                archivoBuscados << (*it)->getDepartamentoDeDomicilioDeLaIes() << ";";
-                archivoBuscados << (*it)->getCodigoDelMunicipioIes() << ";";
-                archivoBuscados << (*it)->getMunicipioDeDomicilioDeLaIes() << ";";
-                archivoBuscados << (*it)->getCodigoSniesDelPrograma() << ";";
-                archivoBuscados << (*it)->getProgramaAcademico() << ";";
-                archivoBuscados << (*it)->getIdNivelAcademico() << ";";
-                archivoBuscados << (*it)->getNivelAcademico() << ";";
-                archivoBuscados << (*it)->getIdNivelDeFormacion() << ";";
-                archivoBuscados << (*it)->getNivelDeFormacion() << ";";
-                archivoBuscados << (*it)->getIdMetodologia() << ";";
-                archivoBuscados << (*it)->getMetodologia() << ";";
-                archivoBuscados << (*it)->getIdArea() << ";";
-                archivoBuscados << (*it)->getAreaDeConocimiento() << ";";
-                archivoBuscados << (*it)->getIdNucleo() << ";";
-                archivoBuscados << (*it)->getNucleoBasicoDelConocimientoNbc() << ";";
-                archivoBuscados << (*it)->getIdCineCampoAmplio() << ";";
-                archivoBuscados << (*it)->getDescCineCampoAmplio() << ";";
-                archivoBuscados << (*it)->getIdCineCampoEspecifico() << ";";
-                archivoBuscados << (*it)->getDescCineCampoEspecifico() << ";";
-                archivoBuscados << (*it)->getIdCineCodigoDetallado() << ";";
-                archivoBuscados << (*it)->getDescCineCodigoDetallado() << ";";
-                archivoBuscados << (*it)->getCodigoDelDepartamentoPrograma() << ";";
-                archivoBuscados << (*it)->getDepartamentoDeOfertaDelPrograma() << ";";
-                archivoBuscados << (*it)->getCodigoDelMunicipioPrograma() << ";";
-                archivoBuscados << (*it)->getMunicipioDeOfertaDelPrograma() << ";";
-
-                // Imprimimos la información del consolidado: (ID SEXO;SEXO;AÑO;SEMESTRE;ADMITIDOS;GRADUADOS;INSCRITOS;MATRICULADOS;NEOS)
-                Consolidado *consolidadoActual = (*it)->getConsolidado(i);
-                archivoBuscados << consolidadoActual->getIdSexo() << ";";
-                archivoBuscados << consolidadoActual->getSexo() << ";";
-                archivoBuscados << consolidadoActual->getAno() << ";";
-                archivoBuscados << consolidadoActual->getSemestre() << ";";
-                archivoBuscados << consolidadoActual->getAdmitidos() << ";";
-                archivoBuscados << consolidadoActual->getGraduados() << ";";
-                archivoBuscados << consolidadoActual->getInscritos() << ";";
-                archivoBuscados << consolidadoActual->getMatriculados() << ";";
-                archivoBuscados << consolidadoActual->getMatriculadosPrimerSemestre();
-                // Saltamos de linea para la siguiente fila
-                archivoBuscados << endl;
-            }
-        }
-
-        // Cambiamos el valor del booleano si logramos llegar hasta este punto
-        estadoCreacion = true;
-        // Imprimimos ruta donde quedo el archivo
-        cout << "Archivo Creado en: " << rutaCompleta << endl;
+        string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
+        archivoBuscados.close();
+        throw out_of_range(errorMsg);
     }
 
+    // Imprimir las etiquetas de las columnas en la primera fila
+    string strCodigoSNIES = string("Codigo SNIES del programa");
+    string strnombrePrograma = string("Programa Academico");
+    string fila;
+    int MIN_POS_ETIQUETAS = 0;
+    int MAX_POS_ETIQUETAS = 3;
+    // Metodo privado auxiliar para escribir las etiquetas de las columnas
+    escribirEtiquetas(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
+    archivoBuscados << fila << endl;
+
+    // Iteramos sobre la lista de los programasAcademicos para imprimir en cada fila 1 consolidado
+    ProgramaAcademico *programaActual;
+    bool consolidadoValido;
+    for (list<ProgramaAcademico *>::iterator itProgramas = programasBuscados.begin(); itProgramas != programasBuscados.end(); ++itProgramas)
+    {
+        fila.clear();
+        programaActual = *itProgramas;
+        consolidadoValido = true;
+        // Tratamos de escribir en la fila la informacion del programa
+        try
+        {
+            escribirPrograma(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, programaActual);
+        }
+        catch (invalid_argument &e)
+        {
+            // En caso que se produzca este error se intentará seguir imrpimiendo el resto de programa
+            cout << "Programa SNIES '" << programaActual->consultarDatoInt(strCodigoSNIES) << "' tiene atributos faltantes. " << e.what() << endl;
+            consolidadoValido = false;
+        }
+        if (consolidadoValido)
+        {
+            imprimirConsolidados(fila, archivoBuscados, delimitador, matrizEtiquetas, programaActual);
+        }
+    }
+
+    // Cerramos el archivo una vez terminamos de iterar sobre los programas
+    estadoCreacion = true;
     archivoBuscados.close();
-    return estadoCreacion;
-}
-
-bool GestorCsv::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
-{
-    // Este bool nos ayudará a saber si se creo el archivo exitosamente
-    bool estadoCreacion = false;
-    string rutaCompleta = ruta + "extras.csv";
-    ofstream archivoExtra(rutaCompleta);
-    if (archivoExtra.is_open())
-    {
-        // Imprimimos la matriz de datos que queremos imprimir
-        for (int i = 0; i < datosAImprimir.size(); i++)
-        {
-            // Imprimimos cada fila
-            for (int j = 0; j < datosAImprimir[i].size(); j++)
-            {
-                // Imprimimos cada dato separado por ';'
-                archivoExtra << datosAImprimir[i][j];
-                if (j != (datosAImprimir[i].size() - 1))
-                {
-                    archivoExtra << ";";
-                }
-            }
-            // Saltamos de linea al terminar una fila
-            archivoExtra << endl;
-        }
-
-        // Cambiamos el valor del booleano si logramos llegar hasta este punto
-        estadoCreacion = true;
-        // Imprimimos ruta donde quedo el archivo
-        cout << "Archivo Creado en: " << rutaCompleta << endl;
-    }
-
-    archivoExtra.close();
     return estadoCreacion;
 }
