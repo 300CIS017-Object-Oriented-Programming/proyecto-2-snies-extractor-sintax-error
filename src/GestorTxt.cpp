@@ -26,11 +26,12 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
 
     //Iteramos sobre el mapa de los programasAcademicos para imprimir en cada fila 1 consolidado
     ProgramaAcademico * programaActual;
-    bool consolidadoValido = true;
+    bool consolidadoValido;
     for (map<int, ProgramaAcademico *>::iterator itProgramas = mapadeProgramasAcademicos.begin(); itProgramas != mapadeProgramasAcademicos.end(); ++itProgramas)
     {
         fila.clear();
         programaActual = itProgramas->second;
+        consolidadoValido = true;
         //Tratamos de escribir en la fila la informacion del programa
         try
         {
