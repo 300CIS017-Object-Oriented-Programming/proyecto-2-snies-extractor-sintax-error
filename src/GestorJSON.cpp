@@ -28,7 +28,7 @@ void GestorJSON::escribirEtiquetasJson(json& etiquetasJson, string& strCodigoSNI
     }
 }
 
-void GestorJSON:: escribirProgramaJson(json& jsonData, string& nombrePrograma, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual, string& strCodigoSNIES)
+void GestorJSON:: escribirProgramaJson(json& jsonData, string& nombrePrograma, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual, string& strCodigoSNIES,vector<string>& vectorAtributosPrograma)
 {
     try{
         jsonData[nombrePrograma] = to_string(programaActual->consultarDatoInt(strCodigoSNIES));
@@ -45,6 +45,7 @@ void GestorJSON:: escribirProgramaJson(json& jsonData, string& nombrePrograma, v
             if(utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma))
             {
                 jsonData[nombrePrograma].push_back(programaActual->consultarDatoString(nombreAtributo));
+                vectorAtributosPrograma.push_back(programaActual->consultarDatoString(nombreAtributo));
             }
         }
         for(int columnaEtiqueta = 0; columnaEtiqueta < matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS].size(); columnaEtiqueta++)
@@ -53,6 +54,7 @@ void GestorJSON:: escribirProgramaJson(json& jsonData, string& nombrePrograma, v
             if(utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES))
             {
                 jsonData[escribirEtiquetasJson].push_back(programaActual->consultarDatoInt(nombreAtributo));
+                vectorAtributosPrograma.push_back(programaActual->consultarDatoString(nombreAtributo));
             }
         }
     }catch (invalid_argument& e)
@@ -60,7 +62,19 @@ void GestorJSON:: escribirProgramaJson(json& jsonData, string& nombrePrograma, v
         throw invalid_argument(e.what());
     }
     
+}
 
+void GestorJSON::imprimirConsolidadosJson(json& jsonData,ProgramaAcademico* programaActual, vector<vector<string>>& matrizEtiquetas,vector<string>& vectorAtributosPrograma)
+{
+    int FILA_VALORES_SEXO = 4;
+    int FILA_VALORES_ANO = 5;
+    int LLAVE_PRIMER_SEMESTRE = 1;
+    int LLAVE_SEGUNDO_SEMESTRE = 2;
+    //seleccionar consolidado en base a año y sexo
+    int anoActual;
+    string sexoActual;
+    Consolidado* consolidadoActual;
+    
 }
 
 bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas)
@@ -68,6 +82,7 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
     bool estadoCreacion = false;
     string rutaCompleta = ruta + "resultados.json";
     ofstream archivoResultados(rutaCompleta);
+    vector<string> vectorAtributosPrograma;
 
     if(!archivoResultados.is_open())
     {
@@ -103,11 +118,16 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
         string nombrePrograma = programaAcademicoActual->consultarDatoString(strNombrePrograma);
         try
         {
-            escribirProgramaJson(jsonData,nombrePrograma,matrizEtiquetas,programaAcademicoActual,strCodigoSNIES);
+            escribirProgramaJson(jsonData,nombrePrograma,matrizEtiquetas,programaAcademicoActual,strCodigoSNIES,vectorAtributosPrograma);
         }
-        catch(const std::exception& e)
+        catch(invalid_argument& e)
         {
-            std::cerr << e.what() << '\n';
+           cout << "Programa Snies '" << itProgramas->first << "' tiene atributos faltantes. " << e.what() << endl;
+           consolidadoValido = false;
+        }
+        if(consolidadoValido)
+        {
+            imprimirConsolidadosJson(jsonData,programaAcademicoActual,matrizEtiquetas,vectorAtributosPrograma);
         }
         
     }
