@@ -215,6 +215,56 @@ void GestorTxt::escribirConsolidado(string& fila, string& delimitador, Consolida
 
 bool GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>>& matrizEtiquetas)
 {
+    bool estadoCreacion = false;
+    string rutaCompleta = ruta + "buscados.txt";
+    ofstream archivoBuscados(rutaCompleta);
+    string delimitador = Settings::DELIMITADOR;
+    if (!(archivoBuscados.is_open()))
+    {
+        string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
+        archivoBuscados.close();
+        throw out_of_range(errorMsg);
+    }
+
+    //Imprimir las etiquetas de las columnas en la primera fila
+    string strCodigoSNIES = string("Codigo SNIES del programa");
+    string strnombrePrograma =  string("Programa Academico");
+    string fila;
+    int MIN_POS_ETIQUETAS = 0;
+    int MAX_POS_ETIQUETAS = 3;
+    //Metodo privado auxiliar para escribir las etiquetas de las columnas
+    escribirEtiquetas(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
+    archivoBuscados << fila << endl;
+
+    //Iteramos sobre la lista de los programasAcademicos para imprimir en cada fila 1 consolidado
+    ProgramaAcademico * programaActual;
+    bool consolidadoValido;
+    for (list<ProgramaAcademico *>::iterator itProgramas = programasBuscados.begin(); itProgramas != programasBuscados.end(); ++itProgramas)
+    {
+        fila.clear();
+        programaActual = *itProgramas;
+        consolidadoValido = true;
+        //Tratamos de escribir en la fila la informacion del programa
+        try
+        {
+            escribirPrograma(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, programaActual);
+        } catch (invalid_argument& e)
+        {
+            //En caso que se produzca este error se intentará seguir imrpimiendo el resto de programa
+            cout << "Programa SNIES '" << programaActual->consultarDatoInt(strCodigoSNIES) << "' tiene atributos faltantes. " << e.what() << endl;
+            consolidadoValido = false;
+        }
+        if (consolidadoValido)
+        {
+            imprimirConsolidados(fila, archivoBuscados,delimitador, matrizEtiquetas, programaActual);
+        }
+    }
+
+
+    //Cerramos el archivo una vez terminamos de iterar sobre los programas
+    estadoCreacion = true;
+    archivoBuscados.close();
+    return estadoCreacion;
 }
 
 bool GestorTxt::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
