@@ -22,12 +22,16 @@ void GestorJSON::escribirEtiquetasJson(json& etiquetasJson, string& strCodigoSNI
             etiquetaValida = etiquetaValida && (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma));
             if(etiquetaValida)
             {
-                etiquetasJson["Etiquetas Adicionales"].push_back(nombreAtributo);
+                etiquetasJson["Etiquetas"].push_back(nombreAtributo);
             }
         }
     }
 }
 
+void GestorJSON:: escribirProgramaJson(json& jsonData, string& nombrePrograma, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual)
+{
+    
+}
 
 bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas)
 {
@@ -43,11 +47,11 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
     }
 
     json jsonData; //objeto json principal
-    json etiquetasJson;// objeto json para las etiquetas
+    json etiquetasJson;//objeto json para las etiquetas
 
     //Guardar etiquetas en el json
-    etiquetasJson["Codigo Snies"] = "Codigo Snies del programa";
-    etiquetasJson["Programa"] = "Programa Academico";
+    etiquetasJson["Etiquetas"] = "Codigo Snies del programa";
+    etiquetasJson["Etiquetas"] = "Programa Academico";
     //variables de escribirEtiquetasJson
     string strCodigoSNIES = string("Codigo SNIES del programa");
     string strNombrePrograma =  string("Programa Academico");
@@ -60,11 +64,22 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
 
     //añadir los consolidados
     ProgramaAcademico* programaAcademicoActual;
-    bool consolidadoValido = true;
+
     //iterar sobre los programas academicos 
     for(map<int, ProgramaAcademico*>::iterator itProgramas = mapadeProgramasAcademicos.begin(); itProgramas != mapadeProgramasAcademicos.end(); ++itProgramas)
     {
         programaAcademicoActual = itProgramas->second;
+        bool consolidadoValido = true;
+        string nombrePrograma = programaAcademicoActual->consultarDatoString(strNombrePrograma);
+        try
+        {
+            escribirProgramaJson(jsonData,nombrePrograma,matrizEtiquetas,programaAcademicoActual);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        
     }
 }
 
