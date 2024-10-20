@@ -57,8 +57,8 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
 void GestorTxt::escribirEtiquetas(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
 {
     /*Orden de las Etiquetas
-     CodigoSnies, Nombre Programa, (etiquetas Tipo String Programa), ...
-    ... (etiquetas Tipo String Programa), (etiquetas Tipo String Consolidado)
+     CodigoSnies, Nombre Programa, (etiquetas Tipo String Programa), (etiquetas Tipo Int Programa)...
+    ... (etiquetas Tipo String Consolidado), (etiquetas Tipo Int Consolidado)
      */
     fila = strCodigoSNIES + delimitador + strNombrePrograma;
     string nombreAtributo;
@@ -125,8 +125,6 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
     int FILA_VALORES_ANO = 5;
     int LLAVE_PRIMER_SEMESTRE = 1;
     int LLAVE_SEGUNDO_SEMESTRE = 2;
-    int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
-    int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
     //Vamos a seleccionar el consolidado apropiado con base en el sexo y año
     int anoActual;
     string sexoActual;
@@ -138,17 +136,29 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
         for (int posVectorSexos = 0; posVectorSexos < matrizEtiquetas[FILA_VALORES_SEXO].size(); posVectorSexos++)
         {
             sexoActual = matrizEtiquetas[FILA_VALORES_SEXO][posVectorSexos];
+            //Escribimos el consolidado del primer semestre del año e imprimimos al archivo
             try
             {
-                //Escribimos el consolidado del primer semestre del año e imprimimos al archivo
                 consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_PRIMER_SEMESTRE);
                 fila = infoPrograma;
                 //FIXME: Implementar este metodo
                 escribirConsolidado(fila, delimitador, consolidadoActual,matrizEtiquetas);
                 //Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
                 archivoResultados << fila << endl;
+            } catch (invalid_argument& e)
+            {
+                //De no existir el consolidado, se sigue adelante
+                cout << e.what() << endl;
+            }
+            catch (out_of_range& e)
+            {
+                //Caso donde no tiene todos los atributos el consolidado
+                cout << e.what() << endl;
+            }
 
-                //Escribimos el consolidado del segundo semestre del año e imprimimos al archivo
+            //Escribimos el consolidado del segundo semestre del año e imprimimos al archivo
+            try
+            {
                 consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_SEGUNDO_SEMESTRE);
                 fila = infoPrograma;
                 //FIXME: Implementar este metodo
@@ -167,6 +177,13 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
             }
         }
     }
+}
+
+void GestorTxt::escribirConsolidado(string& fila, string& delimitador, Consolidado* consolidadoActual, vector<vector<string>>& matrizEtiquetas)
+{
+    int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
+    int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
+    //Procedemos a escribir la informacion string e int del consolidado, respectivamente
 }
 
 
