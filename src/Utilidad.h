@@ -15,6 +15,7 @@ public:
     ~Utilidad() = default;
 
     string minusculasSinEspacios(string &);
+    string limpiarString(string&);
 };
 
 
