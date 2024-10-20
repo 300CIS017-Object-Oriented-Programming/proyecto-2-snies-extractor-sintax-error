@@ -42,7 +42,6 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
             cout << "Programa SNIES '" << itProgramas->first << "' tiene atributos faltantes. " << e.what() << endl;
             consolidadoValido = false;
         }
-        //FIXME: Añadir la iteracion de los consolidados por medio de los sexos, años y semestres para ir imprimiendo las filas
         if (consolidadoValido)
         {
             imprimirConsolidados(fila, archivoResultados,delimitador, matrizEtiquetas, programaActual);
@@ -50,6 +49,7 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
 
     }
 
+    //Cerramos el archivo una vez terminamos de iterar sobre los programas
     estadoCreacion = true;
     archivoResultados.close();
     return estadoCreacion;
