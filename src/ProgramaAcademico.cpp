@@ -118,7 +118,7 @@ Consolidado* ProgramaAcademico::buscarConsolidado(string& infoSexo, int infoAno 
     if (consolidados.find(claveConsolidado) == consolidados.end())
     {
         // Genera un mensaje de error con la clave no encontrada
-        string msg = string("Llave No Encontrada: '") + claveConsolidado + string("'");
+        string msg = string("Consolidado No Encontrada: '") + claveConsolidado + string("'");
         throw invalid_argument(msg);  // Lanza excepción si la clave no existe
     }
     // Retorna el consolidado asociado a la clave

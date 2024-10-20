@@ -11,18 +11,21 @@
 #include "ProgramaAcademico.h"
 #include "Consolidado.h"
 #include "GestorArchivos.h"
+#include "json.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 class GestorJSON : public GestorArchivos
 {
 public:
     GestorJSON() = default;
-    vector<int> leerProgramas(string &ruta) override;
-    vector<vector<string>> leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies) override;
+    void escribirEtiquetasJson(json& etiquetasJson, string& strCodigoSNIES, string& strNombrePrograma, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
 
-    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasColumnas) override;
-    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<string> etiquetasColumnas) override;
+    //funciones que agregue en base a lo hecho en GestorTxt
+
+    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas) override;
+    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>>& matrizEtiquetas) override;
     bool crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) override;
 };
 
