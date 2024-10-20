@@ -268,3 +268,37 @@ bool GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &pr
     archivoBuscados.close();
     return estadoCreacion;
 }
+
+bool GestorCsv::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
+{
+    bool estadoCreacion = false;
+    string rutaCompleta = ruta + "extras.txt";
+    ofstream archivoExtras(rutaCompleta);
+    string delimitador = Settings::DELIMITADOR;
+    if (!(archivoExtras.is_open()))
+    {
+        string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
+        archivoExtras.close();
+        throw out_of_range(errorMsg);
+    }
+
+    for (int fila = 0; fila < datosAImprimir.size(); fila++)
+    {
+        for (int columna = 0; columna < datosAImprimir[fila].size(); columna++)
+        {
+            archivoExtras << datosAImprimir[fila][columna];
+            // Por estandar, imprimiremos con el delimitador
+            if (columna != datosAImprimir[fila].size() - 1)
+            {
+                archivoExtras << delimitador;
+            }
+            // Saltamos linea al terminar de imprimir una linea
+            archivoExtras << endl;
+        }
+    }
+
+    // Cerramos el archivo una vez terminamos de imprimir los datos
+    estadoCreacion = true;
+    archivoExtras.close();
+    return estadoCreacion;
+}
