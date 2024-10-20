@@ -11,8 +11,10 @@
 #include "ProgramaAcademico.h"
 #include "Consolidado.h"
 #include "GestorArchivos.h"
+#include "json.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 class GestorJSON : public GestorArchivos
 {

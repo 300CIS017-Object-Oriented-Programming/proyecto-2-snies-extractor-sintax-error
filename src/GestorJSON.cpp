@@ -5,7 +5,7 @@
 
 using namespace std;
 
-using json = nlohmann::json;
+
 // FIXME: falta toda la implementacion
 
 void GestorJSON::escribirEtiquetasJson(json& etiquetasJson, string& strCodigoSNIES, string& strNombrePrograma, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
@@ -62,7 +62,7 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
     ProgramaAcademico* programaAcademicoActual;
     bool consolidadoValido = true;
     //iterar sobre los programas academicos 
-    for(map<int, ProgramaAcademico*>::iterator itProgramas = mapadeProgramasAcademicos.begin(); itProgramas != mapadeProgramasAcademicos.end(), ++itProgramas)
+    for(map<int, ProgramaAcademico*>::iterator itProgramas = mapadeProgramasAcademicos.begin(); itProgramas != mapadeProgramasAcademicos.end(); ++itProgramas)
     {
         programaAcademicoActual = itProgramas->second;
     }
