@@ -1,6 +1,5 @@
 #include "GestorTxt.h"
 
-//FIXME: IMPLEMENTAR :,,,)
 bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas)
 {
     bool estadoCreacion = false;
@@ -42,7 +41,6 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
             cout << "Programa SNIES '" << itProgramas->first << "' tiene atributos faltantes. " << e.what() << endl;
             consolidadoValido = false;
         }
-        //FIXME: Añadir la iteracion de los consolidados por medio de los sexos, años y semestres para ir imprimiendo las filas
         if (consolidadoValido)
         {
             imprimirConsolidados(fila, archivoResultados,delimitador, matrizEtiquetas, programaActual);
@@ -50,6 +48,7 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
 
     }
 
+    //Cerramos el archivo una vez terminamos de iterar sobre los programas
     estadoCreacion = true;
     archivoResultados.close();
     return estadoCreacion;
@@ -142,7 +141,6 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
             {
                 consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_PRIMER_SEMESTRE);
                 fila = infoPrograma;
-                //FIXME: Implementar este metodo
                 escribirConsolidado(fila, delimitador, consolidadoActual,matrizEtiquetas);
                 //Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
                 archivoResultados << fila << endl;
@@ -160,9 +158,10 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
             //Escribimos el consolidado del segundo semestre del año e imprimimos al archivo
             try
             {
+                //Manda invalid argument si no existe el consolidado
                 consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_SEGUNDO_SEMESTRE);
                 fila = infoPrograma;
-                //FIXME: Implementar este metodo
+                //Manda out of range si no tiene todos los atributos
                 escribirConsolidado(fila, delimitador, consolidadoActual,matrizEtiquetas);
                 //Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
                 archivoResultados << fila << endl;
@@ -185,11 +184,87 @@ void GestorTxt::escribirConsolidado(string& fila, string& delimitador, Consolida
     int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
     int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
     //Procedemos a escribir la informacion string e int del consolidado, respectivamente
+    try
+    {
+        //Cualquier atributo faltante arroja invalid argument
+        string nombreAtributo;
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO].size();columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO][columnaEtiquetas];
+            fila += consolidadoActual->obtenerDatoString(nombreAtributo) + delimitador;
+        }
+
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size();columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO][columnaEtiquetas];
+            fila += to_string(consolidadoActual->obtenerDatoInt(nombreAtributo));
+
+            if (columnaEtiquetas != matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size() - 1)
+            {
+                fila += delimitador;
+            }
+        }
+
+    } catch (invalid_argument& e)
+    {
+        //Transformamos el invalid argument a out_of_range para la impresion de consolidados
+        throw out_of_range(e.what());
+    }
 }
 
 
 bool GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>>& matrizEtiquetas)
 {
+    bool estadoCreacion = false;
+    string rutaCompleta = ruta + "buscados.txt";
+    ofstream archivoBuscados(rutaCompleta);
+    string delimitador = Settings::DELIMITADOR;
+    if (!(archivoBuscados.is_open()))
+    {
+        string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
+        archivoBuscados.close();
+        throw out_of_range(errorMsg);
+    }
+
+    //Imprimir las etiquetas de las columnas en la primera fila
+    string strCodigoSNIES = string("Codigo SNIES del programa");
+    string strnombrePrograma =  string("Programa Academico");
+    string fila;
+    int MIN_POS_ETIQUETAS = 0;
+    int MAX_POS_ETIQUETAS = 3;
+    //Metodo privado auxiliar para escribir las etiquetas de las columnas
+    escribirEtiquetas(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
+    archivoBuscados << fila << endl;
+
+    //Iteramos sobre la lista de los programasAcademicos para imprimir en cada fila 1 consolidado
+    ProgramaAcademico * programaActual;
+    bool consolidadoValido;
+    for (list<ProgramaAcademico *>::iterator itProgramas = programasBuscados.begin(); itProgramas != programasBuscados.end(); ++itProgramas)
+    {
+        fila.clear();
+        programaActual = *itProgramas;
+        consolidadoValido = true;
+        //Tratamos de escribir en la fila la informacion del programa
+        try
+        {
+            escribirPrograma(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, programaActual);
+        } catch (invalid_argument& e)
+        {
+            //En caso que se produzca este error se intentará seguir imrpimiendo el resto de programa
+            cout << "Programa SNIES '" << programaActual->consultarDatoInt(strCodigoSNIES) << "' tiene atributos faltantes. " << e.what() << endl;
+            consolidadoValido = false;
+        }
+        if (consolidadoValido)
+        {
+            imprimirConsolidados(fila, archivoBuscados,delimitador, matrizEtiquetas, programaActual);
+        }
+    }
+
+
+    //Cerramos el archivo una vez terminamos de iterar sobre los programas
+    estadoCreacion = true;
+    archivoBuscados.close();
+    return estadoCreacion;
 }
 
 bool GestorTxt::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
