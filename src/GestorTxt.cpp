@@ -1,6 +1,5 @@
 #include "GestorTxt.h"
 
-//FIXME: IMPLEMENTAR :,,,)
 bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas)
 {
     bool estadoCreacion = false;
