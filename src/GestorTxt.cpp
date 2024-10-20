@@ -142,7 +142,6 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
             {
                 consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_PRIMER_SEMESTRE);
                 fila = infoPrograma;
-                //FIXME: Implementar este metodo
                 escribirConsolidado(fila, delimitador, consolidadoActual,matrizEtiquetas);
                 //Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
                 archivoResultados << fila << endl;
@@ -160,9 +159,10 @@ void GestorTxt::imprimirConsolidados(string& fila, ofstream& archivoResultados, 
             //Escribimos el consolidado del segundo semestre del año e imprimimos al archivo
             try
             {
+                //Manda invalid argument si no existe el consolidado
                 consolidadoActual = programaActual->buscarConsolidado(sexoActual, anoActual, LLAVE_SEGUNDO_SEMESTRE);
                 fila = infoPrograma;
-                //FIXME: Implementar este metodo
+                //Manda out of range si no tiene todos los atributos
                 escribirConsolidado(fila, delimitador, consolidadoActual,matrizEtiquetas);
                 //Imprimimos al archivo una fila correspondiente a la informacion de un consolidado
                 archivoResultados << fila << endl;
@@ -185,6 +185,32 @@ void GestorTxt::escribirConsolidado(string& fila, string& delimitador, Consolida
     int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
     int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
     //Procedemos a escribir la informacion string e int del consolidado, respectivamente
+    try
+    {
+        //Cualquier atributo faltante arroja invalid argument
+        string nombreAtributo;
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO].size();columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO][columnaEtiquetas];
+            fila += consolidadoActual->obtenerDatoString(nombreAtributo) + delimitador;
+        }
+
+        for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size();columnaEtiquetas++)
+        {
+            nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO][columnaEtiquetas];
+            fila += to_string(consolidadoActual->obtenerDatoInt(nombreAtributo));
+
+            if (columnaEtiquetas != matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size() - 1)
+            {
+                fila += delimitador;
+            }
+        }
+
+    } catch (invalid_argument& e)
+    {
+        //Transformamos el invalid argument a out_of_range para la impresion de consolidados
+        throw out_of_range(e.what());
+    }
 }
 
 
