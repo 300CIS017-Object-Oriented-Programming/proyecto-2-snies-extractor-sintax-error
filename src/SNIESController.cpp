@@ -109,7 +109,30 @@ void SNIESController::procesarDatos(vector<string> anos)
     }
     matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
 
-    // Ahora procesamos los datos que nos llegaron de la lectura del archivo
+    //Ahora procesamos los datos que nos llegaron de la lectura del archivo
+    string etiquetaCorrespondiente;
+    ProgramaAcademico* programaNuevo;
+    Consolidado* consolidadoNuevo;
+    vector<string>::iterator itFilaMatriz;
+    string datoString;
+    int datoInt;
+    //Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
+    for (int fila = 1; fila < matrizArchivo.size(); fila++)
+    {
+        programaNuevo = new ProgramaAcademico();
+        consolidadoNuevo = new Consolidado();
+        for (int columna = 0; columna < matrizArchivo[fila].size(); columna++)
+        {
+            etiquetaCorrespondiente = matrizArchivo[0][columna];
+            datoString = matrizArchivo[fila][columna];
+            //Buscamos a que tipo de atributo pertenece
+            itFilaMatriz = find(matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].begin(), matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].end(), etiquetaCorrespondiente);
+            if (itFilaMatriz != matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].end())
+            {
+                programaNuevo->agregarElementoTipoString(etiquetaCorrespondiente, datoString);
+            }
+        }
+    }
 }
 
 void SNIESController::procesarDatosCsv(string &ano1, string &ano2)

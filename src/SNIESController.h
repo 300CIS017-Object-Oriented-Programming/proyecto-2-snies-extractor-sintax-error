@@ -34,8 +34,13 @@ private:
 
     void inicializarGestores();
     void inicializarEtiquetas();
+<<<<<<< HEAD
     void leerArchivoConfiguracion(vector<vector<string>> &matriz);
     Utilidad utilidadObj;
+=======
+    void leerArchivoConfiguracion(vector<vector<string>>& matriz);
+    void seleccionarEtiquetas(int filaMin, int filaMax, );
+>>>>>>> 15b0e1b2eb0a65a0238a1cb0c59abecc01a589a7
 
 public:
     SNIESController();
