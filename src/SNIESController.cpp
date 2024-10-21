@@ -76,7 +76,41 @@ SNIESController::~SNIESController()
 //FIXME: Adaptar al nuevo diseño teniendo en cuenta el diseño viejo
 void SNIESController::procesarDatos(vector<string> anos)
 {
-    ;
+    int FILA_ATRIBUTOS_STRING_PROGRAMA = 0;
+    int FILA_ATRIBUTOS_INT_PROGRAMA = 1;
+    int FILA_ATRIBUTOS_STRING_CONSOLIDADO = 2;
+    int FILA_ATRIBUTOS_INT_CONSOLIDADO = 3;
+    int FILA_SEXOS_DISPONIBLES = 4;
+    int FILA_ANOS_DISPONIBLES = 5;
+    //Llenamos la ultima fila de la matriz de etiquetas con los años a considerar
+    matrizEtiquetas[FILA_ANOS_DISPONIBLES] = anos;
+
+    vector<int> codigosSNIES;
+    vector<string> etiquetasParaLeer;
+    vector<vector<string>> matrizArchivo;
+    string rutaActual;
+    //Leemos los codigos SNIES que nos piden buscar
+    rutaActual = Settings::PROGRAMAS_FILTRAR_FILE_PATH;
+    //Se utiliza el gestor 0 porque para los propósitos de leer sirve cualquier gestor
+    codigosSNIES = gestoresArchivos[0]->leerProgramas(rutaActual);
+
+    /*
+     * Ahora leeremos el primer archivo
+     * Donde mandaremos a buscar la informacion base de los programas
+     * Y los consolidados de este archivo en particular
+     */
+
+    //Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
+    for (int fila = FILA_ATRIBUTOS_STRING_PROGRAMA; fila <= FILA_ATRIBUTOS_INT_CONSOLIDADO; fila++)
+    {
+        for (int columna = 0; columna < matrizEtiquetas[fila].size(); columna++)
+        {
+            etiquetasParaLeer.push_back(matrizEtiquetas[fila][columna]);
+        }
+    }
+    matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
+
+    //Ahora procesamos los datos que nos llegaron de la lectura del archivo
 }
 
 
