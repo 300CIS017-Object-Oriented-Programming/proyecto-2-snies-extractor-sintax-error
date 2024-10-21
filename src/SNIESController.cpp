@@ -4,8 +4,15 @@ using namespace std;
 
 SNIESController::SNIESController()
 {
-    inicializarGestores();
-    inicializarEtiquetas();
+    try
+    {
+        inicializarGestores();
+        inicializarEtiquetas();
+    } catch (out_of_range& e)
+    {
+        string errorMsg = string("No se pudo inicializar el Controlador. ") + e.what();
+        throw out_of_range(errorMsg);
+    }
 }
 
 void SNIESController::inicializarGestores()
