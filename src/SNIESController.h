@@ -8,7 +8,10 @@
 #include <list>
 #include "ProgramaAcademico.h"
 #include "Consolidado.h"
+#include "GestorArchivos.h"
 #include "GestorCsv.h"
+#include "GestorTxt.h"
+#include "GestorJSON.h"
 
 using namespace std;
 
@@ -28,9 +31,12 @@ private:
      Matriz Etiquetas[5] -> Años a considerar (Se obtienen de los parametros de procesarDatosCsv)
     */
 
+    void inicializarGestores();
+    void inicializarEtiquetas();
+    void leerArchivoConfiguracion(vector<vector<string>>& matriz);
+
 public:
-    SNIESController() = default;
-    SNIESController(string &, string &, string &, string &, string &, string &, string &);
+    SNIESController();
     ~SNIESController();
     void procesarDatos(vector<string> anos);
     void calcularDatosExtra(bool exportarArchivo);

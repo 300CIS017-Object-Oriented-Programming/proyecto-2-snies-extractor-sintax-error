@@ -1,4 +1,4 @@
-Etiquetas Atributos de Tipo String Programa Academico:
+-Etiquetas Atributos de Tipo String Programa Academico:
 INSTITUCIÓN DE EDUCACIÓN SUPERIOR (IES)
 TIPO IES
 SECTOR IES
@@ -16,8 +16,7 @@ DESC CINE CAMPO ESPECIFICO
 DESC CINE CODIGO DETALLADO
 DEPARTAMENTO DE OFERTA DEL PROGRAMA
 MUNICIPIO DE OFERTA DEL PROGRAMA
--1
-Etiquetas Atributos de Tipo Int Programa Academico:
+-Etiquetas Atributos de Tipo Int Programa Academico:
 CÓDIGO DE LA INSTITUCIÓN
 IES_PADRE
 ID SECTOR IES
@@ -35,11 +34,9 @@ ID CINE CAMPO ESPECIFICO
 ID CINE CODIGO DETALLADO
 CÓDIGO DEL DEPARTAMENTO (PROGRAMA)
 CÓDIGO DEL MUNICIPIO (PROGRAMA)
--1
-Etiquetas Atributos de Tipo String Consolidado:
+-Etiquetas Atributos de Tipo String Consolidado:
 SEXO
--1
-Etiquetas Atributos de Tipo Int Consolidado:
+-Etiquetas Atributos de Tipo Int Consolidado:
 INSCRITOS
 ADMITIDOS
 PRIMER CURSO
@@ -47,8 +44,6 @@ MATRICULADOS
 GRADUADOS
 AÑO
 SEMESTRE
--1
-Sexos Disponibles:
+-Sexos Disponibles:
 Hombre
 Mujer
--1

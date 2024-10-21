@@ -2,18 +2,60 @@
 
 using namespace std;
 
-SNIESController::SNIESController(string &nuevaRutaProgramasCSV, string &nuevaRutaAdmitidos, string &nuevaRutaGraduados, string &nuevaRutaInscritos, string &nuevaRutaMatriculadosc, string &nuevaRutaMatriculadosPrimerSemestre, string &nuevaRutaOutput)
+SNIESController::SNIESController()
 {
-    // FIXME quitar los parámetros de las rutas de los parametros del constructor, usar el archivo de settings.h para poner las constantes
-    gestorCsvObj = GestorCsv();
-    rutaProgramasCSV = nuevaRutaProgramasCSV;
-    rutaAdmitidos = nuevaRutaAdmitidos;
-    rutaGraduados = nuevaRutaGraduados;
-    rutaInscritos = nuevaRutaInscritos;
-    rutaMatriculados = nuevaRutaMatriculadosc;
-    rutaMatriculadosPrimerSemestre = nuevaRutaMatriculadosPrimerSemestre;
-    rutaOutput = nuevaRutaOutput;
+    inicializarGestores();
+    inicializarEtiquetas();
 }
+
+void SNIESController::inicializarGestores()
+{
+    //Agregar los gestores al vector
+    gestoresArchivos.push_back(new GestorCsv());
+    gestoresArchivos.push_back(new GestorTxt());
+    gestoresArchivos.push_back(new GestorJSON());
+}
+
+void SNIESController::inicializarEtiquetas()
+{
+    matrizEtiquetas = vector<vector<string>>(6);
+    //Leer el archivo de configuracion para obtener la información necesaria
+    leerArchivoConfiguracion(matrizEtiquetas);
+}
+
+void SNIESController::leerArchivoConfiguracion(vector<vector<string>>& matriz)
+{
+    string rutaConfig = Settings::ETIQUETAS_CONFIG_PATH;
+    ifstream archivoConfig(rutaConfig);
+    if (!(archivoConfig.is_open()))
+    {
+        throw out_of_range("Error al abrir el archivo de configuracion de atributos");
+    }
+
+    string fila;
+    //Se inicia en -1 para que cuando lea la primera serie de etiquetas empiece por la fila 0 de la matriz
+    int posFilaMatriz = -1;
+    while (getline(archivoConfig,fila))
+    {
+        /*Las distintas categorias de etiquetas empizan por una fila con el nombre de la categoria
+         * El primer caracter del nombre de la categoria siempre empieza por '-'
+         * Esto se aprovecha para saber cuando cambiamos de categoria y por tanto de fila en la matriz de etiquetas
+         */
+        if (fila[0] == '-')
+        {
+            posFilaMatriz++;
+        }
+        else
+        {
+            matriz[posFilaMatriz].push_back(fila);
+        }
+    }
+
+    //Cerramos el archivo una vez hemos terminado
+    archivoConfig.close();
+}
+
+
 
 SNIESController::~SNIESController()
 {
