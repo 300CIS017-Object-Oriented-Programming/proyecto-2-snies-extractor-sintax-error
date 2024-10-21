@@ -34,6 +34,7 @@ private:
     void inicializarGestores();
     void inicializarEtiquetas();
     void leerArchivoConfiguracion(vector<vector<string>>& matriz);
+    void seleccionarEtiquetas(int filaMin, int filaMax, );
 
 public:
     SNIESController();
