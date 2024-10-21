@@ -73,6 +73,13 @@ SNIESController::~SNIESController()
     }
 }
 
+//FIXME: Adaptar al nuevo diseño teniendo en cuenta el diseño viejo
+void SNIESController::procesarDatos(vector<string> anos)
+{
+    ;
+}
+
+
 void SNIESController::procesarDatosCsv(string &ano1, string &ano2)
 {
     vector<int> codigosSnies;
@@ -309,6 +316,7 @@ void SNIESController::procesarDatosCsv(string &ano1, string &ano2)
     // cout << archivoCreado << endl;
 }
 
+//FIXME: Adaptar al nuevo diseño
 void SNIESController::buscarProgramas(bool flag, string &palabraClave, int idComparacion)
 {
     list<ProgramaAcademico *> listaProgramas;
@@ -332,7 +340,8 @@ void SNIESController::buscarProgramas(bool flag, string &palabraClave, int idCom
     }
 }
 
-void SNIESController::calcularDatosExtra(bool flag)
+//FIXME: Adaptar al nuevo diseño
+void SNIESController::calcularDatosExtra(bool exportarArchivo)
 {
     vector<vector<string>> matrizFinal;
     vector<vector<string>> matrizEtiquetas1;
