@@ -8,11 +8,12 @@ using namespace std;
 
 // FIXME: falta toda la implementacion
 
-void GestorJSON::escribirEtiquetasJson(json& etiquetasJson, string& strCodigoSNIES, string& strNombrePrograma, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
+void GestorJSON::escribirEtiquetasJson(json& etiquetasJson, string& strCodigoSNIES, string& strNombrePrograma, vector<vector<string>>& matrizEtiquetas, int MIN_POS_ETIQUETAS, int MAX_POS_ETIQUETAS)
 {
     string nombreAtributo;
+    string ETIQUETAS = "Etiquetas";
     bool etiquetaValida;
-    for(int filaEtiquetas = minPosEtiquetas; filaEtiquetas < maxPosEtiquetas; filaEtiquetas++)
+    for(int filaEtiquetas = MIN_POS_ETIQUETAS; filaEtiquetas < MAX_POS_ETIQUETAS; filaEtiquetas++)
     {
         for(int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[filaEtiquetas].size(); columnaEtiquetas++)
         {
@@ -22,7 +23,7 @@ void GestorJSON::escribirEtiquetasJson(json& etiquetasJson, string& strCodigoSNI
             etiquetaValida = etiquetaValida && (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma));
             if(etiquetaValida)
             {
-                etiquetasJson["Etiquetas"].push_back(nombreAtributo);
+                etiquetasJson[ETIQUETAS].push_back(nombreAtributo);
             }
         }
     }
@@ -178,11 +179,11 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
     //variables de escribirEtiquetasJson
     string strCodigoSNIES = string("Codigo SNIES del programa");
     string strNombrePrograma =  string("Programa Academico");
-    int minPosEtiquetas = 0;
-    int maxPosEtiquetas = 3;
+    int MIN_POS_ETIQUETAS = 0;
+    int MAX_POS_ETIQUETAS = 3;
 
     //Crear una lista de etiquetas adicionales desde la matriz 
-    escribirEtiquetasJson(etiquetasJson, strCodigoSNIES, strNombrePrograma,  matrizEtiquetas, minPosEtiquetas, maxPosEtiquetas);
+    escribirEtiquetasJson(etiquetasJson, strCodigoSNIES, strNombrePrograma,  matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
     jsonData["Etiquetas"] = etiquetasJson;
 
     //añadir los consolidados
@@ -191,6 +192,7 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
     //iterar sobre los programas academicos 
     for(map<int, ProgramaAcademico*>::iterator itProgramas = mapadeProgramasAcademicos.begin(); itProgramas != mapadeProgramasAcademicos.end(); ++itProgramas)
     {
+        vectorAtributosPrograma.clear();
         programaAcademicoActual = itProgramas->second;
         bool consolidadoValido = true;
         string nombrePrograma = programaAcademicoActual->consultarDatoString(strNombrePrograma);
@@ -209,10 +211,70 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
         }
         
     }
+
+    //Cerrar el archivo una vez acabamos de escribir en el
+    int INDENTACION_JSON = 4;
+    archivoResultados << jsonData.dump(INDENTACION_JSON);
+    estadoCreacion = true;
+    archivoResultados.close();
+    return estadoCreacion;
 }
 
 bool GestorJSON::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>>& matrizEtiquetas)
 {
+    bool estadoCreacion = false;
+    string rutaCompleta = ruta + "buscados.json";
+    ofstream archivoBuscados(rutaCompleta);
+
+    if(!archivoBuscados.is_open())
+    {
+        string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
+        archivoBuscados.close();
+        throw out_of_range(errorMsg);
+    }
+    
+    json jsonData; //objeto json principal
+    json etiquetasJson;
+    string ETIQUETAS = "Etiquetas";
+    vector<string> vectorAtributosPrograma;
+    string strCodigoSNIES = string("Codigo SNIES del programa");
+    string strNombrePrograma =  string("Programa Academico");
+    int MIN_POS_ETIQUETAS = 0;
+    int MAX_POS_ETIQUETAS = 3;
+
+    escribirEtiquetasJson(etiquetasJson,strCodigoSNIES,strNombrePrograma,matrizEtiquetas,MIN_POS_ETIQUETAS,MAX_POS_ETIQUETAS);
+    jsonData[ETIQUETAS] = etiquetasJson;
+
+    ProgramaAcademico* programaActual;
+    bool consolidadoValido;
+    for(list<ProgramaAcademico *>::iterator itProgramas = programasBuscados.begin(); itProgramas != programasBuscados.end(); ++itProgramas)
+    {
+        vectorAtributosPrograma.clear();
+        programaActual = *itProgramas;
+        consolidadoValido = true;
+        string nombrePrograma = programaActual->consultarDatoString(strNombrePrograma);
+
+        try
+        {
+            escribirProgramaJson(jsonData,nombrePrograma,matrizEtiquetas,programaActual,strCodigoSNIES,vectorAtributosPrograma);
+        }catch (invalid_argument& e)
+        {
+            //En caso que se produzca este error se intentará seguir imrpimiendo el resto de programa
+            cout << "Programa SNIES '" << programaActual->consultarDatoInt(strCodigoSNIES) << "' tiene atributos faltantes. " << e.what() << endl;
+            consolidadoValido = false;
+        }
+        if(consolidadoValido)
+        {
+            imprimirConsolidadosJson(jsonData,programaActual,matrizEtiquetas,vectorAtributosPrograma);
+        }
+        
+    }
+
+    int INDENTACION_JSON = 4;
+    archivoBuscados << jsonData.dump(INDENTACION_JSON);
+    estadoCreacion = true;
+    archivoBuscados.close();
+    return estadoCreacion;
 }
 
 bool GestorJSON::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
