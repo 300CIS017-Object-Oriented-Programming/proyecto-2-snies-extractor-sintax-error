@@ -48,3 +48,7 @@ SEXO
 AÑO
 SEMESTRE
 -1
+Sexos Disponibles:
+Hombre
+Mujer
+-1

@@ -18,14 +18,7 @@ class SNIESController
 private:
     map<int, ProgramaAcademico *> programasAcademicos;
     GestorCsv gestorCsvObj;
-    vector<string> etiquetasColumnas;
-    string rutaProgramasCSV;
-    string rutaAdmitidos;
-    string rutaGraduados;
-    string rutaInscritos;
-    string rutaMatriculados;
-    string rutaMatriculadosPrimerSemestre;
-    string rutaOutput;
+    vector<vector<string>> matrizEtiquetas;
 
 public:
     SNIESController() = default;
