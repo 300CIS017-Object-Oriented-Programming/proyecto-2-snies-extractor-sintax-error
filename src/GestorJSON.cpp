@@ -279,4 +279,31 @@ bool GestorJSON::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &p
 
 bool GestorJSON::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
 {
+    bool estadoCreacion = false;
+    string rutaCompleta = ruta + "extras.json";
+    ofstream archivoExtras(rutaCompleta);
+
+    if (!(archivoExtras.is_open()))
+    {
+        string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
+        archivoExtras.close();
+        throw out_of_range(errorMsg);
+    }
+
+    json jsonData;
+
+    for (int fila = 0; fila < datosAImprimir.size(); fila++)
+    {
+        for (int columna = 0; columna < datosAImprimir[fila].size(); columna++)
+        {
+            jsonData[fila].push_back(datosAImprimir[fila][columna]);
+            
+        }
+    }
+
+    int INDENTACION_JSON = 4;
+    archivoExtras << jsonData.dump(INDENTACION_JSON);
+    estadoCreacion = true;
+    archivoExtras.close();
+    return estadoCreacion;
 }
