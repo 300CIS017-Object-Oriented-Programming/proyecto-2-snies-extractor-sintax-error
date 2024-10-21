@@ -20,7 +20,7 @@ class SNIESController
 
 private:
     map<int, ProgramaAcademico *> programasAcademicos;
-    vector<GestorArchivos*> gestoresArchivos;
+    vector<GestorArchivos *> gestoresArchivos;
     vector<vector<string>> matrizEtiquetas;
     /*
      Matriz Etiquetas[0] -> Etiquetas Atributos de Tipo String Programa Academico
