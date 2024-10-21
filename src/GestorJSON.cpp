@@ -74,7 +74,85 @@ void GestorJSON::imprimirConsolidadosJson(json& jsonData,ProgramaAcademico* prog
     int anoActual;
     string sexoActual;
     Consolidado* consolidadoActual;
+    string llaveConsolidado;
+    for(int posVectoresAno = 0; posVectoresAno < matrizEtiquetas[FILA_VALORES_ANO].size();posVectoresAno++)
+    {
+        anoActual = stoi(matrizEtiquetas[FILA_VALORES_ANO][posVectoresAno]);
+        for(int posVectoresSexos = 0; posVectoresSexos < matrizEtiquetas[FILA_VALORES_SEXO].size(); posVectoresSexos++)
+        {
+            sexoActual = matrizEtiquetas[FILA_VALORES_SEXO][posVectoresSexos];
+            try
+            {
+                consolidadoActual = programaActual->buscarConsolidado(sexoActual,anoActual, LLAVE_PRIMER_SEMESTRE);
+                llaveConsolidado = sexoActual  + string("-") + to_string(anoActual) + string("-") + to_string(LLAVE_PRIMER_SEMESTRE);
+                for(int elemento = 0; elemento < vectorAtributosPrograma.size(); elemento++)
+                {
+                    jsonData[llaveConsolidado].push_back(vectorAtributosPrograma[elemento]);
+                }
+                escribirConsolidadoJson(jsonData,consolidadoActual,matrizEtiquetas, llaveConsolidado);
+            }
+            catch (invalid_argument& e)
+            {
+                //De no existir el consolidado, se sigue adelante
+                cout << e.what() << endl;
+            }
+            catch (out_of_range& e)
+            {
+                //Caso donde no tiene todos los atributos el consolidado
+                cout << e.what() << endl;
+            }
+            
+            try
+            {
+                consolidadoActual = programaActual->buscarConsolidado(sexoActual,anoActual, LLAVE_SEGUNDO_SEMESTRE);
+                llaveConsolidado = sexoActual  + string("-") + to_string(anoActual) + string("-") + to_string(LLAVE_SEGUNDO_SEMESTRE);
+                for(int elemento = 0; elemento < vectorAtributosPrograma.size(); elemento++)
+                {
+                    jsonData[llaveConsolidado].push_back(vectorAtributosPrograma[elemento]);
+                }
+                escribirConsolidadoJson(jsonData,consolidadoActual,matrizEtiquetas, llaveConsolidado);
+            }
+            catch (invalid_argument& e)
+            {
+                //De no existir el consolidado, se sigue adelante
+                cout << e.what() << endl;
+            }
+            catch (out_of_range& e)
+            {
+                //Caso donde no tiene todos los atributos el consolidado
+                cout << e.what() << endl;
+            }
+        }
+    }
     
+}
+
+void GestorJSON:: escribirConsolidadoJson(json& jsonData, Consolidado* consolidadoActual, vector<vector<string>>& matrizEtiquetas, string& llaveConsolidado)
+{
+        int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
+        int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
+
+        try
+        {
+            string nombreAtributo;
+            for(int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO].size();columnaEtiquetas)
+            {
+                nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO][columnaEtiquetas];
+                jsonData[llaveConsolidado].push_back(consolidadoActual->obtenerDatoString(nombreAtributo));
+            }
+
+            for(int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size(); columnaEtiquetas++)
+            {
+                nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO][columnaEtiquetas];
+                jsonData[llaveConsolidado].push_back(consolidadoActual->obtenerDatoInt(nombreAtributo));
+
+            }
+        }catch (invalid_argument& e)
+        {
+        //Transformamos el invalid argument a out_of_range para la impresion de consolidados
+        throw out_of_range(e.what());
+        }
+        
 }
 
 bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas)
