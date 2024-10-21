@@ -37,6 +37,7 @@ CÓDIGO DEL DEPARTAMENTO (PROGRAMA)
 CÓDIGO DEL MUNICIPIO (PROGRAMA)
 -1
 Etiquetas Atributos de Tipo String Consolidado:
+SEXO
 -1
 Etiquetas Atributos de Tipo Int Consolidado:
 INSCRITOS
@@ -44,7 +45,6 @@ ADMITIDOS
 PRIMER CURSO
 MATRICULADOS
 GRADUADOS
-SEXO
 AÑO
 SEMESTRE
 -1
