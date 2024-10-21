@@ -12,7 +12,6 @@
 #include "GestorCsv.h"
 #include "GestorTxt.h"
 #include "GestorJSON.h"
-#include "Utilidad.h"
 
 using namespace std;
 
@@ -31,19 +30,20 @@ private:
      Matriz Etiquetas[4] -> Sexos Disponibles
      Matriz Etiquetas[5] -> Años a considerar (Se obtienen de los parametros de procesarDatosCsv)
     */
+    Utilidad utilidadObj;
 
     void inicializarGestores();
     void inicializarEtiquetas();
-    Utilidad utilidadObj;
-    void leerArchivoConfiguracion(vector<vector<string>> &matriz);
-    void seleccionarEtiquetas(int filaMin, int filaMax);
+    void leerArchivoConfiguracion(vector<vector<string>>& matriz);
+    void seleccionarEtiquetas(int filaMin, int filaMax, vector<string>& etiquetasParaLeer);
+    void crearProgramas(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int filaAtrIntCon);
 
 public:
     SNIESController();
     ~SNIESController();
     void procesarDatos(vector<string> anos);
     void calcularDatosExtra(bool exportarArchivo);
-    void buscarProgramas(bool exportarArchivo, string &palabraClave, int idComparacion);
+    void buscarProgramas(bool exportarArchivo, string& palabraClave, int idComparacion);
 };
 
 #endif

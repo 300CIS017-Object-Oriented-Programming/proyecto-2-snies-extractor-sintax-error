@@ -8,8 +8,7 @@ SNIESController::SNIESController()
     {
         inicializarGestores();
         inicializarEtiquetas();
-    }
-    catch (out_of_range &e)
+    } catch (out_of_range& e)
     {
         string errorMsg = string("No se pudo inicializar el Controlador. ") + e.what();
         throw out_of_range(errorMsg);
@@ -18,7 +17,7 @@ SNIESController::SNIESController()
 
 void SNIESController::inicializarGestores()
 {
-    // Agregar los gestores al vector
+    //Agregar los gestores al vector
     gestoresArchivos.push_back(new GestorCsv());
     gestoresArchivos.push_back(new GestorTxt());
     gestoresArchivos.push_back(new GestorJSON());
@@ -27,11 +26,11 @@ void SNIESController::inicializarGestores()
 void SNIESController::inicializarEtiquetas()
 {
     matrizEtiquetas = vector<vector<string>>(6);
-    // Leer el archivo de configuracion para obtener la información necesaria
+    //Leer el archivo de configuracion para obtener la información necesaria
     leerArchivoConfiguracion(matrizEtiquetas);
 }
 
-void SNIESController::leerArchivoConfiguracion(vector<vector<string>> &matriz)
+void SNIESController::leerArchivoConfiguracion(vector<vector<string>>& matriz)
 {
     string rutaConfig = Settings::ETIQUETAS_CONFIG_PATH;
     ifstream archivoConfig(rutaConfig);
@@ -41,9 +40,9 @@ void SNIESController::leerArchivoConfiguracion(vector<vector<string>> &matriz)
     }
 
     string fila;
-    // Se inicia en -1 para que cuando lea la primera serie de etiquetas empiece por la fila 0 de la matriz
+    //Se inicia en -1 para que cuando lea la primera serie de etiquetas empiece por la fila 0 de la matriz
     int posFilaMatriz = -1;
-    while (getline(archivoConfig, fila))
+    while (getline(archivoConfig,fila))
     {
         /*Las distintas categorias de etiquetas empizan por una fila con el nombre de la categoria
          * El primer caracter del nombre de la categoria siempre empieza por '-'
@@ -59,7 +58,7 @@ void SNIESController::leerArchivoConfiguracion(vector<vector<string>> &matriz)
         }
     }
 
-    // Cerramos el archivo una vez hemos terminado
+    //Cerramos el archivo una vez hemos terminado
     archivoConfig.close();
 }
 
@@ -72,7 +71,7 @@ SNIESController::~SNIESController()
     }
 }
 
-// FIXME: Adaptar al nuevo diseño teniendo en cuenta el diseño viejo
+//FIXME: Adaptar al nuevo diseño teniendo en cuenta el diseño viejo
 void SNIESController::procesarDatos(vector<string> anos)
 {
     int FILA_ATRIBUTOS_STRING_PROGRAMA = 0;
@@ -81,16 +80,16 @@ void SNIESController::procesarDatos(vector<string> anos)
     int FILA_ATRIBUTOS_INT_CONSOLIDADO = 3;
     int FILA_SEXOS_DISPONIBLES = 4;
     int FILA_ANOS_DISPONIBLES = 5;
-    // Llenamos la ultima fila de la matriz de etiquetas con los años a considerar
+    //Llenamos la ultima fila de la matriz de etiquetas con los años a considerar
     matrizEtiquetas[FILA_ANOS_DISPONIBLES] = anos;
 
     vector<int> codigosSNIES;
     vector<string> etiquetasParaLeer;
     vector<vector<string>> matrizArchivo;
     string rutaActual;
-    // Leemos los codigos SNIES que nos piden buscar
+    //Leemos los codigos SNIES que nos piden buscar
     rutaActual = Settings::PROGRAMAS_FILTRAR_FILE_PATH;
-    // Se utiliza el gestor 0 porque para los propósitos de leer sirve cualquier gestor
+    //Se utiliza el gestor 0 porque para los propósitos de leer sirve cualquier gestor
     codigosSNIES = gestoresArchivos[0]->leerProgramas(rutaActual);
 
     /*
@@ -99,24 +98,40 @@ void SNIESController::procesarDatos(vector<string> anos)
      * Y los consolidados de este archivo en particular
      */
 
-    // Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
-    for (int fila = FILA_ATRIBUTOS_STRING_PROGRAMA; fila <= FILA_ATRIBUTOS_INT_CONSOLIDADO; fila++)
+    //Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
+    seleccionarEtiquetas(FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, etiquetasParaLeer);
+
+    //Leemos el archivo
+    matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
+
+    //Ahora procesamos los datos que nos llegaron de la lectura del archivo para crear los programas
+    crearProgramas();
+
+}
+
+void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<string>& etiquetasParaLeer)
+{
+    etiquetasParaLeer.clear();
+    for (int fila = filaMin; fila <= filaMax; fila++)
     {
         for (int columna = 0; columna < matrizEtiquetas[fila].size(); columna++)
         {
             etiquetasParaLeer.push_back(matrizEtiquetas[fila][columna]);
         }
     }
-    matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
+}
 
-    // Ahora procesamos los datos que nos llegaron de la lectura del archivo
+void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int filaAtrIntCon)
+{
     string etiquetaCorrespondiente;
     ProgramaAcademico *programaNuevo;
     Consolidado *consolidadoNuevo;
     vector<string>::iterator itFilaMatriz;
     string datoString;
     int datoInt;
-    // Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
+    int codigoSNIES;
+    string strCodigoSNIES = "CÓDIGO SNIES DEL PROGRAMA";
+    //Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
     for (int fila = 1; fila < matrizArchivo.size(); fila++)
     {
         programaNuevo = new ProgramaAcademico();
@@ -125,15 +140,23 @@ void SNIESController::procesarDatos(vector<string> anos)
         {
             etiquetaCorrespondiente = matrizArchivo[0][columna];
             datoString = matrizArchivo[fila][columna];
-            // Buscamos a que tipo de atributo pertenece
-            itFilaMatriz = find(matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].begin(), matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].end(), etiquetaCorrespondiente);
-            if (itFilaMatriz != matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].end())
+            //Miramos si la etiqueta es el codigo SNIES para guardarlo por separado
+            if (utilidadObj.minusculasSinEspacios(etiquetaCorrespondiente) == utilidadObj.minusculasSinEspacios(strCodigoSNIES))
+            {
+                datoInt = stoi();
+                codigoSNIES = datoInt;
+            }
+            //Buscamos a que tipo de atributo pertenece
+            itFilaMatriz = find(matrizEtiquetas[fAtrStrProg].begin(), matrizEtiquetas[fAtrStrProg].end(), etiquetaCorrespondiente);
+            if (itFilaMatriz != matrizEtiquetas[fAtrStrProg].end())
             {
                 programaNuevo->agregarElementoTipoString(etiquetaCorrespondiente, datoString);
             }
         }
     }
 }
+
+
 
 void SNIESController::procesarDatosCsv(string &ano1, string &ano2)
 {
@@ -371,7 +394,7 @@ void SNIESController::procesarDatosCsv(string &ano1, string &ano2)
     // cout << archivoCreado << endl;
 }
 
-// FIXME: Adaptar al nuevo diseño
+//FIXME: Adaptar al nuevo diseño
 void SNIESController::buscarProgramas(bool flag, string &palabraClave, int idComparacion)
 {
     list<ProgramaAcademico *> listaProgramas;
@@ -395,7 +418,7 @@ void SNIESController::buscarProgramas(bool flag, string &palabraClave, int idCom
     }
 }
 
-// FIXME: Adaptar al nuevo diseño
+//FIXME: Adaptar al nuevo diseño
 void SNIESController::calcularDatosExtra(bool exportarArchivo)
 {
     vector<vector<string>> matrizFinal;
@@ -567,3 +590,4 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
             creado = gestorCsvObj.crearArchivoExtra(rutaOutput, matrizFinal);
         }
     }
+}
