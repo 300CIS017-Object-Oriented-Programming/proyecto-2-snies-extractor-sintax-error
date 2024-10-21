@@ -124,8 +124,8 @@ void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<stri
 void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int filaAtrIntCon)
 {
     string etiquetaCorrespondiente;
-    ProgramaAcademico* programaNuevo;
-    Consolidado* consolidadoNuevo;
+    ProgramaAcademico *programaNuevo;
+    Consolidado *consolidadoNuevo;
     vector<string>::iterator itFilaMatriz;
     string datoString;
     int datoInt;
@@ -464,7 +464,7 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
     matrizEtiquetas3.push_back(etiquetas3);
 
     int suma = 0;
-    string sexoH, sexoM, Matriculados = "Hombre" "Mujer" "Matriculados";
+    string Matriculados = "Matriculados";
     for (auto &it : programasAcademicos)
     {
         int neosPrimerAno = 0;
@@ -491,7 +491,6 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
                 sumaMatriculados.push_back(to_string(suma));
             }
         }
-
 
         for (map<int, ProgramaAcademico *>::iterator it = programasAcademicos.begin(); it != programasAcademicos.end(); ++it)
         {
