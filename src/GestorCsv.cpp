@@ -184,24 +184,34 @@ void GestorCsv::imprimirConsolidados(string &fila, ofstream &archivoResultados, 
 
 void GestorCsv::escribirConsolidado(string &fila, string &delimitador, Consolidado *consolidadoActual, vector<vector<string>> &matrizEtiquetas)
 {
+    // Filas de la matriz que contienen las etiquetas para datos string e int respectivamente
     int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
     int FILA_ETIQUETAS_INT_CONSOLIDADO = 3;
-    // Procedemos a escribir la informacion string e int del consolidado, respectivamente
+
+    // Intentamos escribir los datos string e int del consolidado
     try
     {
-        // Cualquier atributo faltante arroja invalid argument
+        // Variable para almacenar temporalmente el nombre del atributo a buscar
         string nombreAtributo;
+
+        // Iteramos sobre las etiquetas que corresponden a datos de tipo string en el consolidado
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO].size(); columnaEtiquetas++)
         {
+            // Obtenemos el nombre del atributo a partir de las etiquetas
             nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO][columnaEtiquetas];
+            // Agregamos el dato obtenido del consolidado a la fila, seguido del delimitador
             fila += consolidadoActual->obtenerDatoString(nombreAtributo) + delimitador;
         }
 
+        // Iteramos sobre las etiquetas que corresponden a datos de tipo int en el consolidado
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size(); columnaEtiquetas++)
         {
+            // Obtenemos el nombre del atributo a partir de las etiquetas
             nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO][columnaEtiquetas];
+            // Agregamos el dato obtenido del consolidado a la fila como una cadena de texto
             fila += to_string(consolidadoActual->obtenerDatoInt(nombreAtributo));
 
+            // Si no es la última columna, añadimos el delimitador después del dato
             if (columnaEtiquetas != matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO].size() - 1)
             {
                 fila += delimitador;
@@ -210,7 +220,7 @@ void GestorCsv::escribirConsolidado(string &fila, string &delimitador, Consolida
     }
     catch (invalid_argument &e)
     {
-        // Transformamos el invalid argument a out_of_range para la impresion de consolidados
+        // Si se lanza una excepción de tipo invalid_argument, la transformamos en out_of_range para un mejor manejo
         throw out_of_range(e.what());
     }
 }
@@ -271,34 +281,53 @@ bool GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &pr
 
 bool GestorCsv::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
 {
+    // Variable para almacenar el estado de la creación del archivo
     bool estadoCreacion = false;
+
+    // Concatenamos la ruta con el nombre del archivo que queremos crear
     string rutaCompleta = ruta + "extras.txt";
+
+    // Abrimos el archivo de salida
     ofstream archivoExtras(rutaCompleta);
+
+    // Definimos el delimitador a usar, que se obtiene de la configuración global
     string delimitador = Settings::DELIMITADOR;
+
+    // Verificamos si el archivo se ha abierto correctamente
     if (!(archivoExtras.is_open()))
     {
+        // Si no se puede abrir el archivo, construimos un mensaje de error y lanzamos una excepción
         string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
-        archivoExtras.close();
+        archivoExtras.close(); // Cerramos el archivo si está abierto por alguna razón
         throw out_of_range(errorMsg);
     }
 
+    // Recorremos todas las filas de los datos que se van a imprimir
     for (int fila = 0; fila < datosAImprimir.size(); fila++)
     {
+        // Recorremos cada columna en la fila actual
         for (int columna = 0; columna < datosAImprimir[fila].size(); columna++)
         {
+            // Escribimos el valor de la columna en el archivo
             archivoExtras << datosAImprimir[fila][columna];
-            // Por estandar, imprimiremos con el delimitador
+
+            // Si no es la última columna, añadimos el delimitador entre los valores
             if (columna != datosAImprimir[fila].size() - 1)
             {
                 archivoExtras << delimitador;
             }
-            // Saltamos linea al terminar de imprimir una linea
-            archivoExtras << endl;
         }
+
+        // Al terminar de escribir una fila, saltamos a la siguiente línea
+        archivoExtras << endl;
     }
 
-    // Cerramos el archivo una vez terminamos de imprimir los datos
+    // Indicamos que el archivo fue creado exitosamente
     estadoCreacion = true;
+
+    // Cerramos el archivo para asegurar que los datos se guarden correctamente
     archivoExtras.close();
+
+    // Devolvemos el estado de creación del archivo
     return estadoCreacion;
 }
