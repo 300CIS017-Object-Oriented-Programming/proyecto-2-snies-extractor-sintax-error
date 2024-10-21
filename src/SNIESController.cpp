@@ -109,14 +109,14 @@ void SNIESController::procesarDatos(vector<string> anos)
     }
     matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
 
-    //Ahora procesamos los datos que nos llegaron de la lectura del archivo
+    // Ahora procesamos los datos que nos llegaron de la lectura del archivo
     string etiquetaCorrespondiente;
-    ProgramaAcademico* programaNuevo;
-    Consolidado* consolidadoNuevo;
+    ProgramaAcademico *programaNuevo;
+    Consolidado *consolidadoNuevo;
     vector<string>::iterator itFilaMatriz;
     string datoString;
     int datoInt;
-    //Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
+    // Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
     for (int fila = 1; fila < matrizArchivo.size(); fila++)
     {
         programaNuevo = new ProgramaAcademico();
@@ -125,7 +125,7 @@ void SNIESController::procesarDatos(vector<string> anos)
         {
             etiquetaCorrespondiente = matrizArchivo[0][columna];
             datoString = matrizArchivo[fila][columna];
-            //Buscamos a que tipo de atributo pertenece
+            // Buscamos a que tipo de atributo pertenece
             itFilaMatriz = find(matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].begin(), matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].end(), etiquetaCorrespondiente);
             if (itFilaMatriz != matrizEtiquetas[FILA_ATRIBUTOS_STRING_PROGRAMA].end())
             {
@@ -420,7 +420,7 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
     matrizEtiquetas3.push_back(etiquetas3);
 
     int suma = 0;
-    string sexoH, sexoM, Matriculados = "Hombre" "Mujer" "Matriculados";
+    string Matriculados = "Matriculados";
     for (auto &it : programasAcademicos)
     {
         int neosPrimerAno = 0;
@@ -447,7 +447,6 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
                 sumaMatriculados.push_back(to_string(suma));
             }
         }
-
 
         for (map<int, ProgramaAcademico *>::iterator it = programasAcademicos.begin(); it != programasAcademicos.end(); ++it)
         {
