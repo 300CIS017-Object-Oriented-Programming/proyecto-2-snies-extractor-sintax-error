@@ -8,7 +8,7 @@ vector<int> GestorArchivos::leerProgramas(string &ruta)
     {
         string errorMsg = string("Archivo ") + ruta + string(" no se pudo abrir correctamente");
         throw out_of_range(errorMsg);
-        //cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
+        // cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
     }
     else
     {
@@ -37,7 +37,7 @@ vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> 
     // Verificar si el archivo se abre correctamente
     if (!archivoPrimero.is_open())
     {
-        //FIX: Manejo del error con gestion de excepciones
+        // FIX: Manejo del error con gestion de excepciones
         string errorMsg = string("Archivo ") + ruta + string(" no se pudo abrir correctamente");
         throw out_of_range(errorMsg);
         /*cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
@@ -67,7 +67,7 @@ vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> 
         }
         // Verificar si esta es la columna de los códigos SNIES
         string strCodigoSNIES = string("CÓDIGO SNIES DEL PROGRAMA");
-        //FIX: Ahora se utiliza bien el objeto de clase Utilidad
+        // FIX: Ahora se utiliza bien el objeto de clase Utilidad
         if (datoMinusculasSinEspacios == utilidadObj.minusculasSinEspacios(strCodigoSNIES))
         {
             indiceColumnaCodigo = columna;
@@ -78,8 +78,9 @@ vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> 
     // Si no se encontró la columna de códigos SNIES, retornar matriz vacía
     if (indiceColumnaCodigo == -1)
     {
-        cout << "No se encontró la columna de Código SNIES en el archivo." << endl;
-        return matrizResultado;
+        string msg = "No se encontró la columna de Código SNIES en el archivo.";
+        cerr << "Error: " << msg << endl;
+        throw runtime_error(msg); // Lanza una excepción para indicar un error crítico
     }
 
     // Añadir etiquetas a la matriz de resultados
