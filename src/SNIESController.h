@@ -12,6 +12,7 @@
 #include "GestorCsv.h"
 #include "GestorTxt.h"
 #include "GestorJSON.h"
+#include "Utilidad.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ class SNIESController
 
 private:
     map<int, ProgramaAcademico *> programasAcademicos;
-    vector<GestorArchivos*> gestoresArchivos;
+    vector<GestorArchivos *> gestoresArchivos;
     vector<vector<string>> matrizEtiquetas;
     /*
      Matriz Etiquetas[0] -> Etiquetas Atributos de Tipo String Programa Academico
@@ -33,14 +34,15 @@ private:
 
     void inicializarGestores();
     void inicializarEtiquetas();
-    void leerArchivoConfiguracion(vector<vector<string>>& matriz);
+    void leerArchivoConfiguracion(vector<vector<string>> &matriz);
+    Utilidad utilidadObj;
 
 public:
     SNIESController();
     ~SNIESController();
     void procesarDatos(vector<string> anos);
     void calcularDatosExtra(bool exportarArchivo);
-    void buscarProgramas(bool exportarArchivo, string& palabraClave, int idComparacion);
+    void buscarProgramas(bool exportarArchivo, string &palabraClave, int idComparacion);
 };
 
 #endif
