@@ -398,23 +398,44 @@ void SNIESController::procesarDatosCsv(string &ano1, string &ano2)
 void SNIESController::buscarProgramas(bool flag, string &palabraClave, int idComparacion)
 {
     list<ProgramaAcademico *> listaProgramas;
+    string llaveNombrePrograma = string("PROGRAMA ACADÉMICO");
+    string llaveId = string("ID NIVEL DE FORMACIÓN");
+    string codigoSNIES = string("CÓDIGO SNIES DEL PROGRAMA");
+    string codigoInstitucion = string("CÓDIGO DE LA INSTITUCIÓN");
+    string institucionEducacionSuperior = string("INSTITUCIÓN DE EDUCACIÓN SUPERIOR (IES)");
+    string METODOLOGIA =string("METODOLOGÍA");
+    string rutaOutput = Settings::OUTPUTS_PATH;
+
     for (map<int, ProgramaAcademico *>::iterator it = programasAcademicos.begin(); it != programasAcademicos.end(); ++it)
     {
         ProgramaAcademico *programa = it->second;
-        string nombre = programa->getProgramaAcademico();
-        int id = programa->getIdNivelDeFormacion();
+        string nombre = programa->consultarDatoString(llaveNombrePrograma);
+        int id = stoi(programa->consultarDatoString(llaveId));
+        //nombre = hecho123 palabraClave = hecho
+        
         if (nombre.find(palabraClave) != string::npos && id == idComparacion)
         {
             listaProgramas.push_back(programa);
             // codigo SNIES, nombre del programa, codigo de la institucion, nombre de la institucion y metodología
-            cout << programa->getCodigoSniesDelPrograma() << ";" << programa->getProgramaAcademico() << ";" << programa->getCodigoDeLaInstitucion() << ";" << programa->getInstitucionDeEducacionSuperiorIes() << ";" << programa->getMetodologia() << endl;
+            cout << programa->consultarDatoInt(codigoSNIES) << ";" << nombre << ";" << programa->consultarDatoInt(codigoInstitucion) << ";"; 
+            cout << programa->consultarDatoString(institucionEducacionSuperior) << ";" << programa->consultarDatoString(METODOLOGIA) << endl;
         }
     }
 
     if (flag)
     {
-        bool creado;
-        creado = gestorCsvObj.crearArchivoBuscados(rutaOutput, listaProgramas, etiquetasColumnas);
+
+
+        for(int gestor = 0; gestor < gestoresArchivos.size(); gestor++)
+        {
+            try
+            {
+                gestoresArchivos[gestor]->crearArchivoBuscados(rutaOutput,listaProgramas,matrizEtiquetas);
+            }catch(out_of_range& e)
+            {
+                cout << "No se pudo crear el archivo con los buscados" << endl;
+            }
+        }
     }
 }
 
