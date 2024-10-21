@@ -1,1 +1,44 @@
 Etiquetas Atributos de Tipo String Programa Academico:
+Programa Académico
+Institución de Educación
+Principal O Seccional
+Sector IES
+Carácter IES
+Departamento De Domicilio De La IES
+Municipio De Domicilio De La IES
+Nivel Académico
+Nivel De Formación
+Metodología
+Area De Conocimiento
+Núcleo Básico Del Conocimiento (NBC)
+Descripción CINE Campo Amplio
+Descripción CINE Campo Específico
+Descripción CINE Código Detallado
+Departamento De Oferta Del Programa
+Municipio De Oferta Del Programa
+-1
+Etiquetas Atributos de Tipo Int Programa Academico:
+Codigo SNIES Del Programa
+Codigo De La Institución
+IES Padre
+ID Sector IES
+ID Carácter
+Codigo Del Departamento (IES)
+Codigo Del Municipio IES
+ID Nivel Académico
+ID Nivel De Formación
+ID Metodología
+ID Área
+ID Núcleo
+ID CINE Campo Amplio
+ID CINE Campo Específico
+ID CINE Código Detallado
+Codigo Del Departamento (Programa)
+Codigo Del Municipio (Programa)
+-1
+Etiquetas Atributos de Tipo String Consolidado:
+Inscritos
+Admitidos
+-1
+Etiquetas Atributos de Tipo Int Consolidado:
+-1
