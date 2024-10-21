@@ -1,80 +1,92 @@
-#include "GestorCsv.h"
+#include "GestorTxt.h"
 
-bool GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
+bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
 {
     bool estadoCreacion = false;
-    string rutaCompleta = ruta + "resultados.csv";
+    string rutaCompleta = ruta + "resultados.txt";
+
+    // Abrimos el archivo donde se van a escribir los resultados
     ofstream archivoResultados(rutaCompleta);
     string delimitador = Settings::DELIMITADOR;
+
+    // Verificamos si el archivo se abrió correctamente
     if (!(archivoResultados.is_open()))
     {
         string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
         archivoResultados.close();
-        throw out_of_range(errorMsg);
+        throw out_of_range(errorMsg); // Lanzamos excepción si no se pudo abrir
     }
 
-    // Imprimir las etiquetas de las columnas en la primera fila
+    // Imprimimos las etiquetas de las columnas en la primera fila
     string strCodigoSNIES = string("Codigo SNIES del programa");
     string strnombrePrograma = string("Programa Academico");
     string fila;
     int MIN_POS_ETIQUETAS = 0;
     int MAX_POS_ETIQUETAS = 3;
-    // Metodo privado auxiliar para escribir las etiquetas de las columnas
+
+    // Llamada a método auxiliar para escribir las etiquetas de las columnas
     escribirEtiquetas(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, MIN_POS_ETIQUETAS, MAX_POS_ETIQUETAS);
     archivoResultados << fila << endl;
 
-    // Iteramos sobre el mapa de los programasAcademicos para imprimir en cada fila 1 consolidado
+    // Iteramos sobre el mapa de programas académicos para imprimir cada consolidado
     ProgramaAcademico *programaActual;
     bool consolidadoValido;
+
     for (map<int, ProgramaAcademico *>::iterator itProgramas = mapadeProgramasAcademicos.begin(); itProgramas != mapadeProgramasAcademicos.end(); ++itProgramas)
     {
-        fila.clear();
+        fila.clear(); // Limpiamos la fila para el nuevo programa
         programaActual = itProgramas->second;
         consolidadoValido = true;
-        // Tratamos de escribir en la fila la informacion del programa
+
+        // Intentamos escribir la información del programa en la fila
         try
         {
             escribirPrograma(strCodigoSNIES, strnombrePrograma, fila, delimitador, matrizEtiquetas, programaActual);
         }
         catch (invalid_argument &e)
         {
-            // En caso que se produzca este error se intentará seguir imrpimiendo el resto de programa
+            // Capturamos el error si hay atributos faltantes y seguimos con los demás programas
             cout << "Programa SNIES '" << itProgramas->first << "' tiene atributos faltantes. " << e.what() << endl;
             consolidadoValido = false;
         }
+
+        // Si la información del programa es válida, imprimimos los consolidados asociados
         if (consolidadoValido)
         {
             imprimirConsolidados(fila, archivoResultados, delimitador, matrizEtiquetas, programaActual);
         }
     }
 
-    // Cerramos el archivo una vez terminamos de iterar sobre los programas
+    // Cerramos el archivo una vez terminamos de escribir los resultados
     estadoCreacion = true;
     archivoResultados.close();
     return estadoCreacion;
 }
 
-void GestorCsv::escribirEtiquetas(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
+void GestorTxt::escribirEtiquetas(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
 {
-    /*Orden de las Etiquetas
-     CodigoSnies, Nombre Programa, (etiquetas Tipo String Programa), (etiquetas Tipo Int Programa)...
-    ... (etiquetas Tipo String Consolidado), (etiquetas Tipo Int Consolidado)
-     */
+    // Estructura de las etiquetas: CodigoSnies, Nombre Programa, etiquetas del programa y consolidados
     fila = strCodigoSNIES + delimitador + strNombrePrograma;
     string nombreAtributo;
     bool etiquetaValida;
+
+    // Iteramos sobre las etiquetas y agregamos aquellas que no sean duplicadas
     for (int filaEtiquetas = minPosEtiquetas; filaEtiquetas < maxPosEtiquetas; filaEtiquetas++)
     {
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[filaEtiquetas].size(); columnaEtiquetas++)
         {
             nombreAtributo = matrizEtiquetas[filaEtiquetas][columnaEtiquetas];
-            // Verificamos que la etiqueta que vamos a escribir no sea el codigo snies o nombre que ya escribimos
+            // Evitamos duplicar el código SNIES o el nombre del programa
             etiquetaValida = utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES);
             etiquetaValida = etiquetaValida && (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma));
+
+            // Si es válida, la agregamos a la fila
             if (etiquetaValida)
             {
                 fila += nombreAtributo;
             }
+
+            // Agregamos el delimitador si no es la última columna
             if (columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1)
             {
                 fila += delimitador;
@@ -83,31 +95,36 @@ void GestorCsv::escribirEtiquetas(string &strCodigoSNIES, string &strNombreProgr
     }
 }
 
-void GestorCsv::escribirPrograma(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual)
+void GestorTxt::escribirPrograma(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual)
 {
     try
     {
-        // Empezamos por imprimir el codigo SNIES y el nombre del programa en la fila
+        // Escribimos el código SNIES y el nombre del programa en la fila
         fila = to_string(programaActual->consultarDatoInt(strCodigoSNIES)) + delimitador;
         fila += programaActual->consultarDatoString(strNombrePrograma) + delimitador;
 
-        // Seguimos por imprimir la informacion string e int del programa en la fila, respectivamente
+        // Escribimos la información string del programa
         int FILA_ETIQUETAS_STRING_PROGRAMAS = 0;
         int FILA_ETIQUETAS_INT_PROGRAMAS = 1;
         string nombreAtributo;
+
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_STRING_PROGRAMAS].size(); columnaEtiquetas++)
         {
             nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_PROGRAMAS][columnaEtiquetas];
-            // Verificamos que el dato que vamos a escribir no sea el nombre del programa que ya escribimos
+
+            // Evitamos duplicar el nombre del programa
             if (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma))
             {
                 fila += programaActual->consultarDatoString(nombreAtributo) + delimitador;
             }
         }
+
+        // Escribimos la información numérica del programa
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS].size(); columnaEtiquetas++)
         {
             nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_PROGRAMAS][columnaEtiquetas];
-            // Verificamos que el dato que vamos a escribir no sea el codigo SNIES que ya escribimos
+
+            // Evitamos duplicar el código SNIES
             if (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES))
             {
                 fila += to_string(programaActual->consultarDatoInt(nombreAtributo)) + delimitador;
@@ -116,11 +133,12 @@ void GestorCsv::escribirPrograma(string &strCodigoSNIES, string &strNombreProgra
     }
     catch (invalid_argument &e)
     {
+        // Si ocurre un error, lo propagamos
         throw invalid_argument(e.what());
     }
 }
 
-void GestorCsv::imprimirConsolidados(string &fila, ofstream &archivoResultados, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual)
+void GestorTxt::imprimirConsolidados(string &fila, ofstream &archivoResultados, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual)
 {
     int FILA_VALORES_SEXO = 4;
     int FILA_VALORES_ANO = 5;
@@ -182,7 +200,7 @@ void GestorCsv::imprimirConsolidados(string &fila, ofstream &archivoResultados, 
     }
 }
 
-void GestorCsv::escribirConsolidado(string &fila, string &delimitador, Consolidado *consolidadoActual, vector<vector<string>> &matrizEtiquetas)
+void GestorTxt::escribirConsolidado(string &fila, string &delimitador, Consolidado *consolidadoActual, vector<vector<string>> &matrizEtiquetas)
 {
     // Filas de la matriz que contienen las etiquetas para datos string e int respectivamente
     int FILA_ETIQUETAS_STRING_CONSOLIDADO = 2;
@@ -225,10 +243,10 @@ void GestorCsv::escribirConsolidado(string &fila, string &delimitador, Consolida
     }
 }
 
-bool GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
+bool GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
 {
     bool estadoCreacion = false;
-    string rutaCompleta = ruta + "buscados.csv";
+    string rutaCompleta = ruta + "buscados.txt";
     ofstream archivoBuscados(rutaCompleta);
     string delimitador = Settings::DELIMITADOR;
     if (!(archivoBuscados.is_open()))
@@ -279,55 +297,50 @@ bool GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &pr
     return estadoCreacion;
 }
 
-bool GestorCsv::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
+bool GestorTxt::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
 {
-    // Variable para almacenar el estado de la creación del archivo
+    // Inicializamos el estado de creación en falso
     bool estadoCreacion = false;
-
-    // Concatenamos la ruta con el nombre del archivo que queremos crear
+    // Definimos la ruta completa del archivo que se va a crear
     string rutaCompleta = ruta + "extras.txt";
-
-    // Abrimos el archivo de salida
+    // Creamos un archivo de salida en la ruta especificada
     ofstream archivoExtras(rutaCompleta);
-
-    // Definimos el delimitador a usar, que se obtiene de la configuración global
+    // Obtenemos el delimitador de los ajustes globales
     string delimitador = Settings::DELIMITADOR;
 
-    // Verificamos si el archivo se ha abierto correctamente
+    // Verificamos si el archivo se abrió correctamente
     if (!(archivoExtras.is_open()))
     {
-        // Si no se puede abrir el archivo, construimos un mensaje de error y lanzamos una excepción
+        // Si hay un error al abrir el archivo, cerramos y lanzamos una excepción
         string errorMsg = string("Error al abrir el archivo: ") + rutaCompleta;
-        archivoExtras.close(); // Cerramos el archivo si está abierto por alguna razón
+        archivoExtras.close();
         throw out_of_range(errorMsg);
     }
 
-    // Recorremos todas las filas de los datos que se van a imprimir
+    // Iteramos sobre las filas de los datos a imprimir
     for (int fila = 0; fila < datosAImprimir.size(); fila++)
     {
-        // Recorremos cada columna en la fila actual
+        // Iteramos sobre las columnas de la fila actual
         for (int columna = 0; columna < datosAImprimir[fila].size(); columna++)
         {
-            // Escribimos el valor de la columna en el archivo
+            // Escribimos el valor actual en el archivo
             archivoExtras << datosAImprimir[fila][columna];
 
-            // Si no es la última columna, añadimos el delimitador entre los valores
+            // Si no es la última columna, añadimos el delimitador
             if (columna != datosAImprimir[fila].size() - 1)
             {
                 archivoExtras << delimitador;
             }
         }
-
-        // Al terminar de escribir una fila, saltamos a la siguiente línea
+        // Saltamos a la siguiente línea después de cada fila
         archivoExtras << endl;
     }
 
-    // Indicamos que el archivo fue creado exitosamente
+    // Establecemos el estado de creación en verdadero una vez que se haya completado la escritura
     estadoCreacion = true;
-
-    // Cerramos el archivo para asegurar que los datos se guarden correctamente
+    // Cerramos el archivo después de terminar de escribir
     archivoExtras.close();
 
-    // Devolvemos el estado de creación del archivo
+    // Retornamos el estado de creación (verdadero si se creó el archivo correctamente)
     return estadoCreacion;
 }
