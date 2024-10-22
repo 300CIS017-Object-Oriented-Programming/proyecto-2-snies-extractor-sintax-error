@@ -26,61 +26,11 @@ bool View::mostrarPantallaBienvenido()
     if (validezRespuesta)
     {
         parametrizacionBool = true;
-
-        string userText;
         cout << "A continuacion se procesaran los datos de los programas academicos seleccionados en /programas.csv..." << endl;
 
-        string anio1("abc");
-        string ano2("abc");
-        string anoAux;
-        int i = 0;
-        bool anosValido = false;
-        // FIXME pasar la lógica del bucle a un método reutlizable
-        // Usar en el while una bandera y simplificar el código
-        // Bucle para leer un valor valido del año1
-        while (!(utilidadObj.isConvertibleToInt(anio1)))
-        {
-            if (i == 1)
-            {
-                cout << "El valor ingresado fue invalido!" << endl;
-                cout << "Por favor ingrese un valor valido la proxima" << endl;
-                cout << "Presione 'OK' y Enter para continuar: " << endl;
-                cin >> userText;
-                cout << endl;
-            }
-            cout << "Escriba el primer ano de busqueda: " << endl;
-            cin >> anio1;
-            cout << endl;
-            i = 1;
-        }
-
-        i = 0;
-        // Bucle para leer un valor valido del año2
-        while (!(utilidadObj.isConvertibleToInt(ano2)))
-        {
-            if (i == 1)
-            {
-                cout << "El valor ingresado fue invalido!" << endl;
-                cout << "Por favor ingrese un valor valido la proxima" << endl;
-                cout << "Presione 'OK' y Enter para continuar: " << endl;
-                cin >> userText;
-                cout << endl;
-            }
-            cout << "Escriba el segundo ano de busqueda: " << endl;
-            cin >> ano2;
-            cout << endl;
-            i = 1;
-        }
-
-        // Organizo los años
-        // FIXME: Crear un método para hacer que el segundo año sea siempre
-        // mayor que el primer año
-        if (stoi(ano2) < stoi(anio1))
-        {
-            anoAux = anio1;
-            anio1 = ano2;
-            ano2 = anoAux;
-        }
+        int anio1;
+        int anio2;
+        solicitarAniosBusqueda(anio1, anio2);
 
         cout << "Procesando datos ..." << endl;
         controlador.procesarDatosCsv(anio1, ano2);
@@ -185,4 +135,76 @@ bool View::respuestaValida(string& respuestaEsperada, string& respuestaActual)
         validez = false;
     }
     return validez;
+}
+
+int View::solicitarIntValido(string& mensajeInput, string& mensajeError)
+{
+    string userInput = '';
+    bool condicion = false;
+    bool intInvalido = false;
+
+    while (!condicion)
+    {
+        if (intInvalido)
+        {
+            //Imprimimos un mensaje de error si no se puso un int válido
+            cout << mensajeError << endl;
+        }
+        else
+        {
+            intInvalido = true;
+        }
+
+        //Imprimimos el mensaje para el input y leemos la respuesta del usuario
+        cout << mensajeInput << endl;
+        cin >> userInput;
+        cout << endl;
+
+        //Verificamos que el string se pueda convertir a int para salir del bucle
+        condicion = utilidadObj.isConvertibleToInt(userInput);
+    }
+
+    return stoi(userInput);
+}
+
+void View::solicitarAniosBusqueda(int& anio1, int& anio2)
+{
+    string anoAux;
+
+    //Leemos el primer anio de busqueda
+    string mensajeInput = string("Ingrese el primer anio de busqueda:");
+    string mensajeError = string("Por favor introduzca un anio valido.");
+    anio1 = solicitarIntValido(mensajeInput, mensajeError);
+
+    //Leemos el segundo anio de busqueda
+    bool anioInvalido = false;
+    anio2 = anio1;
+    mensajeInput = string("Ingrese el ultimo anio de busqueda:");
+    mensajeError = string("Por favor introduzca un anio valido.");
+    while (anio1 == anio2)
+    {
+        if (anioInvalido)
+        {
+            cout << "El segundo anio de busqueda debe ser distinto al primero: " << anio1 << endl;
+        }
+        else
+        {
+            anioInvalido = true;
+        }
+        anio2 = solicitarIntValido(mensajeInput, mensajeError);
+    }
+
+    // Organizo los años de menor a mayor
+    organizarAnios(anio1, anio2);
+}
+
+void View::organizarAnios(int& anio1, int& anio2)
+{
+    int anioAux;
+    if (anio1 > anio2)
+    {
+        anioAux = anio1;
+        anio1 = anio2;
+        anio2 = anioAux;
+    }
 }

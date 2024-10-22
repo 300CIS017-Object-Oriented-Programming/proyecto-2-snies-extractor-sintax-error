@@ -14,6 +14,9 @@ private:
     Utilidad utilidadObj;
 
     bool respuestaValida(string& respuestaEsperada, string& respuestaActual);
+    int solicitarIntValido(string& mensajeInput, string& mensajeError);
+    void solicitarAniosBusqueda(int& anio1, int& anio2);
+    void organizarAnios(int& anio1, int& anio2);
 public:
     View() = default;
     ~View();
