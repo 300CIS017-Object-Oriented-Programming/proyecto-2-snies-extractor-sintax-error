@@ -4,6 +4,8 @@
 
 #include "Utilidad.h"
 
+#include <stdexcept>
+
 string Utilidad::limpiarString(string &texto)
 {
     std::string resultado;
@@ -41,4 +43,26 @@ string Utilidad::minusculasSinEspacios(string &input)
 
     // Devolvemos la cadena resultante en minúsculas y sin espacios
     return resultado;
+}
+
+bool Utilidad::isConvertibleToInt(const string& str)
+{
+    try
+    {
+        std::size_t pos;
+        int num = std::stoi(str, &pos);
+
+        // Verificamos si se ha convertido toda la cadena
+        return pos == str.length();
+    }
+    catch (invalid_argument &)
+    {
+        // No se pudo convertir: la cadena no es un número válido
+        return false;
+    }
+    catch (out_of_range &)
+    {
+        // No se pudo convertir: el número está fuera del rango de int
+        return false;
+    }
 }

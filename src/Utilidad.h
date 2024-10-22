@@ -6,6 +6,7 @@
 #define UTILIDAD_H
 
 #include <string>
+#include <cctype>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ public:
 
     string minusculasSinEspacios(string &);
     string limpiarString(string &);
+    bool isConvertibleToInt(const string&);
 };
 
 #endif // UTILIDAD_H
