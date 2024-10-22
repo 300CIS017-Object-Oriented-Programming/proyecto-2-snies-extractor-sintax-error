@@ -8,7 +8,8 @@ SNIESController::SNIESController()
     {
         inicializarGestores();
         inicializarEtiquetas();
-    } catch (out_of_range& e)
+    }
+    catch (out_of_range &e)
     {
         string errorMsg = string("No se pudo inicializar el Controlador. ") + e.what();
         throw out_of_range(errorMsg);
@@ -17,7 +18,7 @@ SNIESController::SNIESController()
 
 void SNIESController::inicializarGestores()
 {
-    //Agregar los gestores al vector
+    // Agregar los gestores al vector
     gestoresArchivos.push_back(new GestorCsv());
     gestoresArchivos.push_back(new GestorTxt());
     gestoresArchivos.push_back(new GestorJSON());
@@ -26,11 +27,11 @@ void SNIESController::inicializarGestores()
 void SNIESController::inicializarEtiquetas()
 {
     matrizEtiquetas = vector<vector<string>>(6);
-    //Leer el archivo de configuracion para obtener la información necesaria
+    // Leer el archivo de configuracion para obtener la información necesaria
     leerArchivoConfiguracion(matrizEtiquetas);
 }
 
-void SNIESController::leerArchivoConfiguracion(vector<vector<string>>& matriz)
+void SNIESController::leerArchivoConfiguracion(vector<vector<string>> &matriz)
 {
     string rutaConfig = Settings::ETIQUETAS_CONFIG_PATH;
     ifstream archivoConfig(rutaConfig);
@@ -40,9 +41,9 @@ void SNIESController::leerArchivoConfiguracion(vector<vector<string>>& matriz)
     }
 
     string fila;
-    //Se inicia en -1 para que cuando lea la primera serie de etiquetas empiece por la fila 0 de la matriz
+    // Se inicia en -1 para que cuando lea la primera serie de etiquetas empiece por la fila 0 de la matriz
     int posFilaMatriz = -1;
-    while (getline(archivoConfig,fila))
+    while (getline(archivoConfig, fila))
     {
         /*Las distintas categorias de etiquetas empizan por una fila con el nombre de la categoria
          * El primer caracter del nombre de la categoria siempre empieza por '-'
@@ -58,7 +59,7 @@ void SNIESController::leerArchivoConfiguracion(vector<vector<string>>& matriz)
         }
     }
 
-    //Cerramos el archivo una vez hemos terminado
+    // Cerramos el archivo una vez hemos terminado
     archivoConfig.close();
 }
 
@@ -71,7 +72,7 @@ SNIESController::~SNIESController()
     }
 }
 
-//FIXME: Adaptar al nuevo diseño teniendo en cuenta el diseño viejo
+// FIXME: Adaptar al nuevo diseño teniendo en cuenta el diseño viejo
 void SNIESController::procesarDatos(vector<string> anos)
 {
     int FILA_ATRIBUTOS_STRING_PROGRAMA = 0;
@@ -80,16 +81,16 @@ void SNIESController::procesarDatos(vector<string> anos)
     int FILA_ATRIBUTOS_INT_CONSOLIDADO = 3;
     int FILA_SEXOS_DISPONIBLES = 4;
     int FILA_ANOS_DISPONIBLES = 5;
-    //Llenamos la ultima fila de la matriz de etiquetas con los años a considerar
+    // Llenamos la ultima fila de la matriz de etiquetas con los años a considerar
     matrizEtiquetas[FILA_ANOS_DISPONIBLES] = anos;
 
     vector<int> codigosSNIES;
     vector<string> etiquetasParaLeer;
     vector<vector<string>> matrizArchivo;
     string rutaActual;
-    //Leemos los codigos SNIES que nos piden buscar
+    // Leemos los codigos SNIES que nos piden buscar
     rutaActual = Settings::PROGRAMAS_FILTRAR_FILE_PATH;
-    //Se utiliza el gestor 0 porque para los propósitos de leer sirve cualquier gestor
+    // Se utiliza el gestor 0 porque para los propósitos de leer sirve cualquier gestor
     codigosSNIES = gestoresArchivos[0]->leerProgramas(rutaActual);
 
     /*
@@ -98,18 +99,17 @@ void SNIESController::procesarDatos(vector<string> anos)
      * Y los consolidados de este archivo en particular
      */
 
-    //Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
+    // Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
     seleccionarEtiquetas(FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, etiquetasParaLeer);
 
-    //Leemos el archivo
+    // Leemos el archivo
     matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
 
-    //Ahora procesamos los datos que nos llegaron de la lectura del archivo para crear los programas
+    // Ahora procesamos los datos que nos llegaron de la lectura del archivo para crear los programas
     crearProgramas();
-
 }
 
-void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<string>& etiquetasParaLeer)
+void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<string> &etiquetasParaLeer)
 {
     etiquetasParaLeer.clear();
     for (int fila = filaMin; fila <= filaMax; fila++)
@@ -121,7 +121,7 @@ void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<stri
     }
 }
 
-void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int filaAtrIntCon)
+void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int filaAtrIntCon)
 {
     string etiquetaCorrespondiente;
     ProgramaAcademico *programaNuevo;
@@ -131,7 +131,7 @@ void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int 
     int datoInt;
     int codigoSNIES;
     string strCodigoSNIES = "CÓDIGO SNIES DEL PROGRAMA";
-    //Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
+    // Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
     for (int fila = 1; fila < matrizArchivo.size(); fila++)
     {
         programaNuevo = new ProgramaAcademico();
@@ -140,13 +140,13 @@ void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int 
         {
             etiquetaCorrespondiente = matrizArchivo[0][columna];
             datoString = matrizArchivo[fila][columna];
-            //Miramos si la etiqueta es el codigo SNIES para guardarlo por separado
+            // Miramos si la etiqueta es el codigo SNIES para guardarlo por separado
             if (utilidadObj.minusculasSinEspacios(etiquetaCorrespondiente) == utilidadObj.minusculasSinEspacios(strCodigoSNIES))
             {
                 datoInt = stoi();
                 codigoSNIES = datoInt;
             }
-            //Buscamos a que tipo de atributo pertenece
+            // Buscamos a que tipo de atributo pertenece
             itFilaMatriz = find(matrizEtiquetas[fAtrStrProg].begin(), matrizEtiquetas[fAtrStrProg].end(), etiquetaCorrespondiente);
             if (itFilaMatriz != matrizEtiquetas[fAtrStrProg].end())
             {
@@ -155,8 +155,6 @@ void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int 
         }
     }
 }
-
-
 
 void SNIESController::procesarDatosCsv(string &ano1, string &ano2)
 {
@@ -394,7 +392,7 @@ void SNIESController::procesarDatosCsv(string &ano1, string &ano2)
     // cout << archivoCreado << endl;
 }
 
-//FIXME: Adaptar al nuevo diseño
+// FIXME: Adaptar al nuevo diseño
 void SNIESController::buscarProgramas(bool flag, string &palabraClave, int idComparacion)
 {
     list<ProgramaAcademico *> listaProgramas;
@@ -418,7 +416,7 @@ void SNIESController::buscarProgramas(bool flag, string &palabraClave, int idCom
     }
 }
 
-//FIXME: Adaptar al nuevo diseño
+// FIXME: Adaptar al nuevo diseño
 void SNIESController::calcularDatosExtra(bool exportarArchivo)
 {
     vector<vector<string>> matrizFinal;
@@ -427,31 +425,40 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
     vector<vector<string>> matrizEtiquetas3;
     vector<string> etiquetas1;
     vector<string> sumaMatriculados;
+    string ano1 = matrizEtiquetas[5][matrizEtiquetas.size() - 2];
+    string ano2 = matrizEtiquetas[5][matrizEtiquetas.size() - 1];
+    string Matriculados = "Matriculados";
+    string Neos = "PRIMER CURSO";
+    string Metodologia = "ID METODOLOGÍA";
+    string CodigoSnies = "CÓDIGO SNIES DEL PROGRAMA";
+    string NombrePrograma = "PROGRAMA ACADÉMICO";
+
     for (string ano : matrizEtiquetas[5])
     {
-        string etiqueta = "Suma Estudiantes Matriculados de Programas Seleccionados (Presencial o Virtual) año " + ano;
-        etiquetas1.push_back(etiqueta);
+        string etiqueta1 = "Suma Estudiantes Matriculados de Programas Seleccionados (Presencial o Virtual) año " + ano;
+        etiquetas1.push_back(etiqueta1);
     }
     matrizEtiquetas1.push_back(etiquetas1);
 
     vector<string> etiquetas2 = {
-        "Codigo Snies", "Nombre del Programa", "Nombre del Institucion", "Diferencial porcentual anual de NEOS"};
+        "Codigo Snies", "Nombre del Programa", "Nombre del Institucion", "Diferencial porcentual anual de NEOS de los años" + ano2 + " y " + ano1};
     matrizEtiquetas2.push_back(etiquetas2);
 
     vector<string> etiquetas3 = {
         "Codigo Snies", "Nombre del Programa sin NEOS en los ultimos 3 semestres"};
     matrizEtiquetas3.push_back(etiquetas3);
 
-    int suma = 0;
-    string Matriculados = "Matriculados";
     for (auto &it : programasAcademicos)
     {
-        int neosPrimerAno = 0;
-        int neosSegundoAno = 0;
-        int diferenciaNeos = 0;
+        int SumaNeosPrimerSemestre;
+        int SumaNeosSegundoSemestre;
+        int SumaNeosTercerSemestre;
+        int SumaNeosCuartoSemestre;
+        int SumaNeosPrimerAno;
+        int SumaNeosSegundoAno;
+        int suma;
         ProgramaAcademico *programa = it.second;
 
-        string Metodologia = "ID METODOLOGÍA";
         // Acceso a los datos del programa académico desde los mapas
         int idMetodologiaBuscada = programa->consultarDatoInt(Metodologia);
 
@@ -471,100 +478,62 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
             }
         }
 
-        for (map<int, ProgramaAcademico *>::iterator it = programasAcademicos.begin(); it != programasAcademicos.end(); ++it)
+        for (string sexo : matrizEtiquetas[4])
         {
-            int neosPrimerAno = 0;
-            int neosSegundoAno = 0;
-            int diferenciaNeos = 0;
-            ProgramaAcademico *programa = it->second;
-            int idMetodologiaBuscada = programa->getIdMetodologia();
-            if (idMetodologiaBuscada == 1 || idMetodologiaBuscada == 3)
-            {
-                for (int i = 0; i < 4; ++i)
-                {
-                    Consolidado *consolidado = programa->getConsolidado(i);
-                    int matriculados = consolidado->getMatriculados();
-                    sumaPrimerAno += matriculados;
-                }
+            Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano1), 1);
+            SumaNeosPrimerSemestre += stoi(consolidado1->obtenerDatoString(Neos));
+            Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano1), 2);
+            SumaNeosSegundoSemestre += stoi(consolidado2->obtenerDatoString(Neos));
 
-                for (int i = 0; i < 4; ++i)
-                {
-                    Consolidado *consolidado = programa->getConsolidado(i + 4);
-                    int matriculados = consolidado->getMatriculados();
-                    sumaSegundoAno += matriculados;
-                }
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                Consolidado *consolidado = programa->getConsolidado(i);
-                int numNeos = consolidado->getMatriculadosPrimerSemestre();
-                neosPrimerAno += numNeos;
-            }
-
-            for (int i = 0; i < 4; ++i)
-            {
-                Consolidado *consolidado = programa->getConsolidado(i + 4);
-                int numNeos = consolidado->getMatriculadosPrimerSemestre();
-                neosSegundoAno += numNeos;
-            }
-
-            if (neosPrimerAno != 0)
-            {
-                diferenciaNeos = ((neosSegundoAno - neosPrimerAno) * 100) / neosPrimerAno;
-            }
-            else
-            {
-                diferenciaNeos = 0;
-            }
-            datosEtiquetas2 = {to_string(programa->getCodigoSniesDelPrograma()), programa->getProgramaAcademico(), programa->getInstitucionDeEducacionSuperiorIes(), to_string(diferenciaNeos)};
-            matrizEtiquetas2.push_back(datosEtiquetas2);
-            int SumaNeosPrimerSemestre;
-            int SumaNeosSegundoSemestre;
-            int SumaNeosTercerSemestre;
-            int SumaNeosCuartoSemestre;
-            for (int i = 0; i < 4; ++i)
-            {
-                Consolidado *consolidados[8];
-                if (i == 0)
-                {
-                    consolidados[0] = programa->getConsolidado(i);
-                    consolidados[1] = programa->getConsolidado(i + 2);
-                    int neosHombres = consolidados[0]->getMatriculadosPrimerSemestre();
-                    int neosMujeres = consolidados[1]->getMatriculadosPrimerSemestre();
-                    SumaNeosPrimerSemestre = neosHombres + neosMujeres;
-                }
-                else if (i == 1)
-                {
-                    consolidados[2] = programa->getConsolidado(i);
-                    consolidados[3] = programa->getConsolidado(i + 2);
-                    int neosHombres = consolidados[2]->getMatriculadosPrimerSemestre();
-                    int neosMujeres = consolidados[3]->getMatriculadosPrimerSemestre();
-                    SumaNeosSegundoSemestre = neosHombres + neosMujeres;
-                }
-                else if (i == 2)
-                {
-                    consolidados[4] = programa->getConsolidado(i + 2);
-                    consolidados[5] = programa->getConsolidado(i + 4);
-                    int neosHombres = consolidados[4]->getMatriculadosPrimerSemestre();
-                    int neosMujeres = consolidados[5]->getMatriculadosPrimerSemestre();
-                    SumaNeosTercerSemestre = neosHombres + neosMujeres;
-                }
-                else if (i == 3)
-                {
-                    consolidados[6] = programa->getConsolidado(i + 2);
-                    consolidados[7] = programa->getConsolidado(i + 4);
-                    int neosHombres = consolidados[6]->getMatriculadosPrimerSemestre();
-                    int neosMujeres = consolidados[7]->getMatriculadosPrimerSemestre();
-                    SumaNeosCuartoSemestre = neosHombres + neosMujeres;
-                }
-            }
-
-            if ((SumaNeosPrimerSemestre == 0 && SumaNeosSegundoSemestre == 0 && SumaNeosTercerSemestre == 0) || (SumaNeosSegundoSemestre == 0 && SumaNeosTercerSemestre == 0 && SumaNeosCuartoSemestre == 0))
-            {
-                etiquetas3 = {to_string(programa->getCodigoSniesDelPrograma()),
-                              programa->getProgramaAcademico()};
-            }
+            Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ano2), 1);
+            SumaNeosTercerSemestre += stoi(consolidado3->obtenerDatoString(Neos));
+            Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ano2), 2);
+            SumaNeosCuartoSemestre += stoi(consolidado4->obtenerDatoString(Neos));
         }
+
+        if ((SumaNeosPrimerSemestre == 0 && SumaNeosSegundoSemestre == 0 && SumaNeosTercerSemestre == 0) || (SumaNeosSegundoSemestre == 0 && SumaNeosTercerSemestre == 0 && SumaNeosCuartoSemestre == 0))
+        {
+            etiquetas3 = {to_string(programa->consultarDatoInt(CodigoSnies)), programa->consultarDatoString(NombrePrograma)};
+        }
+// esta parte que es la de calcular la diferencia entre dos anos toca revisarla para ver si se calcula solo la de los utlimos dos o de dos en dos y asi hasta calcualar todos los anos.
+        for (string sexo : matrizEtiquetas[4])
+        {
+            Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano1), 1);
+            SumaNeosPrimerAno += stoi(consolidado1->obtenerDatoString(Neos));
+            Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano1), 2);
+            SumaNeosPrimerAno += stoi(consolidado2->obtenerDatoString(Neos));
+
+            Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ano2), 1);
+            SumaNeosSegundoAno += stoi(consolidado3->obtenerDatoString(Neos));
+            Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ano2), 2);
+            SumaNeosSegundoAno+= stoi(consolidado4->obtenerDatoString(Neos));
+        }
+
+        for (int i = 0; i < 4; ++i)
+        {
+            Consolidado *consolidado = programa->getConsolidado(i);
+            int numNeos = consolidado->getMatriculadosPrimerSemestre();
+            neosPrimerAno += numNeos;
+        }
+
+        for (int i = 0; i < 4; ++i)
+        {
+            Consolidado *consolidado = programa->getConsolidado(i + 4);
+            int numNeos = consolidado->getMatriculadosPrimerSemestre();
+            neosSegundoAno += numNeos;
+        }
+
+        if (neosPrimerAno != 0)
+        {
+            diferenciaNeos = ((neosSegundoAno - neosPrimerAno) * 100) / neosPrimerAno;
+        }
+        else
+        {
+            diferenciaNeos = 0;
+        }
+        datosEtiquetas2 = {to_string(programa->getCodigoSniesDelPrograma()), programa->getProgramaAcademico(), programa->getInstitucionDeEducacionSuperiorIes(), to_string(diferenciaNeos)};
+        matrizEtiquetas2.push_back(datosEtiquetas2);
+
         etiquetas1 = {to_string(sumaPrimerAno), to_string(sumaSegundoAno)};
         matrizEtiquetas1.push_back(etiquetas1);
         matrizFinal.insert(matrizFinal.end(), matrizEtiquetas1.begin(), matrizEtiquetas1.end());
