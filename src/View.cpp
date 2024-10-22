@@ -22,7 +22,7 @@ bool View::mostrarPantallaBienvenido()
     cout << endl;
 
     string respuestaEsperada = string("Y");
-    validezRespuesta = respuestaValida(respuestaEsperada, userAnswer);
+    validezRespuesta = esRespuestaValida(respuestaEsperada, userAnswer);
     if (validezRespuesta)
     {
         parametrizacionBool = true;
@@ -60,24 +60,16 @@ void View::salir()
 
 void View::mostrarDatosExtra()
 {
-    char opcionYN;
+    string opcionYN;
     cout << "A continuacion vamos a mostrar datos relevantes de los programas academicos seleccionados" << "\n"
          << endl;
     cout << "Desea Convertir los datos a un archivo CSV?(Y/N): " << endl;
     cin >> opcionYN;
-    opcionYN = tolower(opcionYN);
-    cout << "\n";
-    // FIXME verificar que el usuario ingrese un valor igual al esperado, return true si es Y, false si es N, y no sale si no retorna un valor válido
-    // Simplificar el código de acuerdo a ese ajuste
-    if (opcionYN == 'y')
-    {
-        controlador.calcularDatosExtra(true);
-    }
+    cout << endl;
 
-    else
-    {
-        controlador.calcularDatosExtra(false);
-    }
+    string respuestaEsperada = string("Y");
+    bool exportarArchivo = esRespuestaValida(respuestaEsperada, opcionYN);
+    controlador.calcularDatosExtra(exportarArchivo);
 }
 
 void View::buscarPorPalabraClaveYFormacion()
@@ -130,7 +122,7 @@ void View::buscarPorPalabraClaveYFormacion()
     }
 }
 
-bool View::respuestaValida(string& respuestaEsperada, string& respuestaActual)
+bool View::esRespuestaValida(string& respuestaEsperada, string& respuestaActual)
 {
     bool validez = false;
     if (utilidadObj.minusculasSinEspacios(respuestaActual) == utilidadObj.minusculasSinEspacios(respuestaEsperada))
