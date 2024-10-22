@@ -8,21 +8,22 @@ View::~View()
 bool View::mostrarPantallaBienvenido()
 {
     bool parametrizacionBool = false;
+    bool validezRespuesta;
 
     cout << "Bienvenido al SNIES-Extractor!" << endl;
     cout << "=========================================" << endl;
     cout << "Recuerde que para el correcto funcionamiento del programa tuvo que haber parametrizado" << endl;
     cout << "antes la carpeta SNIES_EXTRACTOR en el disco duro C:, con sus respectivas carpetas inputs y outputs" << endl;
     cout << "y todos los archivo CSV del SNIES." << endl;
-    cout << "Si ya hizo esto, escriba 'Y', de lo contrario 'N', y Enter: " << endl;
-    char userAnswer = 'Y'; // FIXME cuando se arregle el debugger
-    // cin >> userAnswer;
-    // cout << endl;
-    // FIXME verificar que el usuario ingree un valor igual al esperado incluir todo dentro de un while para
-    // para asegurar que el usuario ingrese un valor valido
-    // pasarlo a un método que se pueda usar en otros lugares
-    userAnswer = static_cast<char>(tolower(userAnswer));
-    if (userAnswer == 'y')
+    cout << "Si ya hizo esto, escriba 'Y' y Enter: " << endl;
+
+    string userAnswer;
+    cin >> userAnswer;
+    cout << endl;
+
+    string respuestaEsperada = string("Y");
+    validezRespuesta = respuestaValida(respuestaEsperada, userAnswer);
+    if (validezRespuesta)
     {
         parametrizacionBool = true;
 
@@ -85,6 +86,11 @@ bool View::mostrarPantallaBienvenido()
         controlador.procesarDatosCsv(anio1, ano2);
         cout << "Datos procesados con exito!" << endl;
     }
+    else
+    {
+        parametrizacionBool = false;
+    }
+
     return parametrizacionBool;
 }
 
@@ -165,4 +171,18 @@ void View::buscarPorPalabraClaveYFormacion()
             controlador.buscarProgramas(convertirCSV, palabraClave, idFormacionAcademica);
         }
     }
+}
+
+bool View::respuestaValida(string& respuestaEsperada, string& respuestaActual)
+{
+    bool validez = false;
+    if (utilidadObj.minusculasSinEspacios(respuestaActual) == utilidadObj.minusculasSinEspacios(respuestaEsperada))
+    {
+        validez = true;
+    }
+    else
+    {
+        validez = false;
+    }
+    return validez;
 }

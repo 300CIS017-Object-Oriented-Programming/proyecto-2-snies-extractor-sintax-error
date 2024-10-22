@@ -12,6 +12,8 @@ class View
 private:
     SNIESController controlador;
     Utilidad utilidadObj;
+
+    bool respuestaValida(string& respuestaEsperada, string& respuestaActual);
 public:
     View() = default;
     ~View();
