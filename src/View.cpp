@@ -139,7 +139,7 @@ bool View::esRespuestaValida(string& respuestaEsperada, string& respuestaActual)
 
 int View::solicitarIntValido(string& mensajeInput, string& mensajeError)
 {
-    string userInput = '';
+    string userInput;
     bool condicion = false;
     bool intInvalido = false;
 
