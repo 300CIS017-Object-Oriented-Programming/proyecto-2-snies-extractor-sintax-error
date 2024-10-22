@@ -1,8 +1,7 @@
 #include "GestorTxt.h"
 
-bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
+void GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
 {
-    bool estadoCreacion = false;
     string rutaCompleta = ruta + "resultados.txt";
 
     // Abrimos el archivo donde se van a escribir los resultados
@@ -58,9 +57,7 @@ bool GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     }
 
     // Cerramos el archivo una vez terminamos de escribir los resultados
-    estadoCreacion = true;
     archivoResultados.close();
-    return estadoCreacion;
 }
 
 void GestorTxt::escribirEtiquetas(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
@@ -243,9 +240,8 @@ void GestorTxt::escribirConsolidado(string &fila, string &delimitador, Consolida
     }
 }
 
-bool GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
+void GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
 {
-    bool estadoCreacion = false;
     string rutaCompleta = ruta + "buscados.txt";
     ofstream archivoBuscados(rutaCompleta);
     string delimitador = Settings::DELIMITADOR;
@@ -292,15 +288,11 @@ bool GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &pr
     }
 
     // Cerramos el archivo una vez terminamos de iterar sobre los programas
-    estadoCreacion = true;
     archivoBuscados.close();
-    return estadoCreacion;
 }
 
-bool GestorTxt::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
+void GestorTxt::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
 {
-    // Inicializamos el estado de creación en falso
-    bool estadoCreacion = false;
     // Definimos la ruta completa del archivo que se va a crear
     string rutaCompleta = ruta + "extras.txt";
     // Creamos un archivo de salida en la ruta especificada
@@ -336,11 +328,6 @@ bool GestorTxt::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImp
         archivoExtras << endl;
     }
 
-    // Establecemos el estado de creación en verdadero una vez que se haya completado la escritura
-    estadoCreacion = true;
     // Cerramos el archivo después de terminar de escribir
     archivoExtras.close();
-
-    // Retornamos el estado de creación (verdadero si se creó el archivo correctamente)
-    return estadoCreacion;
 }

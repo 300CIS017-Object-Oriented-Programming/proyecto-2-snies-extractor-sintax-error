@@ -199,9 +199,8 @@ void GestorJSON::escribirConsolidadoJson(json &jsonData, Consolidado *consolidad
     }
 }
 
-bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
+void GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
 {
-    bool estadoCreacion = false;                    // Variable que indica el estado de creación del archivo
     string rutaCompleta = ruta + "resultados.json"; // Construcción de la ruta completa del archivo JSON
     ofstream archivoResultados(rutaCompleta);       // Apertura del archivo para escritura
     vector<string> vectorAtributosPrograma;         // Vector para almacenar atributos del programa académico
@@ -265,14 +264,11 @@ bool GestorJSON::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapad
     // Cerrar el archivo una vez acabamos de escribir en él
     int INDENTACION_JSON = 4;                             // Definir la cantidad de espacios para la indentación del JSON
     archivoResultados << jsonData.dump(INDENTACION_JSON); // Escribir los datos en el archivo con indentación
-    estadoCreacion = true;                                // Marcar el estado de creación como exitoso
     archivoResultados.close();                            // Cerrar el archivo
-    return estadoCreacion;                                // Retornar el estado de creación
 }
 
-bool GestorJSON::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
+void GestorJSON::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
 {
-    bool estadoCreacion = false;                  // Variable que indica el estado de creación del archivo
     string rutaCompleta = ruta + "buscados.json"; // Construcción de la ruta completa del archivo JSON
     ofstream archivoBuscados(rutaCompleta);       // Apertura del archivo para escritura
 
@@ -331,14 +327,11 @@ bool GestorJSON::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &p
     // Cerrar el archivo una vez acabamos de escribir en él
     int INDENTACION_JSON = 4;                           // Definir la cantidad de espacios para la indentación del JSON
     archivoBuscados << jsonData.dump(INDENTACION_JSON); // Escribir los datos en el archivo con indentación
-    estadoCreacion = true;                              // Marcar el estado de creación como exitoso
     archivoBuscados.close();                            // Cerrar el archivo
-    return estadoCreacion;                              // Retornar el estado de creación
 }
 
-bool GestorJSON::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
+void GestorJSON::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
 {
-    bool estadoCreacion = false;                // Variable que indica el estado de creación del archivo
     string rutaCompleta = ruta + "extras.json"; // Construcción de la ruta completa del archivo JSON
     ofstream archivoExtras(rutaCompleta);       // Apertura del archivo para escritura
 
@@ -365,7 +358,5 @@ bool GestorJSON::crearArchivoExtra(string &ruta, vector<vector<string>> datosAIm
 
     int INDENTACION_JSON = 4;                         // Definir la cantidad de espacios para la indentación del JSON
     archivoExtras << jsonData.dump(INDENTACION_JSON); // Escribir los datos en el archivo con indentación
-    estadoCreacion = true;                            // Marcar el estado de creación como exitoso
     archivoExtras.close();                            // Cerrar el archivo
-    return estadoCreacion;                            // Retornar el estado de creación
 }

@@ -25,9 +25,9 @@ public:
     void imprimirConsolidadosJson(json &jsonData, ProgramaAcademico *programaActual, vector<vector<string>> &matrizEtiquetas, vector<string> &vectorAtributosPrograma);
     void escribirConsolidadoJson(json &jsonData, Consolidado *consolidadoActual, vector<vector<string>> &matrizEtiquetas, string &llaveConsolidado);
 
-    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas) override;
-    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas) override;
-    bool crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) override;
+    void crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas) override;
+    void crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas) override;
+    void crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) override;
 };
 
 #endif

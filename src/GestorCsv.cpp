@@ -1,8 +1,7 @@
 #include "GestorCsv.h"
 
-bool GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
+void GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas)
 {
-    bool estadoCreacion = false;
     string rutaCompleta = ruta + "resultados.csv";
     ofstream archivoResultados(rutaCompleta);
     string delimitador = Settings::DELIMITADOR;
@@ -49,9 +48,7 @@ bool GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     }
 
     // Cerramos el archivo una vez terminamos de iterar sobre los programas
-    estadoCreacion = true;
     archivoResultados.close();
-    return estadoCreacion;
 }
 
 void GestorCsv::escribirEtiquetas(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
@@ -225,9 +222,8 @@ void GestorCsv::escribirConsolidado(string &fila, string &delimitador, Consolida
     }
 }
 
-bool GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
+void GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas)
 {
-    bool estadoCreacion = false;
     string rutaCompleta = ruta + "buscados.csv";
     ofstream archivoBuscados(rutaCompleta);
     string delimitador = Settings::DELIMITADOR;
@@ -274,16 +270,11 @@ bool GestorCsv::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &pr
     }
 
     // Cerramos el archivo una vez terminamos de iterar sobre los programas
-    estadoCreacion = true;
     archivoBuscados.close();
-    return estadoCreacion;
 }
 
-bool GestorCsv::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
+void GestorCsv::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir)
 {
-    // Variable para almacenar el estado de la creación del archivo
-    bool estadoCreacion = false;
-
     // Concatenamos la ruta con el nombre del archivo que queremos crear
     string rutaCompleta = ruta + "extras.txt";
 
@@ -322,12 +313,6 @@ bool GestorCsv::crearArchivoExtra(string &ruta, vector<vector<string>> datosAImp
         archivoExtras << endl;
     }
 
-    // Indicamos que el archivo fue creado exitosamente
-    estadoCreacion = true;
-
     // Cerramos el archivo para asegurar que los datos se guarden correctamente
     archivoExtras.close();
-
-    // Devolvemos el estado de creación del archivo
-    return estadoCreacion;
 }
