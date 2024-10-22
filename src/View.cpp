@@ -32,9 +32,16 @@ bool View::mostrarPantallaBienvenido()
         int anio2;
         solicitarAniosBusqueda(anio1, anio2);
 
-        cout << "Procesando datos ..." << endl;
-        controlador.procesarDatosCsv(anio1, ano2);
-        cout << "Datos procesados con exito!" << endl;
+        try
+        {
+            cout << "Procesando datos ..." << endl;
+            controlador.procesarDatos(anio1, anio2);
+            cout << "Datos procesados con exito!" << endl;
+        } catch (out_of_range& e)
+        {
+            cout << e.what() << endl;
+            parametrizacionBool = false;
+        }
     }
     else
     {
