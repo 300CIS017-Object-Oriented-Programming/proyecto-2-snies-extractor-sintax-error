@@ -166,7 +166,7 @@ void SNIESController::procesarDatos(vector<string> anos)
         }
         //Para este punto ya tenemos todos los programas y consolidados
 
-        //Una ves tenemos todos los programas y consolidados, creamos el archivo de resultados con cada gestor de archivos
+        //Una vez tenemos todos los programas y consolidados, creamos el archivo de resultados con cada gestor de archivos
         string rutaOutput = Settings::OUTPUTS_PATH;
         for(int gestor = 0; gestor < gestoresArchivos.size(); gestor++)
         {
@@ -379,6 +379,14 @@ void SNIESController::buscarProgramas(bool exportarArchivo, string &palabraClave
     string institucionEducacionSuperior = string("INSTITUCIÓN DE EDUCACIÓN SUPERIOR (IES)");
     string METODOLOGIA =string("METODOLOGÍA");
     string rutaOutput = Settings::OUTPUTS_PATH;
+    string delimitador = Settings::DELIMITADOR;
+
+    //Imprimimos en terminal las etiquetas que vamos a mostrar de los programas
+    cout << codigoSNIES << delimitador;
+    cout << llaveNombrePrograma << delimitador;
+    cout << codigoInstitucion << delimitador;
+    cout << institucionEducacionSuperior << delimitador;
+    cout << METODOLOGIA << endl;
 
     for (map<int, ProgramaAcademico *>::iterator it = programasAcademicos.begin(); it != programasAcademicos.end(); ++it)
     {
@@ -391,11 +399,15 @@ void SNIESController::buscarProgramas(bool exportarArchivo, string &palabraClave
         {
             listaProgramas.push_back(programa);
             // codigo SNIES, nombre del programa, codigo de la institucion, nombre de la institucion y metodología
-            cout << programa->consultarDatoInt(codigoSNIES) << ";" << nombre << ";" << programa->consultarDatoInt(codigoInstitucion) << ";"; 
-            cout << programa->consultarDatoString(institucionEducacionSuperior) << ";" << programa->consultarDatoString(METODOLOGIA) << endl;
+            cout << programa->consultarDatoInt(codigoSNIES) << delimitador;
+            cout << nombre << delimitador;
+            cout << programa->consultarDatoInt(codigoInstitucion) << delimitador;
+            cout << programa->consultarDatoString(institucionEducacionSuperior) << delimitador;
+            cout << programa->consultarDatoString(METODOLOGIA) << endl;
         }
     }
 
+    //Exportamos los resultados a archivos de salida si nos lo han pedido
     if (exportarArchivo)
     {
         for(int gestor = 0; gestor < gestoresArchivos.size(); gestor++)
