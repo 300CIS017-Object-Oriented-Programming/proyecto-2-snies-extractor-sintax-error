@@ -78,7 +78,7 @@ SNIESController::~SNIESController()
     }
 }
 
-void SNIESController::procesarDatos(vector<string> anos)
+void SNIESController::procesarDatos(int anio1, int anio2)
 {
     try
     {
@@ -89,6 +89,7 @@ void SNIESController::procesarDatos(vector<string> anos)
         int FILA_SEXOS_DISPONIBLES = 4;
         int FILA_ANOS_DISPONIBLES = 5;
         // Llenamos la ultima fila de la matriz de etiquetas con los años a considerar
+        vector<string> anos = generarAniosBusqueda(anio1, anio2);
         matrizEtiquetas[FILA_ANOS_DISPONIBLES] = anos;
 
         vector<int> codigosSNIES;
@@ -379,6 +380,20 @@ void SNIESController::asignarConsolidados(vector<vector<string>> &matrizArchivo,
         }
     }
 }
+
+vector<string> SNIESController::generarAniosBusqueda(int anio1, int anio2)
+{
+    int tamanioVector = (anio2 - anio1) + 1;
+    vector<string> anosBusqueda = vector<string>(tamanioVector);
+    int anioActual = anio1;
+    for (int posVector = 0; posVector < anosBusqueda.size(); posVector++)
+    {
+        anosBusqueda[posVector] = to_string(anioActual);
+        anioActual++;
+    }
+    return anosBusqueda;
+}
+
 
 void SNIESController::buscarProgramas(bool exportarArchivo, string &palabraClave, int idComparacion)
 {
