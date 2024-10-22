@@ -26,9 +26,9 @@ public:
     vector<int> leerProgramas(string &ruta);
     vector<vector<string>> leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies);
 
-    virtual bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas) = 0;
-    virtual bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas) = 0;
-    virtual bool crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) = 0;
+    virtual void crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas) = 0;
+    virtual void crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas) = 0;
+    virtual void crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) = 0;
 };
 
 #endif
