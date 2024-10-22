@@ -423,7 +423,6 @@ void SNIESController::buscarProgramas(bool exportarArchivo, string &palabraClave
     }
 }
 
-//FIXME: Adaptar al nuevo diseño
 void SNIESController::calcularDatosExtra(bool exportarArchivo)
 {
     vector<vector<string>> matrizFinal;
@@ -431,14 +430,12 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
     vector<vector<string>> matrizEtiquetas2;
     vector<vector<string>> matrizEtiquetas3;
     vector<string> etiquetas1;
-    vector<string> sumaMatriculados;
-    string ano1 = matrizEtiquetas[5][matrizEtiquetas.size() - 2];
-    string ano2 = matrizEtiquetas[5][matrizEtiquetas.size() - 1];
     string Matriculados = "Matriculados";
     string Neos = "PRIMER CURSO";
     string Metodologia = "ID METODOLOGÍA";
     string CodigoSnies = "CÓDIGO SNIES DEL PROGRAMA";
     string NombrePrograma = "PROGRAMA ACADÉMICO";
+    string NombreInstitucion = "INSTITUCIÓN DE EDUCACIÓN SUPERIOR (IES)";
 
     for (string ano : matrizEtiquetas[5])
     {
@@ -448,7 +445,15 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
     matrizEtiquetas1.push_back(etiquetas1);
 
     vector<string> etiquetas2 = {
-        "Codigo Snies", "Nombre del Programa", "Nombre del Institucion", "Diferencial porcentual anual de NEOS de los años" + ano2 + " y " + ano1};
+        "Codigo Snies",
+        "Nombre del Programa",
+        "Nombre del Institucion"};
+    for (size_t i = 0; i < matrizEtiquetas[5].size() - 1; ++i)
+    {
+        std::string ano1 = matrizEtiquetas[5][i];
+        std::string ano2 = matrizEtiquetas[5][i + 1];
+        etiquetas2.push_back("Diferencial porcentual anual de NEOS de los años" + ano1 + " y " + ano2);
+    }
     matrizEtiquetas2.push_back(etiquetas2);
 
     vector<string> etiquetas3 = {
@@ -464,6 +469,8 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
         int SumaNeosPrimerAno;
         int SumaNeosSegundoAno;
         int suma;
+        int diferenciaNeos;
+        vector<string> sumaMatriculados;
         ProgramaAcademico *programa = it.second;
 
         // Acceso a los datos del programa académico desde los mapas
@@ -483,18 +490,53 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
                 }
                 sumaMatriculados.push_back(to_string(suma));
             }
+            matrizEtiquetas2.push_back(sumaMatriculados);
         }
 
+        vector<string> diferenciasVariosAnosNeos = {to_string(programa->consultarDatoInt(CodigoSnies)), programa->consultarDatoString(NombrePrograma), programa->consultarDatoString(NombreInstitucion)};
+        // esta parte que es la de calcular la diferencia entre dos anos toca revisarla para ver si se calcula solo la de los utlimos dos o de dos en dos y asi hasta calcualar todos los anos.
+        for (int i = 0; i < matrizEtiquetas[5].size() - 1; ++i)
+        {
+            string ano1 = matrizEtiquetas[5][i];
+            string ano2 = matrizEtiquetas[5][i + 1];
+
+            for (string sexo : matrizEtiquetas[4])
+            {
+                Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano1), 1);
+                SumaNeosPrimerAno += stoi(consolidado1->obtenerDatoString(Neos));
+                Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano1), 2);
+                SumaNeosPrimerAno += stoi(consolidado2->obtenerDatoString(Neos));
+
+                Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ano2), 1);
+                SumaNeosSegundoAno += stoi(consolidado3->obtenerDatoString(Neos));
+                Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ano2), 2);
+                SumaNeosSegundoAno += stoi(consolidado4->obtenerDatoString(Neos));
+            }
+
+            if (SumaNeosPrimerAno != 0)
+            {
+                diferenciaNeos = ((SumaNeosSegundoAno - SumaNeosPrimerAno) * 100) / SumaNeosPrimerAno;
+            }
+            else
+            {
+                diferenciaNeos = 0;
+            }
+            diferenciasVariosAnosNeos.push_back(to_string(diferenciaNeos));
+        }
+        matrizEtiquetas2.push_back(diferenciasVariosAnosNeos);
+
+        string penultimoAno = matrizEtiquetas[5][matrizEtiquetas.size() - 2];
+        string ultimoAno = matrizEtiquetas[5][matrizEtiquetas.size() - 1];
         for (string sexo : matrizEtiquetas[4])
         {
-            Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano1), 1);
+            Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(penultimoAno), 1);
             SumaNeosPrimerSemestre += stoi(consolidado1->obtenerDatoString(Neos));
-            Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano1), 2);
+            Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(penultimoAno), 2);
             SumaNeosSegundoSemestre += stoi(consolidado2->obtenerDatoString(Neos));
 
-            Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ano2), 1);
+            Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ultimoAno), 1);
             SumaNeosTercerSemestre += stoi(consolidado3->obtenerDatoString(Neos));
-            Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ano2), 2);
+            Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ultimoAno), 2);
             SumaNeosCuartoSemestre += stoi(consolidado4->obtenerDatoString(Neos));
         }
 
@@ -502,47 +544,9 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
         {
             etiquetas3 = {to_string(programa->consultarDatoInt(CodigoSnies)), programa->consultarDatoString(NombrePrograma)};
         }
-// esta parte que es la de calcular la diferencia entre dos anos toca revisarla para ver si se calcula solo la de los utlimos dos o de dos en dos y asi hasta calcualar todos los anos.
-        for (string sexo : matrizEtiquetas[4])
-        {
-            Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano1), 1);
-            SumaNeosPrimerAno += stoi(consolidado1->obtenerDatoString(Neos));
-            Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano1), 2);
-            SumaNeosPrimerAno += stoi(consolidado2->obtenerDatoString(Neos));
 
-            Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ano2), 1);
-            SumaNeosSegundoAno += stoi(consolidado3->obtenerDatoString(Neos));
-            Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ano2), 2);
-            SumaNeosSegundoAno+= stoi(consolidado4->obtenerDatoString(Neos));
-        }
+        matrizEtiquetas3.push_back(etiquetas3);
 
-        for (int i = 0; i < 4; ++i)
-        {
-            Consolidado *consolidado = programa->getConsolidado(i);
-            int numNeos = consolidado->getMatriculadosPrimerSemestre();
-            neosPrimerAno += numNeos;
-        }
-
-        for (int i = 0; i < 4; ++i)
-        {
-            Consolidado *consolidado = programa->getConsolidado(i + 4);
-            int numNeos = consolidado->getMatriculadosPrimerSemestre();
-            neosSegundoAno += numNeos;
-        }
-
-        if (neosPrimerAno != 0)
-        {
-            diferenciaNeos = ((neosSegundoAno - neosPrimerAno) * 100) / neosPrimerAno;
-        }
-        else
-        {
-            diferenciaNeos = 0;
-        }
-        datosEtiquetas2 = {to_string(programa->getCodigoSniesDelPrograma()), programa->getProgramaAcademico(), programa->getInstitucionDeEducacionSuperiorIes(), to_string(diferenciaNeos)};
-        matrizEtiquetas2.push_back(datosEtiquetas2);
-
-        etiquetas1 = {to_string(sumaPrimerAno), to_string(sumaSegundoAno)};
-        matrizEtiquetas1.push_back(etiquetas1);
         matrizFinal.insert(matrizFinal.end(), matrizEtiquetas1.begin(), matrizEtiquetas1.end());
         matrizFinal.insert(matrizFinal.end(), matrizEtiquetas2.begin(), matrizEtiquetas2.end());
         matrizFinal.insert(matrizFinal.end(), matrizEtiquetas3.begin(), matrizEtiquetas3.end());
@@ -560,10 +564,20 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
             cout << endl;
         }
 
-        if (flag)
+        if (exportarArchivo)
         {
-            bool creado;
-            creado = gestorCsvObj.crearArchivoExtra(rutaOutput, matrizFinal);
+            string ruta = Settings::OUTPUTS_PATH;
+            for (GestorArchivos *gestor : gestoresArchivos)
+            {
+                try
+                {
+                    gestor->crearArchivoExtra(ruta, matrizFinal);
+                }
+                catch (out_of_range &e)
+                {
+                    cout << "No se pudo crear el archivo con los datos extra" << e.what() << endl;
+                }
+            }
         }
     }
 }
