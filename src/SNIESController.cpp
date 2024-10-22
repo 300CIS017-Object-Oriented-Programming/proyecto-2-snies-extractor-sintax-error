@@ -99,7 +99,9 @@ void SNIESController::procesarDatos(vector<string> anos)
      */
 
     //Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
-    seleccionarEtiquetas(FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, etiquetasParaLeer);
+    string strAdmitidos = "ADMITIDOS";
+    seleccionarEtiquetas(FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_STRING_PROGRAMA, etiquetasParaLeer);
+    etiquetasParaLeer.push_back(strAdmitidos);
 
     //Leemos el archivo de admitidos del primer año de todos
     rutaActual = Settings::ADMITIDOS_FILE_PATH + matrizEtiquetas[FILA_ANOS_DISPONIBLES][0];
@@ -108,7 +110,14 @@ void SNIESController::procesarDatos(vector<string> anos)
     //Ahora procesamos los datos que nos llegaron de la lectura del archivo para crear los programas
     crearProgramas(matrizArchivo, FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, FILA_ATRIBUTOS_STRING_CONSOLIDADO, FILA_ATRIBUTOS_INT_CONSOLIDADO);
 
-    ;
+    /*
+     * A continuación leeremos el resto de los archivos, donde solo pediremos los datos de los consolidados
+     * y los asignaremos al programaAcademico apropiado utlizando el mapa y el codigo SNIES
+     */
+    vector<string> atributosClave;
+    atributosClave.emplace_back("ADMITIDOS");
+    atributosClave.emplace_back("GRADUADOS");
+    atributosClave.emplace_back("INSCRITOS");
 }
 
 void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<string>& etiquetasParaLeer)

@@ -16,7 +16,7 @@ DESC CINE CAMPO ESPECIFICO
 DESC CINE CODIGO DETALLADO
 DEPARTAMENTO DE OFERTA DEL PROGRAMA
 MUNICIPIO DE OFERTA DEL PROGRAMA
--Etiquetas Atributos de Tipo Int Programa Academico:
+-Etiquetas Atributos de Tipo Int Programa Academico: //Siempre debe estar CÓDIGO SNIES DEL PROGRAMA
 CÓDIGO DE LA INSTITUCIÓN
 IES_PADRE
 ID SECTOR IES
@@ -34,9 +34,9 @@ ID CINE CAMPO ESPECIFICO
 ID CINE CODIGO DETALLADO
 CÓDIGO DEL DEPARTAMENTO (PROGRAMA)
 CÓDIGO DEL MUNICIPIO (PROGRAMA)
--Etiquetas Atributos de Tipo String Consolidado:
+-Etiquetas Atributos de Tipo String Consolidado: //Siempre debe estar SEXO
 SEXO
--Etiquetas Atributos de Tipo Int Consolidado:
+-Etiquetas Atributos de Tipo Int Consolidado: //Siempre debe estar AÑO y SEMESTRE
 INSCRITOS
 ADMITIDOS
 PRIMER CURSO
