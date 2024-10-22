@@ -35,7 +35,8 @@ void SNIESController::leerArchivoConfiguracion(vector<vector<string>> &matriz)
 {
     string rutaConfig = Settings::ETIQUETAS_CONFIG_PATH;
     ifstream archivoConfig(rutaConfig);
-    if (!(archivoConfig.is_open()))
+    bool archivoAbierto = archivoConfig.is_open();
+    if (!archivoAbierto)
     {
         throw out_of_range("Error al abrir el archivo de configuracion de atributos");
     }

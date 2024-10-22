@@ -40,9 +40,6 @@ vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> 
         // FIX: Manejo del error con gestion de excepciones
         string errorMsg = string("Archivo ") + ruta + string(" no se pudo abrir correctamente");
         throw out_of_range(errorMsg);
-        /*cout << "Archivo " << ruta << " no se pudo abrir correctamente" << endl;
-        return matrizResultado; // Retornar matriz vacía
-        */
     }
 
     map<int, string> mapa; // Mapa para almacenar la posición y etiqueta

@@ -32,7 +32,7 @@ public:
     inline static const std::string PROGRAMAS_FILTRAR_FILE_PATH = "C:/SNIES_EXTRACTOR/inputs/programas.csv";
     inline static const std::string BASE_PATH = "C:/SNIES_EXTRACTOR/inputs/";
     inline static const std::string DELIMITADOR = ";";
-    inline static const std::string ETIQUETAS_CONFIG_PATH = "etiquetasAtributos.txt";
+    inline static const std::string ETIQUETAS_CONFIG_PATH = "C:/SNIES_EXTRACTOR/inputs/etiquetasAtributos.txt";
     inline static const std::string OUTPUTS_PATH = "C:/SNIES_EXTRACTOR/outputs/";
 
     // FIXME completar para el resto de constantes
