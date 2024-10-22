@@ -11,7 +11,7 @@ ProgramaAcademico::ProgramaAcademico()
 // Método para agregar un dato de tipo string al mapa de datos string
 // nombreDato: referencia a la clave asociada al dato
 // dato: referencia al valor string que se va a almacenar
-void ProgramaAcademico::agregarElementoTipoString(string& nombreDato, string& dato)
+void ProgramaAcademico::agregarElementoTipoString(string &nombreDato, string &dato)
 {
     // Normaliza la clave usando el método minusculasSinEspacios
     string llave = utilidadObj.minusculasSinEspacios(nombreDato);
@@ -22,7 +22,7 @@ void ProgramaAcademico::agregarElementoTipoString(string& nombreDato, string& da
 // Método para agregar un dato de tipo entero al mapa de datos enteros
 // nombreDato: referencia a la clave asociada al dato
 // dato: valor entero que se va a almacenar
-void ProgramaAcademico::agregarElementoTipoInt(string& nombreDato, int dato)
+void ProgramaAcademico::agregarElementoTipoInt(string &nombreDato, int dato)
 {
     // Normaliza la clave usando el método minusculasSinEspacios
     string llave = utilidadObj.minusculasSinEspacios(nombreDato);
@@ -33,7 +33,7 @@ void ProgramaAcademico::agregarElementoTipoInt(string& nombreDato, int dato)
 // Método para consultar un dato string en el mapa de datos string
 // clave: referencia a la clave del dato a consultar
 // return: el valor string asociado a la clave
-string ProgramaAcademico::consultarDatoString(string& clave)
+string ProgramaAcademico::consultarDatoString(string &clave)
 {
     // Normaliza la clave usando el método minusculasSinEspacios
     string llave = utilidadObj.minusculasSinEspacios(clave);
@@ -42,7 +42,7 @@ string ProgramaAcademico::consultarDatoString(string& clave)
     {
         // Genera un mensaje de error con la clave no encontrada
         string msg = string("Llave No Encontrada: '") + llave + string("'");
-        throw invalid_argument(msg);  // Lanza excepción si la clave no existe
+        throw invalid_argument(msg); // Lanza excepción si la clave no existe
     }
     // Retorna el valor string asociado a la clave
     return mapaDatosString.at(llave);
@@ -51,7 +51,7 @@ string ProgramaAcademico::consultarDatoString(string& clave)
 // Método para consultar un dato entero en el mapa de datos enteros
 // clave: referencia a la clave del dato a consultar
 // return: el valor entero asociado a la clave
-int ProgramaAcademico::consultarDatoInt(string& clave)
+int ProgramaAcademico::consultarDatoInt(string &clave)
 {
     // Normaliza la clave usando el método minusculasSinEspacios
     string llave = utilidadObj.minusculasSinEspacios(clave);
@@ -60,7 +60,7 @@ int ProgramaAcademico::consultarDatoInt(string& clave)
     {
         // Genera un mensaje de error con la clave no encontrada
         string msg = string("Llave No Encontrada: '") + llave + string("'");
-        throw invalid_argument(msg);  // Lanza excepción si la clave no existe
+        throw invalid_argument(msg); // Lanza excepción si la clave no existe
     }
     // Retorna el valor entero asociado a la clave
     return mapaDatosEnteros.at(llave);
@@ -71,7 +71,7 @@ int ProgramaAcademico::consultarDatoInt(string& clave)
 // infoAno: ano del consolidado
 // infoSemestre: semestre del consolidado
 // nuevoConsolidado: puntero al consolidado que se va a almacenar
-void ProgramaAcademico::setConsolidado(string& infoSexo, int infoAno , int infoSemestre, Consolidado *nuevoConsolidado)
+void ProgramaAcademico::setConsolidado(string &infoSexo, int infoAno, int infoSemestre, Consolidado *nuevoConsolidado)
 {
     // Construye una clave combinando sexo, año y semestre, y la normaliza
     string claveConsolidado = infoSexo + string("-") + to_string(infoAno) + string("-") + to_string(infoSemestre);
@@ -83,7 +83,7 @@ void ProgramaAcademico::setConsolidado(string& infoSexo, int infoAno , int infoS
 // Método para obtener un consolidado del mapa usando su clave
 // claveConsolidado: referencia a la clave del consolidado a consultar
 // return: puntero al consolidado asociado a la clave
-Consolidado *ProgramaAcademico::getConsolidado(string& claveConsolidado)
+Consolidado *ProgramaAcademico::getConsolidado(string &claveConsolidado)
 {
     // Normaliza la clave usando el método minusculasSinEspacios
     string llave = utilidadObj.minusculasSinEspacios(claveConsolidado);
@@ -96,7 +96,7 @@ Consolidado *ProgramaAcademico::getConsolidado(string& claveConsolidado)
 ProgramaAcademico::~ProgramaAcademico()
 {
     // Itera sobre el mapa de consolidados y libera la memoria de cada uno
-    for (auto& pair : consolidados)
+    for (auto &pair : consolidados)
     {
         delete pair.second;
     }
@@ -109,7 +109,7 @@ ProgramaAcademico::~ProgramaAcademico()
 // infoAno: año del consolidado
 // infoSemestre: semestre del consolidado
 // return: puntero al consolidado si se encuentra
-Consolidado* ProgramaAcademico::buscarConsolidado(string& infoSexo, int infoAno , int infoSemestre)
+Consolidado *ProgramaAcademico::buscarConsolidado(string &infoSexo, int infoAno, int infoSemestre)
 {
     // Construye una clave combinando sexo, año y semestre, y la normaliza
     string claveConsolidado = infoSexo + string("-") + to_string(infoAno) + string("-") + to_string(infoSemestre);
@@ -119,7 +119,7 @@ Consolidado* ProgramaAcademico::buscarConsolidado(string& infoSexo, int infoAno 
     {
         // Genera un mensaje de error con la clave no encontrada
         string msg = string("Consolidado No Encontrada: '") + claveConsolidado + string("'");
-        throw invalid_argument(msg);  // Lanza excepción si la clave no existe
+        throw invalid_argument(msg); // Lanza excepción si la clave no existe
     }
     // Retorna el consolidado asociado a la clave
     return consolidados[claveConsolidado];

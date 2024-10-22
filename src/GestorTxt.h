@@ -17,16 +17,17 @@ using namespace std;
 class GestorTxt : public GestorArchivos
 {
 private:
-    //Metodos privados auxiliares
-    void escribirEtiquetas(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador, vector<vector<string>>& matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
-    void escribirPrograma(string& strCodigoSNIES, string& strNombrePrograma, string& fila, string& delimitador , vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual);
-    void imprimirConsolidados(string& fila, ofstream& archivoResultados, string& delimitador, vector<vector<string>>& matrizEtiquetas, ProgramaAcademico* programaActual);
-    void escribirConsolidado(string& fila, string& delimitador, Consolidado* consolidadoActual,vector<vector<string>>& matrizEtiquetas);
+    // Metodos privados auxiliares
+    void escribirEtiquetas(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
+    void escribirPrograma(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual);
+    void imprimirConsolidados(string &fila, ofstream &archivoResultados, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual);
+    void escribirConsolidado(string &fila, string &delimitador, Consolidado *consolidadoActual, vector<vector<string>> &matrizEtiquetas);
+
 public:
     GestorTxt() = default;
 
-    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>>& matrizEtiquetas) override;
-    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>>& matrizEtiquetas) override;
+    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas) override;
+    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas) override;
     bool crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) override;
 };
 
