@@ -518,31 +518,40 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
     vector<vector<string>> matrizEtiquetas3;
     vector<string> etiquetas1;
     vector<string> sumaMatriculados;
+    string ano1 = matrizEtiquetas[5][matrizEtiquetas.size() - 2];
+    string ano2 = matrizEtiquetas[5][matrizEtiquetas.size() - 1];
+    string Matriculados = "Matriculados";
+    string Neos = "PRIMER CURSO";
+    string Metodologia = "ID METODOLOGÍA";
+    string CodigoSnies = "CÓDIGO SNIES DEL PROGRAMA";
+    string NombrePrograma = "PROGRAMA ACADÉMICO";
+
     for (string ano : matrizEtiquetas[5])
     {
-        string etiqueta = "Suma Estudiantes Matriculados de Programas Seleccionados (Presencial o Virtual) año " + ano;
-        etiquetas1.push_back(etiqueta);
+        string etiqueta1 = "Suma Estudiantes Matriculados de Programas Seleccionados (Presencial o Virtual) año " + ano;
+        etiquetas1.push_back(etiqueta1);
     }
     matrizEtiquetas1.push_back(etiquetas1);
 
     vector<string> etiquetas2 = {
-        "Codigo Snies", "Nombre del Programa", "Nombre del Institucion", "Diferencial porcentual anual de NEOS"};
+        "Codigo Snies", "Nombre del Programa", "Nombre del Institucion", "Diferencial porcentual anual de NEOS de los años" + ano2 + " y " + ano1};
     matrizEtiquetas2.push_back(etiquetas2);
 
     vector<string> etiquetas3 = {
         "Codigo Snies", "Nombre del Programa sin NEOS en los ultimos 3 semestres"};
     matrizEtiquetas3.push_back(etiquetas3);
 
-    int suma = 0;
-    string Matriculados = "Matriculados";
     for (auto &it : programasAcademicos)
     {
-        int neosPrimerAno = 0;
-        int neosSegundoAno = 0;
-        int diferenciaNeos = 0;
+        int SumaNeosPrimerSemestre;
+        int SumaNeosSegundoSemestre;
+        int SumaNeosTercerSemestre;
+        int SumaNeosCuartoSemestre;
+        int SumaNeosPrimerAno;
+        int SumaNeosSegundoAno;
+        int suma;
         ProgramaAcademico *programa = it.second;
 
-        string Metodologia = "ID METODOLOGÍA";
         // Acceso a los datos del programa académico desde los mapas
         int idMetodologiaBuscada = programa->consultarDatoInt(Metodologia);
 
@@ -562,100 +571,62 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
             }
         }
 
-        for (map<int, ProgramaAcademico *>::iterator it = programasAcademicos.begin(); it != programasAcademicos.end(); ++it)
+        for (string sexo : matrizEtiquetas[4])
         {
-            int neosPrimerAno = 0;
-            int neosSegundoAno = 0;
-            int diferenciaNeos = 0;
-            ProgramaAcademico *programa = it->second;
-            int idMetodologiaBuscada = programa->getIdMetodologia();
-            if (idMetodologiaBuscada == 1 || idMetodologiaBuscada == 3)
-            {
-                for (int i = 0; i < 4; ++i)
-                {
-                    Consolidado *consolidado = programa->getConsolidado(i);
-                    int matriculados = consolidado->getMatriculados();
-                    sumaPrimerAno += matriculados;
-                }
+            Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano1), 1);
+            SumaNeosPrimerSemestre += stoi(consolidado1->obtenerDatoString(Neos));
+            Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano1), 2);
+            SumaNeosSegundoSemestre += stoi(consolidado2->obtenerDatoString(Neos));
 
-                for (int i = 0; i < 4; ++i)
-                {
-                    Consolidado *consolidado = programa->getConsolidado(i + 4);
-                    int matriculados = consolidado->getMatriculados();
-                    sumaSegundoAno += matriculados;
-                }
-            }
-            for (int i = 0; i < 4; ++i)
-            {
-                Consolidado *consolidado = programa->getConsolidado(i);
-                int numNeos = consolidado->getMatriculadosPrimerSemestre();
-                neosPrimerAno += numNeos;
-            }
-
-            for (int i = 0; i < 4; ++i)
-            {
-                Consolidado *consolidado = programa->getConsolidado(i + 4);
-                int numNeos = consolidado->getMatriculadosPrimerSemestre();
-                neosSegundoAno += numNeos;
-            }
-
-            if (neosPrimerAno != 0)
-            {
-                diferenciaNeos = ((neosSegundoAno - neosPrimerAno) * 100) / neosPrimerAno;
-            }
-            else
-            {
-                diferenciaNeos = 0;
-            }
-            datosEtiquetas2 = {to_string(programa->getCodigoSniesDelPrograma()), programa->getProgramaAcademico(), programa->getInstitucionDeEducacionSuperiorIes(), to_string(diferenciaNeos)};
-            matrizEtiquetas2.push_back(datosEtiquetas2);
-            int SumaNeosPrimerSemestre;
-            int SumaNeosSegundoSemestre;
-            int SumaNeosTercerSemestre;
-            int SumaNeosCuartoSemestre;
-            for (int i = 0; i < 4; ++i)
-            {
-                Consolidado *consolidados[8];
-                if (i == 0)
-                {
-                    consolidados[0] = programa->getConsolidado(i);
-                    consolidados[1] = programa->getConsolidado(i + 2);
-                    int neosHombres = consolidados[0]->getMatriculadosPrimerSemestre();
-                    int neosMujeres = consolidados[1]->getMatriculadosPrimerSemestre();
-                    SumaNeosPrimerSemestre = neosHombres + neosMujeres;
-                }
-                else if (i == 1)
-                {
-                    consolidados[2] = programa->getConsolidado(i);
-                    consolidados[3] = programa->getConsolidado(i + 2);
-                    int neosHombres = consolidados[2]->getMatriculadosPrimerSemestre();
-                    int neosMujeres = consolidados[3]->getMatriculadosPrimerSemestre();
-                    SumaNeosSegundoSemestre = neosHombres + neosMujeres;
-                }
-                else if (i == 2)
-                {
-                    consolidados[4] = programa->getConsolidado(i + 2);
-                    consolidados[5] = programa->getConsolidado(i + 4);
-                    int neosHombres = consolidados[4]->getMatriculadosPrimerSemestre();
-                    int neosMujeres = consolidados[5]->getMatriculadosPrimerSemestre();
-                    SumaNeosTercerSemestre = neosHombres + neosMujeres;
-                }
-                else if (i == 3)
-                {
-                    consolidados[6] = programa->getConsolidado(i + 2);
-                    consolidados[7] = programa->getConsolidado(i + 4);
-                    int neosHombres = consolidados[6]->getMatriculadosPrimerSemestre();
-                    int neosMujeres = consolidados[7]->getMatriculadosPrimerSemestre();
-                    SumaNeosCuartoSemestre = neosHombres + neosMujeres;
-                }
-            }
-
-            if ((SumaNeosPrimerSemestre == 0 && SumaNeosSegundoSemestre == 0 && SumaNeosTercerSemestre == 0) || (SumaNeosSegundoSemestre == 0 && SumaNeosTercerSemestre == 0 && SumaNeosCuartoSemestre == 0))
-            {
-                etiquetas3 = {to_string(programa->getCodigoSniesDelPrograma()),
-                              programa->getProgramaAcademico()};
-            }
+            Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ano2), 1);
+            SumaNeosTercerSemestre += stoi(consolidado3->obtenerDatoString(Neos));
+            Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ano2), 2);
+            SumaNeosCuartoSemestre += stoi(consolidado4->obtenerDatoString(Neos));
         }
+
+        if ((SumaNeosPrimerSemestre == 0 && SumaNeosSegundoSemestre == 0 && SumaNeosTercerSemestre == 0) || (SumaNeosSegundoSemestre == 0 && SumaNeosTercerSemestre == 0 && SumaNeosCuartoSemestre == 0))
+        {
+            etiquetas3 = {to_string(programa->consultarDatoInt(CodigoSnies)), programa->consultarDatoString(NombrePrograma)};
+        }
+// esta parte que es la de calcular la diferencia entre dos anos toca revisarla para ver si se calcula solo la de los utlimos dos o de dos en dos y asi hasta calcualar todos los anos.
+        for (string sexo : matrizEtiquetas[4])
+        {
+            Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano1), 1);
+            SumaNeosPrimerAno += stoi(consolidado1->obtenerDatoString(Neos));
+            Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano1), 2);
+            SumaNeosPrimerAno += stoi(consolidado2->obtenerDatoString(Neos));
+
+            Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ano2), 1);
+            SumaNeosSegundoAno += stoi(consolidado3->obtenerDatoString(Neos));
+            Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ano2), 2);
+            SumaNeosSegundoAno+= stoi(consolidado4->obtenerDatoString(Neos));
+        }
+
+        for (int i = 0; i < 4; ++i)
+        {
+            Consolidado *consolidado = programa->getConsolidado(i);
+            int numNeos = consolidado->getMatriculadosPrimerSemestre();
+            neosPrimerAno += numNeos;
+        }
+
+        for (int i = 0; i < 4; ++i)
+        {
+            Consolidado *consolidado = programa->getConsolidado(i + 4);
+            int numNeos = consolidado->getMatriculadosPrimerSemestre();
+            neosSegundoAno += numNeos;
+        }
+
+        if (neosPrimerAno != 0)
+        {
+            diferenciaNeos = ((neosSegundoAno - neosPrimerAno) * 100) / neosPrimerAno;
+        }
+        else
+        {
+            diferenciaNeos = 0;
+        }
+        datosEtiquetas2 = {to_string(programa->getCodigoSniesDelPrograma()), programa->getProgramaAcademico(), programa->getInstitucionDeEducacionSuperiorIes(), to_string(diferenciaNeos)};
+        matrizEtiquetas2.push_back(datosEtiquetas2);
+
         etiquetas1 = {to_string(sumaPrimerAno), to_string(sumaSegundoAno)};
         matrizEtiquetas1.push_back(etiquetas1);
         matrizFinal.insert(matrizFinal.end(), matrizEtiquetas1.begin(), matrizEtiquetas1.end());
