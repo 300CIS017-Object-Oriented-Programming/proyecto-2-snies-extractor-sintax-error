@@ -25,6 +25,7 @@ private:
 
 public:
     GestorTxt() = default;
+    ~GestorTxt() override = default;
 
     void crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas) override;
     void crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas) override;

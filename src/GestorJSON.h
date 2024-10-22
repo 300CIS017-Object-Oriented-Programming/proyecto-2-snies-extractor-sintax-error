@@ -20,6 +20,7 @@ class GestorJSON : public GestorArchivos
 {
 public:
     GestorJSON() = default;
+    ~GestorJSON() override = default;
     void escribirEtiquetasJson(json &etiquetasJson, string &strCodigoSNIES, string &strNombrePrograma, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
     void escribirProgramaJson(json &jsonData, string &nombrePrograma, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual, string &strCodigoSNIES, vector<string> &vectorAtributosPrograma);
     void imprimirConsolidadosJson(json &jsonData, ProgramaAcademico *programaActual, vector<vector<string>> &matrizEtiquetas, vector<string> &vectorAtributosPrograma);

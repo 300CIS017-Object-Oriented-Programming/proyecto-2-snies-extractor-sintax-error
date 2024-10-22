@@ -27,6 +27,7 @@ private:
 
 public:
     GestorCsv() = default;
+    ~GestorCsv() override = default;
     void crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas) override;
     void crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas) override;
     void crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) override;

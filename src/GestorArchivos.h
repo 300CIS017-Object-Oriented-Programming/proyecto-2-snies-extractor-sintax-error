@@ -22,7 +22,7 @@ protected:
 
 public:
     GestorArchivos() = default;
-    virtual ~GestorArchivos();
+    virtual ~GestorArchivos() = 0;
     vector<int> leerProgramas(string &ruta);
     vector<vector<string>> leerArchivo(string &rutaBase, vector<string> &etiquetasColumnas, vector<int> &codigosSnies);
 
