@@ -1,20 +1,5 @@
 #include "View.h"
 
-View::View()
-{
-    // NEW quitar estas variables de aquí y del constructor del SNIESController
-    //  estas constantes las leerá el SNIESController del archivo de Settings.h
-    //  Completar el archivo con el resto de constantes necesarias
-    string ruta1 = string("C:/SNIES_EXTRACTOR/inputs/programas.csv");
-    string ruta2 = string("C:/SNIES_EXTRACTOR/inputs/admitidos");
-    string ruta3 = string("C:/SNIES_EXTRACTOR/inputs/graduados");
-    string ruta4 = string("C:/SNIES_EXTRACTOR/inputs/inscritos");
-    string ruta5 = string("C:/SNIES_EXTRACTOR/inputs/matriculados");
-    string ruta6 = string("C:/SNIES_EXTRACTOR/inputs/matriculadosPrimerSemestre");
-    string ruta7 = string("C:/SNIES_EXTRACTOR/outputs/");
-    controlador = SNIESController(ruta1, ruta2, ruta3, ruta4, ruta5, ruta6, ruta7);
-}
-
 View::~View()
 {
     controlador.~SNIESController();
@@ -52,7 +37,7 @@ bool View::mostrarPantallaBienvenido()
         // FIXME pasar la lógica del bucle a un método reutlizable
         // Usar en el while una bandera y simplificar el código
         // Bucle para leer un valor valido del año1
-        while (!(isConvetibleToInt(anio1)))
+        while (!(utilidadObj.isConvertibleToInt(anio1)))
         {
             if (i == 1)
             {
@@ -70,7 +55,7 @@ bool View::mostrarPantallaBienvenido()
 
         i = 0;
         // Bucle para leer un valor valido del año2
-        while (!(isConvetibleToInt(ano2)))
+        while (!(utilidadObj.isConvertibleToInt(ano2)))
         {
             if (i == 1)
             {
@@ -179,27 +164,5 @@ void View::buscarPorPalabraClaveYFormacion()
 
             controlador.buscarProgramas(convertirCSV, palabraClave, idFormacionAcademica);
         }
-    }
-}
-
-bool View::isConvetibleToInt(const string &str)
-{
-    try
-    {
-        std::size_t pos;
-        int num = std::stoi(str, &pos);
-
-        // Verificamos si se ha convertido toda la cadena
-        return pos == str.length();
-    }
-    catch (const std::invalid_argument &)
-    {
-        // No se pudo convertir: la cadena no es un número válido
-        return false;
-    }
-    catch (const std::out_of_range &)
-    {
-        // No se pudo convertir: el número está fuera del rango de int
-        return false;
     }
 }
