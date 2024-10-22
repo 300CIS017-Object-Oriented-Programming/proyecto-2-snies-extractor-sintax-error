@@ -114,10 +114,19 @@ void SNIESController::procesarDatos(vector<string> anos)
      * A continuación leeremos el resto de los archivos, donde solo pediremos los datos de los consolidados
      * y los asignaremos al programaAcademico apropiado utlizando el mapa y el codigo SNIES
      */
-    vector<string> atributosClave;
-    atributosClave.emplace_back("ADMITIDOS");
-    atributosClave.emplace_back("GRADUADOS");
-    atributosClave.emplace_back("INSCRITOS");
+    vector<vector<string>> atributosClave = vector<vector<string>>(2);
+    atributosClave[0].push_back(string("ADMITIDOS"));
+    atributosClave[1].push_back(Settings::ADMITIDOS_FILE_PATH);
+    atributosClave[0].push_back(string("GRADUADOS"));
+    atributosClave[1].push_back(Settings::GRADUADOS_FILE_PATH);
+    atributosClave[0].push_back(string("INSCRITOS"));
+    atributosClave[1].push_back(Settings::INSCRITOS_FILE_PATH);
+    atributosClave[0].push_back(string("MATRICULADOS"));
+    atributosClave[1].push_back(Settings::MATRICULADOS_FILE_PATH);
+    atributosClave[0].push_back(string("PRIMER CURSO"));
+    atributosClave[1].push_back(Settings::PRIMER_CURSO_FILE_PATH);
+
+    for (int )
 }
 
 void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<string>& etiquetasParaLeer)

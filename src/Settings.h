@@ -25,8 +25,10 @@ class Settings
 public:
     // En la clase Settings, las variables ADMITIDOS_FILE_PATH, MATRICULADOS_FILE_PATH y ETC se declaran como static const std::string. Esto significa que son constantes de tipo string que pertenecen a la clase en lugar de a instancias individuales de la clase.
     static const std::string ADMITIDOS_FILE_PATH;
-    static const std::string MATRICULADOS_FILE_PATH;
+    static const std::string GRADUADOS_FILE_PATH;
     static const std::string INSCRITOS_FILE_PATH;
+    static const std::string MATRICULADOS_FILE_PATH;
+    static const std::string PRIMER_CURSO_FILE_PATH;
     static const std::string PROGRAMAS_FILTRAR_FILE_PATH;
     static const std::string BASE_PATH;
     static const std::string DELIMITADOR;
@@ -46,5 +48,7 @@ const std::string Settings::INSCRITOS_FILE_PATH = BASE_PATH + "inscritos";
 const std::string Settings::DELIMITADOR = ";";
 const std::string Settings::ETIQUETAS_CONFIG_PATH = "etiquetasAtributos.txt";
 const std::string Settings::OUTPUTS_PATH = "C:/SNIES_EXTRACTOR/outputs/";
+const std::string Settings::PRIMER_CURSO_FILE_PATH = "matriculadosPrimerSemestre";
+const std::string Settings::GRADUADOS_FILE_PATH = "graduados";
 
 #endif // SETTINGS_H
