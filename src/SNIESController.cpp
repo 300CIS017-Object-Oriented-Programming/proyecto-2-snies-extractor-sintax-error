@@ -70,6 +70,12 @@ SNIESController::~SNIESController()
         ((pair).second)->~ProgramaAcademico();
         delete pair.second;
     }
+
+    //Liberamos los gestores
+    for (int posGestor = 0; posGestor < gestoresArchivos.size(); posGestor++)
+    {
+        delete gestoresArchivos[posGestor];
+    }
 }
 
 void SNIESController::procesarDatos(vector<string> anos)
