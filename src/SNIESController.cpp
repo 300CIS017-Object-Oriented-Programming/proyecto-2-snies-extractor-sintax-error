@@ -157,7 +157,7 @@ void SNIESController::procesarDatos(vector<string> anos)
                 {
                     rutaActual = atributosClave[1][posAtributosClave] + matrizEtiquetas[FILA_ANOS_DISPONIBLES][columna];
                     matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
-                    //Proceso la información resultante para asignar datos a sus respectivos consolidados y programas
+                    // Proceso la información resultante para asignar datos a sus respectivos consolidados y programas
                     asignarConsolidados(matrizArchivo, etiquetaClave, FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, FILA_ATRIBUTOS_STRING_CONSOLIDADO, FILA_ATRIBUTOS_INT_CONSOLIDADO);
                 }
                 else
@@ -166,21 +166,23 @@ void SNIESController::procesarDatos(vector<string> anos)
                 }
             }
         }
-        //Para este punto ya tenemos todos los programas y consolidados
+        // Para este punto ya tenemos todos los programas y consolidados
 
-        //Una ves tenemos todos los programas y consolidados, creamos el archivo de resultados con cada gestor de archivos
+        // Una ves tenemos todos los programas y consolidados, creamos el archivo de resultados con cada gestor de archivos
         string rutaOutput = Settings::OUTPUTS_PATH;
-        for(int gestor = 0; gestor < gestoresArchivos.size(); gestor++)
+        for (int gestor = 0; gestor < gestoresArchivos.size(); gestor++)
         {
             try
             {
                 gestoresArchivos[gestor]->crearArchivo(rutaOutput, programasAcademicos, matrizEtiquetas);
-            }catch(out_of_range& e)
+            }
+            catch (out_of_range &e)
             {
                 cout << "No se pudo crear el archivo de resultados. " << e.what() << endl;
             }
         }
-    } catch (out_of_range& e)
+    }
+    catch (out_of_range &e)
     {
         string errorMsg = string("Error FATAL al abrir un archivo. ") + e.what();
         throw out_of_range(errorMsg);
@@ -295,10 +297,10 @@ int SNIESController::verificarFilaEtiqueta(string &etiquetaCorrespondiente, int 
     return filaCorrespondiente;
 }
 
-void SNIESController::asignarConsolidados(vector<vector<string>>& matrizArchivo, string& etiquetaClave, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
+void SNIESController::asignarConsolidados(vector<vector<string>> &matrizArchivo, string &etiquetaClave, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {
-    Consolidado* consolidadoNuevo;
-    Consolidado* consolidadoViejo;
+    Consolidado *consolidadoNuevo;
+    Consolidado *consolidadoViejo;
     string etiquetaCorrespondiente;
     string datoString;
     int datoInt;
@@ -350,17 +352,18 @@ void SNIESController::asignarConsolidados(vector<vector<string>>& matrizArchivo,
             sexoActual = consolidadoNuevo->obtenerDatoString(strSexo);
             anoActual = consolidadoNuevo->obtenerDatoInt(strAno);
             semestreActual = consolidadoNuevo->obtenerDatoInt(strSemestre);
-            //Verificamos si ya teniamos este consolidado (sexo-año-semestre)
+            // Verificamos si ya teniamos este consolidado (sexo-año-semestre)
             try
             {
-                //Si ya existia le agregamos el dato clave del archivo
+                // Si ya existia le agregamos el dato clave del archivo
                 consolidadoViejo = programaAsociado->buscarConsolidado(sexoActual, anoActual, semestreActual);
                 datoClave = consolidadoNuevo->obtenerDatoInt(etiquetaClave);
                 consolidadoViejo->agregarDatoInt(etiquetaClave, datoClave);
                 delete consolidadoNuevo;
-            } catch (invalid_argument& e)
+            }
+            catch (invalid_argument &e)
             {
-                //Creamos un nuevo consolidado
+                // Creamos un nuevo consolidado
                 programaAsociado->setConsolidado(sexoActual, anoActual, semestreActual, consolidadoNuevo);
             }
         }
@@ -400,7 +403,7 @@ void SNIESController::buscarProgramas(bool exportarArchivo, string &palabraClave
 
     if (exportarArchivo)
     {
-        for(int gestor = 0; gestor < gestoresArchivos.size(); gestor++)
+        for (int gestor = 0; gestor < gestoresArchivos.size(); gestor++)
         {
             try
             {
@@ -515,7 +518,7 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
             }
             diferenciasVariosAnosNeos.push_back(to_string(diferenciaNeos));
         }
-        matrizEtiquetas2.push_back(diferenciasVariosAnosNeos);  
+        matrizEtiquetas2.push_back(diferenciasVariosAnosNeos);
 
         string penultimoAno = matrizEtiquetas[5][matrizEtiquetas.size() - 2];
         string ultimoAno = matrizEtiquetas[5][matrizEtiquetas.size() - 1];
@@ -558,8 +561,18 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
 
         if (exportarArchivo)
         {
-            bool creado;
-            creado = gestorCsvObj.crearArchivoExtra(rutaOutput, matrizFinal);
+            string ruta = Settings::OUTPUTS_PATH;
+            for (GestorArchivos *gestor : gestoresArchivos)
+            {
+                try
+                {
+                    gestor->crearArchivoExtra(ruta, matrizFinal);
+                }
+                catch (out_of_range &e)
+                {
+                    cout << "No se pudo crear el archivo con los datos extra" << e.what() << endl;
+                }
+            }
         }
     }
 }
