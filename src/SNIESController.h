@@ -39,11 +39,12 @@ private:
     void crearProgramas(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon);
     int verificarFilaEtiqueta(string& etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon);
     void asignarConsolidados(vector<vector<string>>& matrizArchivo, string& etiquetaClave, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon);
+    vector<string> generarAniosBusqueda(int anio1, int anio2);
 
 public:
     SNIESController();
     ~SNIESController();
-    void procesarDatos(vector<string> anos);
+    void procesarDatos(int anio1, int anio2);
     void calcularDatosExtra(bool exportarArchivo);
     void buscarProgramas(bool exportarArchivo, string& palabraClave, int idComparacion);
 };
