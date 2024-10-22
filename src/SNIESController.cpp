@@ -101,12 +101,14 @@ void SNIESController::procesarDatos(vector<string> anos)
     //Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
     seleccionarEtiquetas(FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, etiquetasParaLeer);
 
-    //Leemos el archivo
+    //Leemos el archivo de admitidos del primer año de todos
+    rutaActual = Settings::ADMITIDOS_FILE_PATH + matrizEtiquetas[FILA_ANOS_DISPONIBLES][0];
     matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
 
     //Ahora procesamos los datos que nos llegaron de la lectura del archivo para crear los programas
-    crearProgramas();
+    crearProgramas(matrizArchivo, FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, FILA_ATRIBUTOS_STRING_CONSOLIDADO, FILA_ATRIBUTOS_INT_CONSOLIDADO);
 
+    ;
 }
 
 void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<string>& etiquetasParaLeer)
@@ -121,16 +123,22 @@ void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<stri
     }
 }
 
-void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int filaAtrIntCon)
+void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {
     string etiquetaCorrespondiente;
     ProgramaAcademico *programaNuevo;
     Consolidado *consolidadoNuevo;
-    vector<string>::iterator itFilaMatriz;
     string datoString;
     int datoInt;
-    int codigoSNIES;
     string strCodigoSNIES = "CÓDIGO SNIES DEL PROGRAMA";
+    string strSexo = "SEXO";
+    string sexoActual;
+    string strAno = "AÑO";
+    int anoActual;
+    string strSemestre = "SEMESTRE";
+    int semestreActual;
+    int filaCorrespondiente;
+    bool programaNuevoCreado;
     //Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
     for (int fila = 1; fila < matrizArchivo.size(); fila++)
     {
@@ -140,22 +148,84 @@ void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int 
         {
             etiquetaCorrespondiente = matrizArchivo[0][columna];
             datoString = matrizArchivo[fila][columna];
-            //Miramos si la etiqueta es el codigo SNIES para guardarlo por separado
-            if (utilidadObj.minusculasSinEspacios(etiquetaCorrespondiente) == utilidadObj.minusculasSinEspacios(strCodigoSNIES))
-            {
-                datoInt = stoi();
-                codigoSNIES = datoInt;
-            }
-            //Buscamos a que tipo de atributo pertenece
-            itFilaMatriz = find(matrizEtiquetas[fAtrStrProg].begin(), matrizEtiquetas[fAtrStrProg].end(), etiquetaCorrespondiente);
-            if (itFilaMatriz != matrizEtiquetas[fAtrStrProg].end())
+
+            //Buscamos a que tipo de atributo pertenece para agregarlo correspondientemente
+            filaCorrespondiente = verificarFilaEtiqueta(etiquetaCorrespondiente, fAtrStrProg, fAtrIntProg, fAtrStrCon, fAtrIntCon);
+            if (filaCorrespondiente == fAtrStrProg)
             {
                 programaNuevo->agregarElementoTipoString(etiquetaCorrespondiente, datoString);
             }
+            else if (filaCorrespondiente == fAtrIntProg)
+            {
+                datoInt = stoi(datoString);
+                programaNuevo->agregarElementoTipoInt(etiquetaCorrespondiente, datoInt);
+            }
+            else if (filaCorrespondiente == fAtrIntCon)
+            {
+                datoInt = stoi(datoString);
+                consolidadoNuevo->agregarDatoInt(etiquetaCorrespondiente, datoInt);
+            }
+            else
+            {
+                consolidadoNuevo->agregarDatoString(etiquetaCorrespondiente, datoString);
+            }
+        }
+
+        //Intentaremos agregar el programa al mapa
+        auto resultadoInsert = programasAcademicos.insert(make_pair(programaNuevo->consultarDatoInt(strCodigoSNIES), programaNuevo));
+        programaNuevoCreado = resultadoInsert.second;
+        sexoActual = consolidadoNuevo->obtenerDatoString(strSexo);
+        anoActual = consolidadoNuevo->obtenerDatoInt(strAno);
+        semestreActual = consolidadoNuevo->obtenerDatoInt(strSemestre);
+        if (!programaNuevoCreado)
+        {
+            //Borramos el programa nuevo que intentamos crear
+            programaNuevo->~ProgramaAcademico();
+            delete programaNuevo;
+
+            //Asignamos el consolidado al programa que ya existía
+            ((resultadoInsert.first)->second)->setConsolidado(sexoActual, anoActual, semestreActual, consolidadoNuevo);
+        }
+        else
+        {
+            //Asignamos el consolidado al programa nuevo
+            programaNuevo->setConsolidado(sexoActual, anoActual, semestreActual, consolidadoNuevo);
         }
     }
 }
 
+int SNIESController::verificarFilaEtiqueta(string& etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
+{
+    int filaCorrespondiente = -1;
+    vector<string>::iterator itFilaMatriz;
+    itFilaMatriz = find(matrizEtiquetas[fAtrStrProg].begin(), matrizEtiquetas[fAtrStrProg].end(), etiquetaCorrespondiente);
+    if (itFilaMatriz != matrizEtiquetas[fAtrStrProg].end())
+    {
+        filaCorrespondiente = fAtrStrProg;
+    }
+    else
+    {
+        itFilaMatriz = find(matrizEtiquetas[fAtrIntProg].begin(), matrizEtiquetas[fAtrIntProg].end(), etiquetaCorrespondiente);
+        if (itFilaMatriz != matrizEtiquetas[fAtrIntProg].end())
+        {
+            filaCorrespondiente = fAtrIntProg;
+        }
+        else
+        {
+            itFilaMatriz = find(matrizEtiquetas[fAtrIntCon].begin(), matrizEtiquetas[fAtrIntCon].end(), etiquetaCorrespondiente);
+            if (itFilaMatriz != matrizEtiquetas[fAtrIntCon].end())
+            {
+                filaCorrespondiente = fAtrIntCon;
+            }
+            else
+            {
+                filaCorrespondiente = fAtrStrCon;
+            }
+        }
+    }
+
+    return filaCorrespondiente;
+}
 
 
 void SNIESController::procesarDatosCsv(string &ano1, string &ano2)
