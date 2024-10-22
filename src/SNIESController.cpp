@@ -71,62 +71,104 @@ SNIESController::~SNIESController()
     }
 }
 
-//FIXME: Adaptar al nuevo diseño teniendo en cuenta el diseño viejo
 void SNIESController::procesarDatos(vector<string> anos)
 {
-    int FILA_ATRIBUTOS_STRING_PROGRAMA = 0;
-    int FILA_ATRIBUTOS_INT_PROGRAMA = 1;
-    int FILA_ATRIBUTOS_STRING_CONSOLIDADO = 2;
-    int FILA_ATRIBUTOS_INT_CONSOLIDADO = 3;
-    int FILA_SEXOS_DISPONIBLES = 4;
-    int FILA_ANOS_DISPONIBLES = 5;
-    //Llenamos la ultima fila de la matriz de etiquetas con los años a considerar
-    matrizEtiquetas[FILA_ANOS_DISPONIBLES] = anos;
+    try {
+        int FILA_ATRIBUTOS_STRING_PROGRAMA = 0;
+        int FILA_ATRIBUTOS_INT_PROGRAMA = 1;
+        int FILA_ATRIBUTOS_STRING_CONSOLIDADO = 2;
+        int FILA_ATRIBUTOS_INT_CONSOLIDADO = 3;
+        int FILA_SEXOS_DISPONIBLES = 4;
+        int FILA_ANOS_DISPONIBLES = 5;
+        //Llenamos la ultima fila de la matriz de etiquetas con los años a considerar
+        matrizEtiquetas[FILA_ANOS_DISPONIBLES] = anos;
 
-    vector<int> codigosSNIES;
-    vector<string> etiquetasParaLeer;
-    vector<vector<string>> matrizArchivo;
-    string rutaActual;
-    //Leemos los codigos SNIES que nos piden buscar
-    rutaActual = Settings::PROGRAMAS_FILTRAR_FILE_PATH;
-    //Se utiliza el gestor 0 porque para los propósitos de leer sirve cualquier gestor
-    codigosSNIES = gestoresArchivos[0]->leerProgramas(rutaActual);
+        vector<int> codigosSNIES;
+        vector<string> etiquetasParaLeer;
+        vector<vector<string>> matrizArchivo;
+        string rutaActual;
+        //Leemos los codigos SNIES que nos piden buscar
+        rutaActual = Settings::PROGRAMAS_FILTRAR_FILE_PATH;
+        //Se utiliza el gestor 0 porque para los propósitos de leer sirve cualquier gestor
+        codigosSNIES = gestoresArchivos[0]->leerProgramas(rutaActual);
 
-    /*
-     * Ahora leeremos el primer archivo
-     * Donde mandaremos a buscar la informacion base de los programas
-     * Y los consolidados de este archivo en particular
-     */
+        /*
+         * Ahora leeremos el primer archivo
+         * Donde mandaremos a buscar la informacion base de los programas
+         * Y los consolidados de este archivo en particular
+         */
 
-    //Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
-    string strAdmitidos = "ADMITIDOS";
-    seleccionarEtiquetas(FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_STRING_PROGRAMA, etiquetasParaLeer);
-    etiquetasParaLeer.push_back(strAdmitidos);
+        //Llenamos el vector de etiquetas con las que nos iteresan para esta lectura
+        string strAdmitidos = "ADMITIDOS";
+        string strAno = "AÑO";
+        string strSexo = "SEXO";
+        string strSemestre = "SEMESTRE";
+        seleccionarEtiquetas(FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, etiquetasParaLeer);
+        etiquetasParaLeer.push_back(strAdmitidos);
+        etiquetasParaLeer.push_back(strAno);
+        etiquetasParaLeer.push_back(strSexo);
+        etiquetasParaLeer.push_back(strSemestre);
 
-    //Leemos el archivo de admitidos del primer año de todos
-    rutaActual = Settings::ADMITIDOS_FILE_PATH + matrizEtiquetas[FILA_ANOS_DISPONIBLES][0];
-    matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
+        //Leemos el archivo de admitidos del primer año de todos
+        rutaActual = Settings::ADMITIDOS_FILE_PATH + matrizEtiquetas[FILA_ANOS_DISPONIBLES][0];
+        matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
 
-    //Ahora procesamos los datos que nos llegaron de la lectura del archivo para crear los programas
-    crearProgramas(matrizArchivo, FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, FILA_ATRIBUTOS_STRING_CONSOLIDADO, FILA_ATRIBUTOS_INT_CONSOLIDADO);
+        //Ahora procesamos los datos que nos llegaron de la lectura del archivo para crear los programas
+        crearProgramas(matrizArchivo, FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, FILA_ATRIBUTOS_STRING_CONSOLIDADO, FILA_ATRIBUTOS_INT_CONSOLIDADO);
 
-    /*
-     * A continuación leeremos el resto de los archivos, donde solo pediremos los datos de los consolidados
-     * y los asignaremos al programaAcademico apropiado utlizando el mapa y el codigo SNIES
-     */
-    vector<vector<string>> atributosClave = vector<vector<string>>(2);
-    atributosClave[0].push_back(string("ADMITIDOS"));
-    atributosClave[1].push_back(Settings::ADMITIDOS_FILE_PATH);
-    atributosClave[0].push_back(string("GRADUADOS"));
-    atributosClave[1].push_back(Settings::GRADUADOS_FILE_PATH);
-    atributosClave[0].push_back(string("INSCRITOS"));
-    atributosClave[1].push_back(Settings::INSCRITOS_FILE_PATH);
-    atributosClave[0].push_back(string("MATRICULADOS"));
-    atributosClave[1].push_back(Settings::MATRICULADOS_FILE_PATH);
-    atributosClave[0].push_back(string("PRIMER CURSO"));
-    atributosClave[1].push_back(Settings::PRIMER_CURSO_FILE_PATH);
+        /*
+         * A continuación leeremos el resto de los archivos, donde solo pediremos los datos de los consolidados
+         * y los asignaremos al programaAcademico apropiado utlizando el mapa y el codigo SNIES
+         */
+        vector<vector<string>> atributosClave = vector<vector<string>>(2);
+        atributosClave[0].push_back(string("ADMITIDOS"));
+        atributosClave[1].push_back(Settings::ADMITIDOS_FILE_PATH);
+        atributosClave[0].push_back(string("GRADUADOS"));
+        atributosClave[1].push_back(Settings::GRADUADOS_FILE_PATH);
+        atributosClave[0].push_back(string("INSCRITOS"));
+        atributosClave[1].push_back(Settings::INSCRITOS_FILE_PATH);
+        atributosClave[0].push_back(string("MATRICULADOS"));
+        atributosClave[1].push_back(Settings::MATRICULADOS_FILE_PATH);
+        atributosClave[0].push_back(string("PRIMER CURSO"));
+        atributosClave[1].push_back(Settings::PRIMER_CURSO_FILE_PATH);
 
-    for (int )
+        string etiquetaClave;
+        //Como el primer año de admitidos ya lo leímos, usaremos esta bandera para saltarnos su lectura
+        bool admitidosFlag = true;
+        string strCodigoSNIES = "CÓDIGO SNIES DEL PROGRAMA";
+        string strAnoActual;
+        for(int posAtributosClave = 0; posAtributosClave < atributosClave[0].size(); posAtributosClave++)
+        {
+            //Cargo en las etiquetas a leer las que necesito del archivo
+            etiquetaClave = atributosClave[0][posAtributosClave];
+            etiquetasParaLeer.clear();
+            etiquetasParaLeer.push_back(strCodigoSNIES);
+            etiquetasParaLeer.push_back(etiquetaClave);
+            etiquetasParaLeer.push_back(strAno);
+            etiquetasParaLeer.push_back(strSexo);
+            etiquetasParaLeer.push_back(strSemestre);
+
+            //Leo los archivos de cada año para cada atributo clave
+            for (int columna = 0; columna < matrizEtiquetas[FILA_ANOS_DISPONIBLES].size(); columna++)
+            {
+                if (!admitidosFlag)
+                {
+                    rutaActual = atributosClave[1][posAtributosClave] + matrizEtiquetas[FILA_ANOS_DISPONIBLES][columna];
+                    matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
+                    //Proceso la información resultante para asignar consolidados a sus respectivos programas
+                    asignarConsolidados(matrizArchivo, FILA_ATRIBUTOS_STRING_PROGRAMA, FILA_ATRIBUTOS_INT_PROGRAMA, FILA_ATRIBUTOS_STRING_CONSOLIDADO, FILA_ATRIBUTOS_INT_CONSOLIDADO);
+                }
+                else
+                {
+                    admitidosFlag = false;
+                }
+            }
+        }
+    } catch (out_of_range& e)
+    {
+        string errorMsg = string("Error FATAL al abrir un archivo. ") + e.what();
+        throw out_of_range(errorMsg);
+    }
 }
 
 void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<string>& etiquetasParaLeer)
@@ -214,35 +256,89 @@ void SNIESController::crearProgramas(vector<vector<string>>& matrizArchivo, int 
 
 int SNIESController::verificarFilaEtiqueta(string& etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {
-    int filaCorrespondiente = -1;
-    vector<string>::iterator itFilaMatriz;
-    itFilaMatriz = find(matrizEtiquetas[fAtrStrProg].begin(), matrizEtiquetas[fAtrStrProg].end(), etiquetaCorrespondiente);
-    if (itFilaMatriz != matrizEtiquetas[fAtrStrProg].end())
+    int filaCorrespondiente;
+    vector<string>::iterator itFilaMatriz1;
+    vector<string>::iterator itFilaMatriz2;
+    vector<string>::iterator itFilaMatriz3;
+    itFilaMatriz1 = find(matrizEtiquetas[fAtrStrProg].begin(), matrizEtiquetas[fAtrStrProg].end(), etiquetaCorrespondiente);
+    itFilaMatriz2 = find(matrizEtiquetas[fAtrIntProg].begin(), matrizEtiquetas[fAtrIntProg].end(), etiquetaCorrespondiente);
+    itFilaMatriz3 = find(matrizEtiquetas[fAtrIntCon].begin(), matrizEtiquetas[fAtrIntCon].end(), etiquetaCorrespondiente);
+    if (itFilaMatriz1 != matrizEtiquetas[fAtrStrProg].end())
     {
         filaCorrespondiente = fAtrStrProg;
     }
-    else
+    else if (itFilaMatriz2 != matrizEtiquetas[fAtrIntProg].end())
     {
-        itFilaMatriz = find(matrizEtiquetas[fAtrIntProg].begin(), matrizEtiquetas[fAtrIntProg].end(), etiquetaCorrespondiente);
-        if (itFilaMatriz != matrizEtiquetas[fAtrIntProg].end())
-        {
-            filaCorrespondiente = fAtrIntProg;
-        }
-        else
-        {
-            itFilaMatriz = find(matrizEtiquetas[fAtrIntCon].begin(), matrizEtiquetas[fAtrIntCon].end(), etiquetaCorrespondiente);
-            if (itFilaMatriz != matrizEtiquetas[fAtrIntCon].end())
-            {
-                filaCorrespondiente = fAtrIntCon;
-            }
-            else
-            {
-                filaCorrespondiente = fAtrStrCon;
-            }
-        }
+        filaCorrespondiente = fAtrIntProg;
+    }
+    else if (itFilaMatriz3 != matrizEtiquetas[fAtrIntCon].end())
+    {
+        filaCorrespondiente = fAtrIntCon;
     }
 
     return filaCorrespondiente;
+}
+
+void SNIESController::asignarConsolidados(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
+{
+    Consolidado* consolidadoNuevo;
+    string etiquetaCorrespondiente;
+    string datoString;
+    int datoInt;
+    int filaCorrespondiente;
+    string strCodigoSNIES = "CÓDIGO SNIES DEL PROGRAMA";
+    string strAno = "AÑO";
+    string strSexo = "SEXO";
+    string strSemestre = "SEMESTRE";
+    int codigoSNIES;
+    int anoActual;
+    string sexoActual;
+    int semestreActual;
+    ProgramaAcademico* programaAsociado;
+    map<int, ProgramaAcademico*>::iterator itPrograma;
+    //Nos saltamos la primera fila (0) porque son las etiquetas y esas no se guardan sino que se utilizan para mapear
+    for (int fila = 1; fila < matrizArchivo.size(); fila++)
+    {
+        consolidadoNuevo = new Consolidado();
+        for (int columna = 0; columna < matrizArchivo[fila].size(); columna++)
+        {
+            etiquetaCorrespondiente = matrizArchivo[0][columna];
+            datoString = matrizArchivo[fila][columna];
+
+            //Buscamos a que tipo de atributo pertenece para agregarlo correspondientemente
+            filaCorrespondiente = verificarFilaEtiqueta(etiquetaCorrespondiente, fAtrStrProg, fAtrIntProg, fAtrStrCon, fAtrIntCon);
+            if (filaCorrespondiente == fAtrIntCon)
+            {
+                datoInt = stoi(datoString);
+                consolidadoNuevo->agregarDatoInt(etiquetaCorrespondiente, datoInt);
+            }
+            //El unico atributo int de un programa que deberiamos conseguir es el codigo SNIES
+            else if (filaCorrespondiente == fAtrIntProg)
+            {
+                datoInt = stoi(datoString);
+                codigoSNIES = datoInt;
+            }
+            else
+            {
+                consolidadoNuevo->agregarDatoString(etiquetaCorrespondiente, datoString);
+            }
+        }
+
+        //Busco a que programa pertenece para asignarle el consolidado que acabo de crear
+        itPrograma = programasAcademicos.find(codigoSNIES);
+        if (itPrograma != programasAcademicos.end())
+        {
+            programaAsociado = itPrograma->second;
+            sexoActual = consolidadoNuevo->obtenerDatoString(strSexo);
+            anoActual = consolidadoNuevo->obtenerDatoInt(strAno);
+            semestreActual = consolidadoNuevo->obtenerDatoInt(strSemestre);
+            programaAsociado->setConsolidado(sexoActual, anoActual, semestreActual, consolidadoNuevo);
+        }
+        else
+        {
+            delete consolidadoNuevo;
+        }
+    }
 }
 
 

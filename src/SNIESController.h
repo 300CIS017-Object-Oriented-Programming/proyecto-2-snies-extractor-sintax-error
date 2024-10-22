@@ -38,6 +38,7 @@ private:
     void seleccionarEtiquetas(int filaMin, int filaMax, vector<string>& etiquetasParaLeer);
     void crearProgramas(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon);
     int verificarFilaEtiqueta(string& etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon);
+    void asignarConsolidados(vector<vector<string>>& matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon);
 
 public:
     SNIESController();
