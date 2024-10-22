@@ -9,15 +9,14 @@
 
 using namespace std;
 
-class Utilidad {
+class Utilidad
+{
 public:
     Utilidad() = default;
     ~Utilidad() = default;
 
     string minusculasSinEspacios(string &);
-    string limpiarString(string&);
+    string limpiarString(string &);
 };
 
-
-
-#endif //UTILIDAD_H
+#endif // UTILIDAD_H
