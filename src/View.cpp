@@ -54,7 +54,7 @@ bool View::mostrarPantallaBienvenido()
 void View::salir()
 {
     cout << "Cerrando programa..." << endl;
-    cout << "Recuerde revisar la carpeta de outputs para los archivos .csv exportados" << endl;
+    cout << "Recuerde revisar la carpeta de outputs para los archivos exportados" << endl;
     cout << "Programa Cerrado con exito!" << endl;
 }
 
@@ -63,7 +63,7 @@ void View::mostrarDatosExtra()
     string opcionYN;
     cout << "A continuacion vamos a mostrar datos relevantes de los programas academicos seleccionados" << "\n"
          << endl;
-    cout << "Desea Convertir los datos a un archivo CSV?(Y/N): " << endl;
+    cout << "Desea Convertir los datos a unos archivos de resultados?(Y/N): " << endl;
     cin >> opcionYN;
     cout << endl;
 
@@ -74,47 +74,48 @@ void View::mostrarDatosExtra()
 
 void View::buscarPorPalabraClaveYFormacion()
 {
-    char opcionYN = 'y', opcionCSV;
+    string opcionYN = string("Y");
+    string opcionCSV;
     string palabraClave;
     bool convertirCSV;
-    int idFormacionAcademica;
+    int idFormacionAcademica = 0;
+    string respuestaEsperada = string("Y");
+    bool hacerBusqueda = esRespuestaValida(respuestaEsperada, opcionYN);
+    bool nivelFormacionInvalido;
 
-    while (opcionYN == 'y')
+    while (hacerBusqueda)
     {
         cout << "Desea hacer una busqueda por palabra clave del nombre del programa(Y/N): " << endl;
         cin >> opcionYN;
-        cout << "\n";
-        opcionYN = tolower(opcionYN);
+        cout << endl;
 
-        if (opcionYN == 'y')
+        hacerBusqueda = esRespuestaValida(respuestaEsperada, opcionYN);
+        if (hacerBusqueda)
         {
-            cout << "Deseas convertir convertir los datos del programa academico a un CSV?(Y/N): " << endl;
+            cout << "Deseas convertir los datos del programa academico a un archivo de salida?(Y/N): " << endl;
             cin >> opcionCSV;
-            cout << "\n";
-            opcionCSV = tolower(opcionCSV);
+            cout << endl;
 
-            if (opcionCSV == 'y')
-            {
-                convertirCSV = true;
-            }
-
-            else
-            {
-                convertirCSV = false;
-            }
+            convertirCSV = esRespuestaValida(respuestaEsperada, opcionCSV);
 
             cout << "Escriba la palabra clave para buscar los programas por nombre:" << endl;
             cin >> palabraClave;
             cout << endl;
 
-            cout << "Seleccione un nivel de formacion para filtrar: \n 1->Especializacion Universitaria\n 2->Maestria\n 3->Doctorado\n 4->Formacion Tecnica Profesional \n 5->Tecnologico\n 6->Universitario\n 7->Especializacion Tecnico Profesional\n 8->Especializacion Tecnologica\n 10->Especializacion Medico Quirurgica\n " << endl;
-            cin >> idFormacionAcademica;
-            cout << "\n";
+            string nivelesFormacion = string("Seleccione un nivel de formacion para filtrar: \n 1->Especializacion Universitaria\n 2->Maestria\n 3->Doctorado\n 4->Formacion Tecnica Profesional \n 5->Tecnologico\n 6->Universitario\n 7->Especializacion Tecnico Profesional\n 8->Especializacion Tecnologica\n 10->Especializacion Medico Quirurgica\n");
+            string mensajeError = string("Ingrese un nivel de formacion valido");
+            nivelFormacionInvalido = false;
             while ((idFormacionAcademica > 10) || (idFormacionAcademica == 9) || (idFormacionAcademica < 1))
             {
-                cout << "Seleccione una opcion entre 1-10 excluyendo el 9\n"
-                     << endl;
-                cin >> idFormacionAcademica;
+                if (nivelFormacionInvalido)
+                {
+                    cout << "Seleccione una opcion entre 1-10 excluyendo el 9" << endl;
+                }
+                else
+                {
+                    nivelFormacionInvalido = true;
+                }
+                idFormacionAcademica = solicitarIntValido(nivelesFormacion, mensajeError);
             }
 
             controlador.buscarProgramas(convertirCSV, palabraClave, idFormacionAcademica);
