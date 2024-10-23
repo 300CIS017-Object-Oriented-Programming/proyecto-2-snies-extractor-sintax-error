@@ -138,6 +138,8 @@ void SNIESController::procesarDatos(int anio1, int anio2)
         etiquetasParaLeer.push_back(strAno);
         etiquetasParaLeer.push_back(strSexo);
         etiquetasParaLeer.push_back(strSemestre);
+        //Hacemos que las etiquetas para leer se pongan en minusculas, sin espacios y sin tildes
+        corregirEtiquetas(etiquetasParaLeer);
 
         // Leemos el archivo de admitidos del primer año disponible
         rutaActual = Settings::ADMITIDOS_FILE_PATH + matrizEtiquetas[FILA_ANOS_DISPONIBLES][0];
@@ -179,6 +181,8 @@ void SNIESController::procesarDatos(int anio1, int anio2)
             etiquetasParaLeer.push_back(strAno);
             etiquetasParaLeer.push_back(strSexo);
             etiquetasParaLeer.push_back(strSemestre);
+            //Quitamos tildes espacios y ponemos en minusculas
+            corregirEtiquetas(etiquetasParaLeer);
 
             // Leemos los archivos de cada año para cada atributo clave
             for (int columna = 0; columna < matrizEtiquetas[FILA_ANOS_DISPONIBLES].size(); columna++)
@@ -237,6 +241,16 @@ void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<stri
         }
     }
 }
+
+void SNIESController::corregirEtiquetas(vector<string>& etiquetasParaLeer)
+{
+    //Eliminamos tildes y espacios, y ponemos en minusculas las etiquetas
+    for (int posVector = 0; posVector < etiquetasParaLeer.size(); posVector++)
+    {
+        etiquetasParaLeer[posVector] = utilidadObj.minusculasSinEspacios(etiquetasParaLeer[posVector]);
+    }
+}
+
 
 void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {

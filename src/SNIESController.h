@@ -41,6 +41,7 @@ private:
     int verificarFilaEtiqueta(string& etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon);
     void asignarConsolidados(vector<vector<string>>& matrizArchivo, string& etiquetaClave, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon);
     vector<string> generarAniosBusqueda(int anio1, int anio2);
+    void corregirEtiquetas(vector<string>& etiquetasParaLeer);
 
 public:
     SNIESController();
