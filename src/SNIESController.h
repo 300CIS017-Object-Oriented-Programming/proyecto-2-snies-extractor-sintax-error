@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <list>
+#include <fstream>
 #include "ProgramaAcademico.h"
 #include "Consolidado.h"
 #include "GestorArchivos.h"

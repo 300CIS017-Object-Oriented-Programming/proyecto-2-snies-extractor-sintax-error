@@ -44,7 +44,8 @@ void SNIESController::leerArchivoConfiguracion(vector<vector<string>> &matriz)
 
     // Abrir el archivo de configuración
     ifstream archivoConfig(rutaConfig);
-    if (!(archivoConfig.is_open()))
+    bool archivoAbierto = archivoConfig.is_open();
+    if (!archivoAbierto)
     {
         // Lanzar una excepción si no se puede abrir el archivo
         throw out_of_range("Error al abrir el archivo de configuracion de atributos");
@@ -140,6 +141,7 @@ void SNIESController::procesarDatos(int anio1, int anio2)
 
         // Leemos el archivo de admitidos del primer año disponible
         rutaActual = Settings::ADMITIDOS_FILE_PATH + matrizEtiquetas[FILA_ANOS_DISPONIBLES][0];
+        //FIXME: Esta devolviendo vacio
         matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
 
         // Procesamos los datos obtenidos para crear los programas académicos
