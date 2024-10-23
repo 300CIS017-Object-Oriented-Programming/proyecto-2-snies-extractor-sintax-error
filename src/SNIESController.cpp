@@ -65,7 +65,7 @@ void SNIESController::leerArchivoConfiguracion(vector<vector<string>> &matriz)
         if (fila[0] == '-')
         {
             // Incrementar el índice de la fila de la matriz cuando cambiamos de categoría
-            posFilaMatriz++;
+            ++posFilaMatriz;
         }
         else
         {
@@ -287,23 +287,27 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
             // Si la etiqueta pertenece a un atributo de tipo string del programa, lo agregamos
             if (filaCorrespondiente == fAtrStrProg)
             {
+                cout << "HOLA1" << endl;
                 programaNuevo->agregarElementoTipoString(etiquetaCorrespondiente, datoString);
             }
             // Si la etiqueta pertenece a un atributo de tipo int del programa, lo agregamos
             else if (filaCorrespondiente == fAtrIntProg)
             {
+                cout << "HOLA2" << endl;
                 datoInt = stoi(datoString); // Convertimos el string a int
                 programaNuevo->agregarElementoTipoInt(etiquetaCorrespondiente, datoInt);
             }
             // Si la etiqueta pertenece a un atributo de tipo int del consolidado, lo agregamos
             else if (filaCorrespondiente == fAtrIntCon)
             {
+                cout << "HOLA3" << endl;
                 datoInt = stoi(datoString); // Convertimos el string a int
                 consolidadoNuevo->agregarDatoInt(etiquetaCorrespondiente, datoInt);
             }
             // Si la etiqueta pertenece a un atributo de tipo string del consolidado, lo agregamos
             else
             {
+                cout << "HOLA4" << endl;
                 consolidadoNuevo->agregarDatoString(etiquetaCorrespondiente, datoString);
             }
         }
@@ -311,7 +315,7 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
         // Intentamos agregar el nuevo programa al mapa de programas académicos
         auto resultadoInsert = programasAcademicos.insert(make_pair(programaNuevo->consultarDatoInt(strCodigoSNIES), programaNuevo));
         programaNuevoCreado = resultadoInsert.second; // Verificamos si el programa fue creado exitosamente
-
+        cout << "SALI";
         // Obtenemos los datos clave del consolidado (sexo, año, semestre)
         sexoActual = consolidadoNuevo->obtenerDatoString(strSexo);
         anoActual = consolidadoNuevo->obtenerDatoInt(strAno);
@@ -338,7 +342,7 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
 // FIXME: Este método no está generando los resultados esperados
 int SNIESController::verificarFilaEtiqueta(string &etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {
-    int filaCorrespondiente;
+    int filaCorrespondiente = -1;
     vector<string>::iterator itFilaMatriz1;
     vector<string>::iterator itFilaMatriz2;
     vector<string>::iterator itFilaMatriz3;
