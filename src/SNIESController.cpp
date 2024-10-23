@@ -336,6 +336,7 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
     }
 }
 
+//FIXME: Este método no está generando los resultados esperados
 int SNIESController::verificarFilaEtiqueta(string &etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {
     int filaCorrespondiente;
