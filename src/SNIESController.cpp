@@ -293,21 +293,18 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
             // Si la etiqueta pertenece a un atributo de tipo int del programa, lo agregamos
             else if (filaCorrespondiente == fAtrIntProg)
             {
-                cout << "HOLA2" << endl;
                 datoInt = stoi(datoString); // Convertimos el string a int
                 programaNuevo->agregarElementoTipoInt(etiquetaCorrespondiente, datoInt);
             }
             // Si la etiqueta pertenece a un atributo de tipo int del consolidado, lo agregamos
             else if (filaCorrespondiente == fAtrIntCon)
             {
-                cout << "HOLA3" << endl;
                 datoInt = stoi(datoString); // Convertimos el string a int
                 consolidadoNuevo->agregarDatoInt(etiquetaCorrespondiente, datoInt);
             }
             // Si la etiqueta pertenece a un atributo de tipo string del consolidado, lo agregamos
             else
             {
-                cout << "HOLA4" << endl;
                 consolidadoNuevo->agregarDatoString(etiquetaCorrespondiente, datoString);
             }
         }
@@ -315,7 +312,7 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
         // Intentamos agregar el nuevo programa al mapa de programas académicos
         auto resultadoInsert = programasAcademicos.insert(make_pair(programaNuevo->consultarDatoInt(strCodigoSNIES), programaNuevo));
         programaNuevoCreado = resultadoInsert.second; // Verificamos si el programa fue creado exitosamente
-        cout << "SALI";
+
         // Obtenemos los datos clave del consolidado (sexo, año, semestre)
         sexoActual = consolidadoNuevo->obtenerDatoString(strSexo);
         anoActual = consolidadoNuevo->obtenerDatoInt(strAno);
@@ -325,7 +322,6 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
         if (!programaNuevoCreado)
         {
             // Eliminamos el programa recién creado ya que no se insertó
-            programaNuevo->~ProgramaAcademico();
             delete programaNuevo;
 
             // Asignamos el consolidado al programa existente en el mapa
@@ -365,17 +361,17 @@ int SNIESController::verificarFilaEtiqueta(string &etiquetaCorrespondiente, int 
     itFilaMatriz3 = find(filaAtrIntCon.begin(), filaAtrIntCon.end(), etiquetaCorrespondiente);
 
     // Si encontramos la etiqueta en la fila de atributos string del programa
-    if (itFilaMatriz1 != matrizEtiquetas[fAtrStrProg].end())
+    if (itFilaMatriz1 != filaAtrStrProg.end())
     {
         filaCorrespondiente = fAtrStrProg;
     }
     // Si encontramos la etiqueta en la fila de atributos int del programa
-    else if (itFilaMatriz2 != matrizEtiquetas[fAtrIntProg].end())
+    else if (itFilaMatriz2 != filaAtrIntProg.end())
     {
         filaCorrespondiente = fAtrIntProg;
     }
     // Si encontramos la etiqueta en la fila de atributos int del consolidado
-    else if (itFilaMatriz3 != matrizEtiquetas[fAtrIntCon].end())
+    else if (itFilaMatriz3 != filaAtrIntCon.end())
     {
         filaCorrespondiente = fAtrIntCon;
     }

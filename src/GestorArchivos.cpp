@@ -103,7 +103,21 @@ vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> 
             // Verificar si esta es la columna del código SNIES
             if (columna == indiceColumnaCodigo)
             {
-                int numero = std::stoi(dato); // Convertir a entero
+                /*Verificamos que el dato pueda convertirse a int*
+                 * Esto se debe a que cuando el programa no tiene asignado un codigo SNIES
+                 * Se decidio poner en vez de un numero lo siguiente:
+                 * "Sin programa específico"
+                 */
+                int numero;
+                if (utilidadObj.isConvertibleToInt(dato))
+                {
+                    // Convertir a entero
+                    numero = std::stoi(dato);
+                }
+                else
+                {
+                    numero = -1;
+                }
                 if (std::find(codigosSnies.begin(), codigosSnies.end(), numero) != codigosSnies.end())
                 {
                     codigoCoincide = true; // Código SNIES coincide
