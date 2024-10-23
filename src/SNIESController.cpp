@@ -138,12 +138,12 @@ void SNIESController::procesarDatos(int anio1, int anio2)
         etiquetasParaLeer.push_back(strAno);
         etiquetasParaLeer.push_back(strSexo);
         etiquetasParaLeer.push_back(strSemestre);
-        //Hacemos que las etiquetas para leer se pongan en minusculas, sin espacios y sin tildes
+        // Hacemos que las etiquetas para leer se pongan en minusculas, sin espacios y sin tildes
         corregirEtiquetas(etiquetasParaLeer);
 
         // Leemos el archivo de admitidos del primer año disponible
         rutaActual = Settings::ADMITIDOS_FILE_PATH + matrizEtiquetas[FILA_ANOS_DISPONIBLES][0];
-        //FIXME: Esta devolviendo vacio
+        // FIXME: Esta devolviendo vacio
         matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
 
         // Procesamos los datos obtenidos para crear los programas académicos
@@ -181,7 +181,7 @@ void SNIESController::procesarDatos(int anio1, int anio2)
             etiquetasParaLeer.push_back(strAno);
             etiquetasParaLeer.push_back(strSexo);
             etiquetasParaLeer.push_back(strSemestre);
-            //Quitamos tildes espacios y ponemos en minusculas
+            // Quitamos tildes espacios y ponemos en minusculas
             corregirEtiquetas(etiquetasParaLeer);
 
             // Leemos los archivos de cada año para cada atributo clave
@@ -242,15 +242,14 @@ void SNIESController::seleccionarEtiquetas(int filaMin, int filaMax, vector<stri
     }
 }
 
-void SNIESController::corregirEtiquetas(vector<string>& etiquetasParaLeer)
+void SNIESController::corregirEtiquetas(vector<string> &etiquetasParaLeer)
 {
-    //Eliminamos tildes y espacios, y ponemos en minusculas las etiquetas
+    // Eliminamos tildes y espacios, y ponemos en minusculas las etiquetas
     for (int posVector = 0; posVector < etiquetasParaLeer.size(); posVector++)
     {
         etiquetasParaLeer[posVector] = utilidadObj.minusculasSinEspacios(etiquetasParaLeer[posVector]);
     }
 }
-
 
 void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {
@@ -336,7 +335,7 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
     }
 }
 
-//FIXME: Este método no está generando los resultados esperados
+// FIXME: Este método no está generando los resultados esperados
 int SNIESController::verificarFilaEtiqueta(string &etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {
     int filaCorrespondiente;
@@ -344,14 +343,22 @@ int SNIESController::verificarFilaEtiqueta(string &etiquetaCorrespondiente, int 
     vector<string>::iterator itFilaMatriz2;
     vector<string>::iterator itFilaMatriz3;
 
+    vector<string> filaAtrStrProg = matrizEtiquetas[fAtrStrProg];
+    vector<string> filaAtrIntProg = matrizEtiquetas[fAtrIntProg];
+    vector<string> filaAtrIntCon = matrizEtiquetas[fAtrIntCon];
+
+    corregirEtiquetas(filaAtrStrProg);
+    corregirEtiquetas(filaAtrIntProg);
+    corregirEtiquetas(filaAtrIntCon);
+
     // Buscamos la etiqueta en la fila de atributos string del programa
-    itFilaMatriz1 = find(matrizEtiquetas[fAtrStrProg].begin(), matrizEtiquetas[fAtrStrProg].end(), etiquetaCorrespondiente);
+    itFilaMatriz1 = find(filaAtrStrProg.begin(), filaAtrStrProg.end(), etiquetaCorrespondiente);
 
     // Buscamos la etiqueta en la fila de atributos int del programa
-    itFilaMatriz2 = find(matrizEtiquetas[fAtrIntProg].begin(), matrizEtiquetas[fAtrIntProg].end(), etiquetaCorrespondiente);
+    itFilaMatriz2 = find(filaAtrIntProg.begin(), filaAtrIntProg.end(), etiquetaCorrespondiente);
 
     // Buscamos la etiqueta en la fila de atributos int del consolidado
-    itFilaMatriz3 = find(matrizEtiquetas[fAtrIntCon].begin(), matrizEtiquetas[fAtrIntCon].end(), etiquetaCorrespondiente);
+    itFilaMatriz3 = find(filaAtrIntCon.begin(), filaAtrIntCon.end(), etiquetaCorrespondiente);
 
     // Si encontramos la etiqueta en la fila de atributos string del programa
     if (itFilaMatriz1 != matrizEtiquetas[fAtrStrProg].end())
