@@ -28,6 +28,7 @@ vector<int> GestorArchivos::leerProgramas(string &ruta)
     return codigosSniesRetorno;
 }
 
+//FIXME: Esta devolviendo filas vacias
 vector<vector<string>> GestorArchivos::leerArchivo(string &ruta, vector<string> &etiquetasColumnas, vector<int> &codigosSnies)
 {
     char delimitador = Settings::DELIMITADOR[0];

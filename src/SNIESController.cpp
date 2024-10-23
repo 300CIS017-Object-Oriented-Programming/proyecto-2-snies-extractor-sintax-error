@@ -121,6 +121,7 @@ void SNIESController::procesarDatos(int anio1, int anio2)
 
         // Leemos el archivo de admitidos del primer año de todos
         rutaActual = Settings::ADMITIDOS_FILE_PATH + matrizEtiquetas[FILA_ANOS_DISPONIBLES][0];
+        //FIXME: Esta devolviendo vacio
         matrizArchivo = gestoresArchivos[0]->leerArchivo(rutaActual, etiquetasParaLeer, codigosSNIES);
 
         // Ahora procesamos los datos que nos llegaron de la lectura del archivo para crear los programas
