@@ -23,6 +23,7 @@ private:
 
 public:
     Consolidado();
+    ~Consolidado() = default;
     void agregarDatoInt(string &, int);
     void agregarDatoString(string &, string &);
     int obtenerDatoInt(string &);

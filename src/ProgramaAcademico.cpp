@@ -101,7 +101,7 @@ ProgramaAcademico::~ProgramaAcademico()
         delete pair.second;
     }
     // Limpia el mapa de consolidados
-    consolidados.clear();
+    //consolidados.clear();
 }
 
 // Método para buscar un consolidado en el mapa utilizando sexo, año y semestre

@@ -1,10 +1,5 @@
 #include "View.h"
 
-View::~View()
-{
-    controlador.~SNIESController();
-}
-
 bool View::mostrarPantallaBienvenido()
 {
     bool parametrizacionBool = false;

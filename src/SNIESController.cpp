@@ -83,8 +83,6 @@ SNIESController::~SNIESController()
     // Iteramos sobre el mapa de programas académicos
     for (auto &pair : programasAcademicos)
     {
-        // Llamamos al destructor del objeto ProgramaAcademico de forma explícita
-        ((pair).second)->~ProgramaAcademico();
         // Liberamos la memoria del objeto ProgramaAcademico
         delete pair.second;
     }
@@ -528,7 +526,7 @@ void SNIESController::buscarProgramas(bool exportarArchivo, string &palabraClave
     {
         ProgramaAcademico *programa = it->second;                           // Obtenemos el programa actual
         string nombre = programa->consultarDatoString(llaveNombrePrograma); // Consultamos el nombre del programa
-        int id = stoi(programa->consultarDatoString(llaveId));              // Convertimos el ID a entero
+        int id = programa->consultarDatoInt(llaveId);
 
         // Verificamos si el nombre contiene la palabra clave y si el ID coincide
         if (nombre.find(palabraClave) != string::npos && id == idComparacion)
@@ -603,6 +601,7 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
     matrizEtiquetas3.push_back(etiquetas3); // Agregamos estas etiquetas a la matriz
 
     // Iteramos sobre todos los programas académicos
+    vector<int> sumaMatriculados = vector<int>(matrizEtiquetas[5].size()); // Vector para almacenar las sumas de matriculados
     for (auto &it : programasAcademicos)
     {
         // Variables para almacenar sumas y diferencias
@@ -614,7 +613,6 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
         int SumaNeosSegundoAno = 0;
         int suma = 0;
         int diferenciaNeos = 0;
-        vector<string> sumaMatriculados;         // Vector para almacenar las sumas de matriculados
         ProgramaAcademico *programa = it.second; // Obtenemos el programa actual
 
         // Acceso a los datos del programa académico desde los mapas
@@ -624,19 +622,18 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
         if (idMetodologiaBuscada == 1 || idMetodologiaBuscada == 3)
         {
             // Sumar estudiantes matriculados del primer y segundo año
-            for (string ano : matrizEtiquetas[5])
+            for (int ano = 0; ano < matrizEtiquetas[5].size(); ++ano)
             {
                 for (string sexo : matrizEtiquetas[4])
                 {
                     // Sumar matriculados por sexo y año
-                    Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano), 1);
+                    Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(matrizEtiquetas[5][ano]), 1);
                     suma += consolidado1->obtenerDatoInt(Matriculados);
-                    Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano), 2);
+                    Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(matrizEtiquetas[5][ano]), 2);
                     suma += consolidado2->obtenerDatoInt(Matriculados);
                 }
-                sumaMatriculados.push_back(to_string(suma)); // Agregamos la suma a la lista
+                sumaMatriculados[ano] += suma; // Agregamos la suma a la lista
             }
-            matrizEtiquetas2.push_back(sumaMatriculados); // Agregamos la suma de matriculados a la matriz
         }
 
         // Generamos la lista de diferencias para los NEOS
@@ -675,8 +672,8 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
         matrizEtiquetas2.push_back(diferenciasVariosAnosNeos); // Agregamos las diferencias a la matriz
 
         // Calculamos las sumas de NEOS para el penúltimo y último año
-        string penultimoAno = matrizEtiquetas[5][matrizEtiquetas.size() - 2];
-        string ultimoAno = matrizEtiquetas[5][matrizEtiquetas.size() - 1];
+        string penultimoAno = matrizEtiquetas[5][matrizEtiquetas[5].size() - 2];
+        string ultimoAno = matrizEtiquetas[5][matrizEtiquetas[5].size() - 1];
         for (string sexo : matrizEtiquetas[4])
         {
             Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(penultimoAno), 1);
@@ -696,41 +693,52 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
             etiquetas3 = {to_string(programa->consultarDatoInt(CodigoSnies)), programa->consultarDatoString(NombrePrograma)};
             matrizEtiquetas3.push_back(etiquetas3); // Agregamos a la matriz
         }
+    }
 
-        // Combinamos todas las matrices de resultados
-        matrizFinal.insert(matrizFinal.end(), matrizEtiquetas1.begin(), matrizEtiquetas1.end());
-        matrizFinal.insert(matrizFinal.end(), matrizEtiquetas2.begin(), matrizEtiquetas2.end());
-        matrizFinal.insert(matrizFinal.end(), matrizEtiquetas3.begin(), matrizEtiquetas3.end());
+    vector<string> sumMatriculados = vector<string>(1);
+    for (int pos = 0; pos < sumaMatriculados.size(); ++pos)
+    {
+        sumMatriculados[0] += to_string(sumaMatriculados[pos]);
 
-        // Imprimimos los resultados finales en la consola
-        for (const auto &fila : matrizFinal)
+        if (pos != sumaMatriculados.size() - 1)
         {
-            for (size_t i = 0; i < fila.size(); ++i)
-            {
-                cout << fila[i]; // Imprimimos cada dato
-                if (i < fila.size() - 1)
-                {
-                    cout << ";"; // Agregamos un delimitador entre datos
-                }
-            }
-            cout << endl; // Nueva línea al final de cada fila
+            sumMatriculados[0] += Settings::DELIMITADOR;
         }
+    }
+    matrizEtiquetas1.push_back(sumMatriculados); // Agregamos la suma de matriculados a la matriz
+    // Combinamos todas las matrices de resultados
+    matrizFinal.insert(matrizFinal.end(), matrizEtiquetas1.begin(), matrizEtiquetas1.end());
+    matrizFinal.insert(matrizFinal.end(), matrizEtiquetas2.begin(), matrizEtiquetas2.end());
+    matrizFinal.insert(matrizFinal.end(), matrizEtiquetas3.begin(), matrizEtiquetas3.end());
 
-        // Si se solicita, exportamos los resultados a archivos
-        if (exportarArchivo)
+    // Imprimimos los resultados finales en la consola
+    for (const auto &fila : matrizFinal)
+    {
+        for (size_t i = 0; i < fila.size(); ++i)
         {
-            string ruta = Settings::OUTPUTS_PATH;
-            for (GestorArchivos *gestor : gestoresArchivos)
+            cout << fila[i]; // Imprimimos cada dato
+            if (i < fila.size() - 1)
             {
-                try
-                {
-                    // Llamamos al métod o para crear archivos con los datos extra
-                    gestor->crearArchivoExtra(ruta, matrizFinal);
-                }
-                catch (out_of_range &e) // Manejo de errores en caso de que no se pueda crear el archivo
-                {
-                    cout << "No se pudo crear el archivo con los datos extra: " << e.what() << endl;
-                }
+                cout << Settings::DELIMITADOR; // Agregamos un delimitador entre datos
+            }
+        }
+        cout << endl; // Nueva línea al final de cada fila
+    }
+
+    // Si se solicita, exportamos los resultados a archivos
+    if (exportarArchivo)
+    {
+        string ruta = Settings::OUTPUTS_PATH;
+        for (int gestor = 0; gestor < gestoresArchivos.size() - 1; ++gestor)
+        {
+            try
+            {
+                // Llamamos al métod o para crear archivos con los datos extra
+                gestoresArchivos[gestor]->crearArchivoExtra(ruta, matrizFinal);
+            }
+            catch (out_of_range &e) // Manejo de errores en caso de que no se pueda crear el archivo
+            {
+                cout << "No se pudo crear el archivo con los datos extra: " << e.what() << endl;
             }
         }
     }

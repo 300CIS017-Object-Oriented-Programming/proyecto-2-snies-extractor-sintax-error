@@ -253,8 +253,8 @@ void GestorTxt::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &pr
     }
 
     // Imprimir las etiquetas de las columnas en la primera fila
-    string strCodigoSNIES = string("Codigo SNIES del programa");
-    string strnombrePrograma = string("Programa Academico");
+    string strCodigoSNIES = string("Código SNIES del programa");
+    string strnombrePrograma = string("Programa Académico");
     string fila;
     int MIN_POS_ETIQUETAS = 0;
     int MAX_POS_ETIQUETAS = 3;

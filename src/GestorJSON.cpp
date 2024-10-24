@@ -292,8 +292,8 @@ void GestorJSON::crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &p
     json etiquetasJson;                                          // Objeto JSON para almacenar las etiquetas
     string ETIQUETAS = "Etiquetas";                              // Nombre clave para las etiquetas
     vector<string> vectorAtributosPrograma;                      // Vector para almacenar atributos del programa académico
-    string strCodigoSNIES = string("Codigo SNIES del programa"); // Nombre de atributo para el código SNIES
-    string strNombrePrograma = string("Programa Academico");     // Nombre de atributo para el programa académico
+    string strCodigoSNIES = string("Código SNIES del programa"); // Nombre de atributo para el código SNIES
+    string strNombrePrograma = string("Programa Académico");     // Nombre de atributo para el programa académico
     int MIN_POS_ETIQUETAS = 0;                                   // Posición mínima para las etiquetas
     int MAX_POS_ETIQUETAS = 3;                                   // Posición máxima para las etiquetas
 

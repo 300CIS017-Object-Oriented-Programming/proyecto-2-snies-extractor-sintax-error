@@ -19,7 +19,7 @@ private:
     void organizarAnios(int& anio1, int& anio2);
 public:
     View() = default;
-    ~View();
+    ~View() = default;
     bool mostrarPantallaBienvenido();
     void mostrarDatosExtra();
     void buscarPorPalabraClaveYFormacion();
