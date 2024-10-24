@@ -126,7 +126,7 @@ ProgramaAcademico o-- Consolidado : tiene varios
 View <.. Main : usa
 View --> SNIESController : tiene un
 SNIESController o-- GestorArchivos: tiene varios
-SNIESController o-- Consolidado
+SNIESController o-- ProgramaAcademico: tiene varios
 ProgramaAcademico <.. GestorArchivos: usa
 GestorArchivos <|-- GestorTxt: es un
 GestorArchivos <|-- GestorJSON: es un
