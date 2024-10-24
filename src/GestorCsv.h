@@ -10,20 +10,26 @@
 #include <algorithm>
 #include "ProgramaAcademico.h"
 #include "Consolidado.h"
+#include "GestorArchivos.h"
+#include "Utilidad.h"
 
 using namespace std;
 
-class GestorCsv
+class GestorCsv : public GestorArchivos
 {
+private:
+    // Metodos privados auxiliares
+    void escribirEtiquetas(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas);
+    void escribirPrograma(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual);
+    void imprimirConsolidados(string &fila, ofstream &archivoResultados, string &delimitador, vector<vector<string>> &matrizEtiquetas, ProgramaAcademico *programaActual);
+    void escribirConsolidado(string &fila, string &delimitador, Consolidado *consolidadoActual, vector<vector<string>> &matrizEtiquetas);
+
 public:
     GestorCsv() = default;
-    vector<int> leerProgramasCsv(string &ruta);
-    vector<vector<string>> leerArchivoPrimera(string &rutaBase, string &ano, vector<int> &codigosSnies);
-    vector<vector<string>> leerArchivoSegunda(string &rutaBase, string &ano, vector<int> &codigosSnies);
-    vector<vector<string>> leerArchivo(string &rutaBase, string &ano, vector<int> &codigosSnies, int colmunaCodigoSnies);
-    bool crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<string> etiquetasColumnas);
-    bool crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<string> etiquetasColumnas);
-    bool crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir);
+    ~GestorCsv() override = default;
+    void crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapadeProgramasAcademicos, vector<vector<string>> &matrizEtiquetas) override;
+    void crearArchivoBuscados(string &ruta, list<ProgramaAcademico *> &programasBuscados, vector<vector<string>> &matrizEtiquetas) override;
+    void crearArchivoExtra(string &ruta, vector<vector<string>> datosAImprimir) override;
 };
 
 #endif

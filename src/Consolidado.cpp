@@ -1,95 +1,62 @@
 #include "Consolidado.h"
 
+// Constructor por defecto de la clase Consolidado
 Consolidado::Consolidado() = default;
 
-Consolidado::Consolidado(int idSexo, string sexo, int ano, int semestre, int inscritos, int admitidos, int primeraMatricula, int totalMatriculados, int graduados)
-    : idSexo(idSexo), sexo(sexo), ano(ano), semestre(semestre), inscritos(inscritos), admitidos(admitidos), matriculados(primeraMatricula), matriculadosPrimerSemestre(totalMatriculados), graduados(graduados) {}
-
-int Consolidado::getIdSexo()
+// Método para agregar un dato entero a la colección consolidada
+// clave: referencia a la clave asociada al dato
+// dato: valor entero a ser almacenado en el mapa
+void Consolidado::agregarDatoInt(string &clave, int dato)
 {
-    return idSexo;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    // Almacena el valor entero en el mapa datosIntConsolidados
+    datosIntConsolidados[llave] = dato;
 }
 
-void Consolidado::setIdSexo(int idSexo)
+// Método para agregar un dato tipo string a la colección consolidada
+// clave: referencia a la clave asociada al dato
+// dato: referencia al valor string a ser almacenado en el mapa
+void Consolidado::agregarDatoString(string &clave, string &dato)
 {
-    this->idSexo = idSexo;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    // Almacena el valor string en el mapa datosStringConsolidados
+    datosStringConsolidados[llave] = dato;
 }
 
-string Consolidado::getSexo()
+// Método para obtener un dato entero asociado a una clave
+// clave: referencia a la clave del dato a buscar
+// return: el valor entero asociado a la clave
+int Consolidado::obtenerDatoInt(string &clave)
 {
-    return sexo;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    // Verifica si la clave existe en el mapa, de lo contrario lanza una excepción
+    if (datosIntConsolidados.find(llave) == datosIntConsolidados.end())
+    {
+        // Genera un mensaje de error con la clave no encontrada
+        string msg = string("Llave No Encontrada: '") + llave + string("'");
+        throw invalid_argument(msg); // Lanza excepción si la clave no existe
+    }
+    // Retorna el valor entero asociado a la clave
+    return datosIntConsolidados.at(llave);
 }
 
-void Consolidado::setSexo(string &sexo)
+// Método para obtener un dato tipo string asociado a una clave
+// clave: referencia a la clave del dato a buscar
+// return: el valor string asociado a la clave
+string Consolidado::obtenerDatoString(string &clave)
 {
-    this->sexo = sexo;
-}
-
-int Consolidado::getAno()
-{
-    return ano;
-}
-
-void Consolidado::setAno(int ano)
-{
-    this->ano = ano;
-}
-
-int Consolidado::getSemestre()
-{
-    return semestre;
-}
-void Consolidado::setSemestre(int semestre)
-{
-    this->semestre = semestre;
-}
-
-int Consolidado::getInscritos()
-{
-    return inscritos;
-}
-
-void Consolidado::setInscritos(int inscritos)
-{
-    this->inscritos = inscritos;
-}
-
-int Consolidado::getAdmitidos()
-{
-    return admitidos;
-}
-
-void Consolidado::setAdmitidos(int admitidos)
-{
-    this->admitidos = admitidos;
-}
-
-int Consolidado::getMatriculados()
-{
-    return matriculados;
-}
-
-void Consolidado::setMatriculados(int matriculados)
-{
-    this->matriculados = matriculados;
-}
-
-int Consolidado::getMatriculadosPrimerSemestre()
-{
-    return matriculadosPrimerSemestre;
-}
-
-void Consolidado::setMatriculadosPrimerSemestre(int matriculadosPrimerSemestre)
-{
-    this->matriculadosPrimerSemestre = matriculadosPrimerSemestre;
-}
-
-int Consolidado::getGraduados()
-{
-    return graduados;
-}
-
-void Consolidado::setGraduados(int graduados)
-{
-    this->graduados = graduados;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    // Verifica si la clave existe en el mapa, de lo contrario lanza una excepción
+    if (datosStringConsolidados.find(llave) == datosStringConsolidados.end())
+    {
+        // Genera un mensaje de error con la clave no encontrada
+        string msg = string("Llave No Encontrada: '") + llave + string("'");
+        throw invalid_argument(msg); // Lanza excepción si la clave no existe
+    }
+    // Retorna el valor string asociado a la clave
+    return datosStringConsolidados.at(llave);
 }

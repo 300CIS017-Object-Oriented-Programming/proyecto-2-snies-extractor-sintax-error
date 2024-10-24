@@ -2,352 +2,125 @@
 
 using namespace std;
 
+// Constructor por defecto de la clase ProgramaAcademico
 ProgramaAcademico::ProgramaAcademico()
 {
-    consolidados = vector<Consolidado *>(8);
+    // consolidados = vector<Consolidado *>(8);
 }
 
-void ProgramaAcademico::setCodigoDeLaInstitucion(int nuevoCodigoDeLaInstitucion)
+// Método para agregar un dato de tipo string al mapa de datos string
+// nombreDato: referencia a la clave asociada al dato
+// dato: referencia al valor string que se va a almacenar
+void ProgramaAcademico::agregarElementoTipoString(string &nombreDato, string &dato)
 {
-    codigoDeLaInstitucion = nuevoCodigoDeLaInstitucion;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(nombreDato);
+    // Almacena el valor string en el mapa mapaDatosString
+    mapaDatosString[llave] = dato;
 }
 
-int ProgramaAcademico::getCodigoDeLaInstitucion()
+// Método para agregar un dato de tipo entero al mapa de datos enteros
+// nombreDato: referencia a la clave asociada al dato
+// dato: valor entero que se va a almacenar
+void ProgramaAcademico::agregarElementoTipoInt(string &nombreDato, int dato)
 {
-    return codigoDeLaInstitucion;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(nombreDato);
+    // Almacena el valor entero en el mapa mapaDatosEnteros
+    mapaDatosEnteros[llave] = dato;
 }
 
-void ProgramaAcademico::setIesPadre(int nuevoIesPadre)
+// Método para consultar un dato string en el mapa de datos string
+// clave: referencia a la clave del dato a consultar
+// return: el valor string asociado a la clave
+string ProgramaAcademico::consultarDatoString(string &clave)
 {
-    iesPadre = nuevoIesPadre;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    // Verifica si la clave existe en el mapa, de lo contrario lanza una excepción
+    if (mapaDatosString.find(llave) == mapaDatosString.end())
+    {
+        // Genera un mensaje de error con la clave no encontrada
+        string msg = string("Llave No Encontrada: '") + llave + string("'");
+        throw invalid_argument(msg); // Lanza excepción si la clave no existe
+    }
+    // Retorna el valor string asociado a la clave
+    return mapaDatosString.at(llave);
 }
 
-int ProgramaAcademico::getIesPadre()
+// Método para consultar un dato entero en el mapa de datos enteros
+// clave: referencia a la clave del dato a consultar
+// return: el valor entero asociado a la clave
+int ProgramaAcademico::consultarDatoInt(string &clave)
 {
-    return iesPadre;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(clave);
+    // Verifica si la clave existe en el mapa, de lo contrario lanza una excepción
+    if (mapaDatosEnteros.find(llave) == mapaDatosEnteros.end())
+    {
+        // Genera un mensaje de error con la clave no encontrada
+        string msg = string("Llave No Encontrada: '") + llave + string("'");
+        throw invalid_argument(msg); // Lanza excepción si la clave no existe
+    }
+    // Retorna el valor entero asociado a la clave
+    return mapaDatosEnteros.at(llave);
 }
 
-void ProgramaAcademico::setInstitucionDeEducacionSuperiorIes(string &nuevoInstitucionDeEducacionSuperiorIes)
+// Método para establecer un consolidado en el mapa de consolidados
+// infoSexo: referencia a la información del sexo
+// infoAno: ano del consolidado
+// infoSemestre: semestre del consolidado
+// nuevoConsolidado: puntero al consolidado que se va a almacenar
+void ProgramaAcademico::setConsolidado(string &infoSexo, int infoAno, int infoSemestre, Consolidado *nuevoConsolidado)
 {
-    institucionDeEducacionSuperiorIes = nuevoInstitucionDeEducacionSuperiorIes;
-}
-string ProgramaAcademico::getInstitucionDeEducacionSuperiorIes()
-{
-    return institucionDeEducacionSuperiorIes;
-}
-
-void ProgramaAcademico::setPrincipalOSeccional(string &nuevoPrincipalOSeccional)
-{
-    principalOSeccional = nuevoPrincipalOSeccional;
-}
-
-string ProgramaAcademico::getPrincipalOSeccional()
-{
-    return principalOSeccional;
+    // Construye una clave combinando sexo, año y semestre, y la normaliza
+    string claveConsolidado = infoSexo + string("-") + to_string(infoAno) + string("-") + to_string(infoSemestre);
+    claveConsolidado = utilidadObj.minusculasSinEspacios(claveConsolidado);
+    // Almacena el consolidado en el mapa de consolidados usando la clave generada
+    consolidados[claveConsolidado] = nuevoConsolidado;
 }
 
-void ProgramaAcademico::setIdSectorIes(int nuevoIdSectorIes)
+// Método para obtener un consolidado del mapa usando su clave
+// claveConsolidado: referencia a la clave del consolidado a consultar
+// return: puntero al consolidado asociado a la clave
+Consolidado *ProgramaAcademico::getConsolidado(string &claveConsolidado)
 {
-    idSectorIes = nuevoIdSectorIes;
+    // Normaliza la clave usando el método minusculasSinEspacios
+    string llave = utilidadObj.minusculasSinEspacios(claveConsolidado);
+    // Retorna el consolidado asociado a la clave
+    return consolidados[llave];
 }
 
-int ProgramaAcademico::getIdSectorIes()
-{
-    return idSectorIes;
-}
-
-void ProgramaAcademico::setSectorIes(string &nuevoSectorIes)
-{
-    sectorIes = nuevoSectorIes;
-}
-
-string ProgramaAcademico::getSectorIes()
-{
-    return sectorIes;
-}
-
-void ProgramaAcademico::setIdCaracter(int nuevoIdCaracter)
-{
-    idCaracter = nuevoIdCaracter;
-}
-
-int ProgramaAcademico::getIdCaracter()
-{
-    return idCaracter;
-}
-
-void ProgramaAcademico::setCaracterIes(string &nuevoCaracterIes)
-{
-    caracterIes = nuevoCaracterIes;
-}
-
-string ProgramaAcademico::getCaracterIes()
-{
-    return caracterIes;
-}
-
-void ProgramaAcademico::setCodigoDelDepartamentoIes(int nuevoCodigoDelDepartamentoIes)
-{
-    codigoDelDepartamentoIes = nuevoCodigoDelDepartamentoIes;
-}
-
-int ProgramaAcademico::getCodigoDelDepartamentoIes()
-{
-    return codigoDelDepartamentoIes;
-}
-
-void ProgramaAcademico::setDepartamentoDeDomicilioDeLaIes(string &nuevoDepartamentoDeDomicilioDeLaIes)
-{
-    departamentoDeDomicilioDeLaIes = nuevoDepartamentoDeDomicilioDeLaIes;
-}
-
-string ProgramaAcademico::getDepartamentoDeDomicilioDeLaIes()
-{
-    return departamentoDeDomicilioDeLaIes;
-}
-
-void ProgramaAcademico::setCodigoDelMunicipioIes(int nuevoCodigoDelMunicipioIes)
-{
-    codigoDelMunicipioIes = nuevoCodigoDelMunicipioIes;
-}
-
-int ProgramaAcademico::getCodigoDelMunicipioIes()
-{
-    return codigoDelMunicipioIes;
-}
-
-void ProgramaAcademico::setMunicipioDeDomicilioDeLaIes(string &nuevoMunicipioDeDomicilioDeLaIes)
-{
-    municipioDeDomicilioDeLaIes = nuevoMunicipioDeDomicilioDeLaIes;
-}
-
-string ProgramaAcademico::getMunicipioDeDomicilioDeLaIes()
-{
-    return municipioDeDomicilioDeLaIes;
-}
-
-void ProgramaAcademico::setCodigoSniesDelPrograma(int nuevoCodigoSniesDelPrograma)
-{
-    codigoSniesDelPrograma = nuevoCodigoSniesDelPrograma;
-}
-
-int ProgramaAcademico::getCodigoSniesDelPrograma()
-{
-    return codigoSniesDelPrograma;
-}
-
-void ProgramaAcademico::setProgramaAcademico(string &nuevoProgramaAcademico)
-{
-    programaAcademico = nuevoProgramaAcademico;
-}
-
-string ProgramaAcademico::getProgramaAcademico()
-{
-    return programaAcademico;
-}
-
-void ProgramaAcademico::setIdNivelAcademico(int nuevoIdNivelAcademico)
-{
-    idNivelAcademico = nuevoIdNivelAcademico;
-}
-
-int ProgramaAcademico::getIdNivelAcademico()
-{
-    return idNivelAcademico;
-}
-
-void ProgramaAcademico::setNivelAcademico(string &nuevoNivelAcademico)
-{
-    nivelAcademico = nuevoNivelAcademico;
-}
-
-string ProgramaAcademico::getNivelAcademico()
-{
-    return nivelAcademico;
-}
-
-void ProgramaAcademico::setIdNivelDeFormacion(int nuevoIdNivelDeFormacion)
-{
-    idNivelDeFormacion = nuevoIdNivelDeFormacion;
-}
-
-int ProgramaAcademico::getIdNivelDeFormacion()
-{
-    return idNivelDeFormacion;
-}
-
-void ProgramaAcademico::setNivelDeFormacion(string &nuevoNivelDeFormacion)
-{
-    nivelDeFormacion = nuevoNivelDeFormacion;
-}
-
-string ProgramaAcademico::getNivelDeFormacion()
-{
-    return nivelDeFormacion;
-}
-
-void ProgramaAcademico::setIdMetodologia(int nuevoIdMetodologia)
-{
-    idMetodologia = nuevoIdMetodologia;
-}
-
-int ProgramaAcademico::getIdMetodologia()
-{
-    return idMetodologia;
-}
-
-void ProgramaAcademico::setMetodologia(string &nuevaMetodologia)
-{
-    metodologia = nuevaMetodologia;
-}
-
-string ProgramaAcademico::getMetodologia()
-{
-    return metodologia;
-}
-
-void ProgramaAcademico::setIdArea(int nuevoIdArea)
-{
-    idArea = nuevoIdArea;
-}
-
-int ProgramaAcademico::getIdArea()
-{
-    return idArea;
-}
-
-void ProgramaAcademico::setAreaDeConocimiento(string &areaConocimiento)
-{
-    areaDeConocimiento = areaConocimiento;
-}
-string ProgramaAcademico::getAreaDeConocimiento()
-{
-    return areaDeConocimiento;
-}
-
-void ProgramaAcademico::setIdNucleo(int nuevoIdNucleo)
-{
-    idNucleo = nuevoIdNucleo;
-}
-int ProgramaAcademico::getIdNucleo()
-{
-    return idNucleo;
-}
-
-void ProgramaAcademico::setNucleoBasicoDelConocimientoNbc(string &nuevoNucleoBasicoDelConocimientoNbc)
-{
-    nucleoBasicoDelConocimientoNbc = nuevoNucleoBasicoDelConocimientoNbc;
-}
-string ProgramaAcademico::getNucleoBasicoDelConocimientoNbc()
-{
-    return nucleoBasicoDelConocimientoNbc;
-}
-
-void ProgramaAcademico::setIdCineCampoAmplio(int nuevoIdCineCampoAmplio)
-{
-    idCineCampoAmplio = nuevoIdCineCampoAmplio;
-}
-int ProgramaAcademico::getIdCineCampoAmplio()
-{
-    return idCineCampoAmplio;
-}
-
-void ProgramaAcademico::setDescCineCampoAmplio(string &nuevoDescCineCampoAmplio)
-{
-    descCineCampoAmplio = nuevoDescCineCampoAmplio;
-}
-string ProgramaAcademico::getDescCineCampoAmplio()
-{
-    return descCineCampoAmplio;
-}
-
-void ProgramaAcademico::setIdCineCampoEspecifico(int nuevoIdCineCampoEspecifico)
-{
-    idCineCampoEspecifico = nuevoIdCineCampoEspecifico;
-}
-int ProgramaAcademico::getIdCineCampoEspecifico()
-{
-    return idCineCampoEspecifico;
-}
-
-void ProgramaAcademico::setDescCineCampoEspecifico(string &nuevoDescCineCampoEspecifico)
-{
-    descCineCampoEspecifico = nuevoDescCineCampoEspecifico;
-}
-
-string ProgramaAcademico::getDescCineCampoEspecifico()
-{
-    return descCineCampoEspecifico;
-}
-
-void ProgramaAcademico::setIdCineCodigoDetallado(int nuevoIdCineCodigoDetallado)
-{
-    idCineCodigoDetallado = nuevoIdCineCodigoDetallado;
-}
-int ProgramaAcademico::getIdCineCodigoDetallado()
-{
-    return idCineCodigoDetallado;
-}
-
-void ProgramaAcademico::setDescCineCodigoDetallado(string &nuevoDescCineCodigoDetallado)
-{
-    descCineCodigoDetallado = nuevoDescCineCodigoDetallado;
-}
-string ProgramaAcademico::getDescCineCodigoDetallado()
-{
-    return descCineCodigoDetallado;
-}
-
-void ProgramaAcademico::setCodigoDelDepartamentoPrograma(int nuevoCodigoDelDepartamentoPrograma)
-{
-    codigoDelDepartamentoPrograma = nuevoCodigoDelDepartamentoPrograma;
-}
-int ProgramaAcademico::getCodigoDelDepartamentoPrograma()
-{
-    return codigoDelDepartamentoPrograma;
-}
-
-void ProgramaAcademico::setDepartamentoDeOfertaDelPrograma(string &nuevoDepartamentoDeOfertaDelPrograma)
-{
-    departamentoDeOfertaDelPrograma = nuevoDepartamentoDeOfertaDelPrograma;
-}
-string ProgramaAcademico::getDepartamentoDeOfertaDelPrograma()
-{
-    return departamentoDeOfertaDelPrograma;
-}
-
-void ProgramaAcademico::setCodigoDelMunicipioPrograma(int nuevoCodigoDelMunicipioPrograma)
-{
-    codigoDelMunicipioPrograma = nuevoCodigoDelMunicipioPrograma;
-}
-int ProgramaAcademico::getCodigoDelMunicipioPrograma()
-{
-    return codigoDelMunicipioPrograma;
-}
-
-void ProgramaAcademico::setMunicipioDeOfertaDelPrograma(string &nuevoMunicipioDeOfertaDelPrograma)
-{
-    municipioDeOfertaDelPrograma = nuevoMunicipioDeOfertaDelPrograma;
-}
-string ProgramaAcademico::getMunicipioDeOfertaDelPrograma()
-{
-    return municipioDeOfertaDelPrograma;
-}
-
-void ProgramaAcademico::setConsolidado(Consolidado *nuevoConsolidado, int pos)
-{
-    consolidados[pos] = nuevoConsolidado;
-}
-
-Consolidado *ProgramaAcademico::getConsolidado(int posicionConsolidado)
-{
-    return consolidados[posicionConsolidado];
-}
-
+// Destructor de la clase ProgramaAcademico
+// Libera la memoria asociada a los consolidados almacenados
 ProgramaAcademico::~ProgramaAcademico()
 {
-    for (Consolidado *consolidado : consolidados)
+    // Itera sobre el mapa de consolidados y libera la memoria de cada uno
+    for (auto &pair : consolidados)
     {
-        delete consolidado;
+        delete pair.second;
     }
+    // Limpia el mapa de consolidados
+    //consolidados.clear();
+}
+
+// Método para buscar un consolidado en el mapa utilizando sexo, año y semestre
+// infoSexo: referencia a la información del sexo
+// infoAno: año del consolidado
+// infoSemestre: semestre del consolidado
+// return: puntero al consolidado si se encuentra
+Consolidado *ProgramaAcademico::buscarConsolidado(string &infoSexo, int infoAno, int infoSemestre)
+{
+    // Construye una clave combinando sexo, año y semestre, y la normaliza
+    string claveConsolidado = infoSexo + string("-") + to_string(infoAno) + string("-") + to_string(infoSemestre);
+    claveConsolidado = utilidadObj.minusculasSinEspacios(claveConsolidado);
+    // Verifica si la clave existe en el mapa, de lo contrario lanza una excepción
+    if (consolidados.find(claveConsolidado) == consolidados.end())
+    {
+        // Genera un mensaje de error con la clave no encontrada
+        string msg = string("Consolidado No Encontrada: '") + claveConsolidado + string("'");
+        throw invalid_argument(msg); // Lanza excepción si la clave no existe
+    }
+    // Retorna el consolidado asociado a la clave
+    return consolidados[claveConsolidado];
 }

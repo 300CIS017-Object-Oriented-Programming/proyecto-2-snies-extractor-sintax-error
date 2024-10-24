@@ -4,58 +4,30 @@
 #include <string>
 #include <vector>
 #include <iostream>
-
+#include <map>
+#include "Utilidad.h"
 
 using std::cin;
 using std::cout;
 using std::endl;
+using std::map;
 using std::string;
 using std::vector;
-
 
 class Consolidado
 {
 private:
-    int idSexo;
-    string sexo;
-    int ano;
-    int semestre;
-    int inscritos;
-    int admitidos;
-    int matriculados;
-    int matriculadosPrimerSemestre;
-    int graduados;
+    map<string, int> datosIntConsolidados;
+    map<string, string> datosStringConsolidados;
+    Utilidad utilidadObj;
 
 public:
     Consolidado();
-    Consolidado(int, string, int, int, int, int, int, int, int);
-
-    int getIdSexo();
-    void setIdSexo(int);
-
-    string getSexo();
-    void setSexo(string &);
-
-    int getAno();
-    void setAno(int);
-
-    int getSemestre();
-    void setSemestre(int);
-
-    int getInscritos();
-    void setInscritos(int);
-
-    int getAdmitidos();
-    void setAdmitidos(int);
-
-    int getMatriculados();
-    void setMatriculados(int);
-
-    int getMatriculadosPrimerSemestre();
-    void setMatriculadosPrimerSemestre(int);
-
-    int getGraduados();
-    void setGraduados(int);
+    ~Consolidado() = default;
+    void agregarDatoInt(string &, int);
+    void agregarDatoString(string &, string &);
+    int obtenerDatoInt(string &);
+    string obtenerDatoString(string &);
 };
 
 #endif // CONSOLIDADO_H
