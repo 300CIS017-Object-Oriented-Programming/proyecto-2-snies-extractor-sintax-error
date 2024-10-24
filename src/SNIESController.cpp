@@ -267,6 +267,10 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
     int semestreActual;
     int filaCorrespondiente;
     bool programaNuevoCreado;
+    string femenino = "Femenino";
+    string mujer = "Mujer";
+    string hombre = "Hombre";
+    string masculino = "Masculino";
 
     // Iteramos sobre las filas del archivo, comenzando desde la fila 1, ya que la fila 0 contiene las etiquetas
     for (int fila = 1; fila < matrizArchivo.size(); fila++)
@@ -314,6 +318,16 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
 
         // Obtenemos los datos clave del consolidado (sexo, año, semestre)
         sexoActual = consolidadoNuevo->obtenerDatoString(strSexo);
+        //Verificamos que si es femenino o masculino, lo cambie por hombre y mujer para simplificar las cosas
+        if (utilidadObj.minusculasSinEspacios(sexoActual) == utilidadObj.minusculasSinEspacios(femenino))
+        {
+            sexoActual = mujer;
+        }
+        else if (utilidadObj.minusculasSinEspacios(sexoActual) == utilidadObj.minusculasSinEspacios(masculino))
+        {
+            sexoActual = hombre;
+        }
+
         anoActual = consolidadoNuevo->obtenerDatoInt(strAno);
         semestreActual = consolidadoNuevo->obtenerDatoInt(strSemestre);
 
@@ -604,9 +618,9 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
                 {
                     // Sumar matriculados por sexo y año
                     Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano), 1);
-                    suma += stoi(consolidado1->obtenerDatoString(Matriculados));
+                    suma += consolidado1->obtenerDatoInt(Matriculados);
                     Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano), 2);
-                    suma += stoi(consolidado2->obtenerDatoString(Matriculados));
+                    suma += consolidado2->obtenerDatoInt(Matriculados);
                 }
                 sumaMatriculados.push_back(to_string(suma)); // Agregamos la suma a la lista
             }
@@ -625,14 +639,14 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
             for (string sexo : matrizEtiquetas[4])
             {
                 Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(ano1), 1);
-                SumaNeosPrimerAno += stoi(consolidado1->obtenerDatoString(Neos));
+                SumaNeosPrimerAno += consolidado1->obtenerDatoInt(Neos);
                 Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(ano1), 2);
-                SumaNeosPrimerAno += stoi(consolidado2->obtenerDatoString(Neos));
+                SumaNeosPrimerAno += consolidado2->obtenerDatoInt(Neos);
 
                 Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ano2), 1);
-                SumaNeosSegundoAno += stoi(consolidado3->obtenerDatoString(Neos));
+                SumaNeosSegundoAno += consolidado3->obtenerDatoInt(Neos);
                 Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ano2), 2);
-                SumaNeosSegundoAno += stoi(consolidado4->obtenerDatoString(Neos));
+                SumaNeosSegundoAno += consolidado4->obtenerDatoInt(Neos);
             }
 
             // Calculamos la diferencia porcentual de NEOS
@@ -654,14 +668,14 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
         for (string sexo : matrizEtiquetas[4])
         {
             Consolidado *consolidado1 = programa->buscarConsolidado(sexo, stoi(penultimoAno), 1);
-            SumaNeosPrimerSemestre += stoi(consolidado1->obtenerDatoString(Neos));
+            SumaNeosPrimerSemestre += consolidado1->obtenerDatoInt(Neos);
             Consolidado *consolidado2 = programa->buscarConsolidado(sexo, stoi(penultimoAno), 2);
-            SumaNeosSegundoSemestre += stoi(consolidado2->obtenerDatoString(Neos));
+            SumaNeosSegundoSemestre += consolidado2->obtenerDatoInt(Neos);
 
             Consolidado *consolidado3 = programa->buscarConsolidado(sexo, stoi(ultimoAno), 1);
-            SumaNeosTercerSemestre += stoi(consolidado3->obtenerDatoString(Neos));
+            SumaNeosTercerSemestre += consolidado3->obtenerDatoInt(Neos);
             Consolidado *consolidado4 = programa->buscarConsolidado(sexo, stoi(ultimoAno), 2);
-            SumaNeosCuartoSemestre += stoi(consolidado4->obtenerDatoString(Neos));
+            SumaNeosCuartoSemestre += consolidado4->obtenerDatoInt(Neos);
         }
 
         // Si no hay NEOS en los últimos 3 semestres, guardamos el programa
@@ -698,7 +712,7 @@ void SNIESController::calcularDatosExtra(bool exportarArchivo)
             {
                 try
                 {
-                    // Llamamos al método para crear archivos con los datos extra
+                    // Llamamos al métod o para crear archivos con los datos extra
                     gestor->crearArchivoExtra(ruta, matrizFinal);
                 }
                 catch (out_of_range &e) // Manejo de errores en caso de que no se pueda crear el archivo
