@@ -30,7 +30,7 @@ void GestorJSON::escribirEtiquetasJson(json &etiquetasJson, string &strCodigoSNI
             // Si la etiqueta es válida, agregarla al objeto JSON
             if (etiquetaValida)
             {
-                etiquetasJson[ETIQUETAS].push_back(nombreAtributo);
+                etiquetasJson[ETIQUETAS] += (nombreAtributo);
             }
         }
     }
@@ -43,7 +43,7 @@ void GestorJSON::escribirProgramaJson(json &jsonData, string &nombrePrograma, ve
         // Asignar el código SNIES del programa al objeto JSON bajo el nombre del programa
         jsonData[nombrePrograma] = to_string(programaActual->consultarDatoInt(strCodigoSNIES));
         // Añadir el nombre del programa al objeto JSON
-        jsonData[nombrePrograma].push_back(nombrePrograma);
+        jsonData[nombrePrograma]= (nombrePrograma) + Settings::DELIMITADOR;
 
         // Definición de índices para las filas de etiquetas
         int FILA_ETIQUETAS_STRING_PROGRAMAS = 0;
@@ -61,7 +61,7 @@ void GestorJSON::escribirProgramaJson(json &jsonData, string &nombrePrograma, ve
             if (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strNombrePrograma))
             {
                 // Agregar el dato correspondiente al objeto JSON
-                jsonData[nombrePrograma].push_back(programaActual->consultarDatoString(nombreAtributo));
+                jsonData[nombrePrograma] += (programaActual->consultarDatoString(nombreAtributo)) + Settings::DELIMITADOR;
                 // Añadir el dato al vector de atributos del programa
                 vectorAtributosPrograma.push_back(programaActual->consultarDatoString(nombreAtributo));
             }
@@ -75,7 +75,7 @@ void GestorJSON::escribirProgramaJson(json &jsonData, string &nombrePrograma, ve
             if (utilidadObj.minusculasSinEspacios(nombreAtributo) != utilidadObj.minusculasSinEspacios(strCodigoSNIES))
             {
                 // Agregar el dato correspondiente al objeto JSON
-                jsonData[nombrePrograma].push_back(programaActual->consultarDatoInt(nombreAtributo));
+                jsonData[nombrePrograma] += to_string(programaActual->consultarDatoInt(nombreAtributo)) + Settings::DELIMITADOR;
                 // Añadir el dato al vector de atributos del programa
                 vectorAtributosPrograma.push_back(programaActual->consultarDatoString(nombreAtributo));
             }
@@ -122,7 +122,7 @@ void GestorJSON::imprimirConsolidadosJson(json &jsonData, ProgramaAcademico *pro
                 // Añadir los atributos del programa al JSON
                 for (int elemento = 0; elemento < vectorAtributosPrograma.size(); elemento++)
                 {
-                    jsonData[llaveConsolidado].push_back(vectorAtributosPrograma[elemento]);
+                    jsonData[llaveConsolidado] += (vectorAtributosPrograma[elemento]) + Settings::DELIMITADOR;
                 }
                 // Escribir el consolidado en el JSON
                 escribirConsolidadoJson(jsonData, consolidadoActual, matrizEtiquetas, llaveConsolidado);
@@ -147,7 +147,7 @@ void GestorJSON::imprimirConsolidadosJson(json &jsonData, ProgramaAcademico *pro
                 // Añadir los atributos del programa al JSON
                 for (int elemento = 0; elemento < vectorAtributosPrograma.size(); elemento++)
                 {
-                    jsonData[llaveConsolidado].push_back(vectorAtributosPrograma[elemento]);
+                    jsonData[llaveConsolidado] += (vectorAtributosPrograma[elemento]) + Settings::DELIMITADOR;
                 }
                 // Escribir el consolidado en el JSON
                 escribirConsolidadoJson(jsonData, consolidadoActual, matrizEtiquetas, llaveConsolidado);
@@ -181,7 +181,7 @@ void GestorJSON::escribirConsolidadoJson(json &jsonData, Consolidado *consolidad
         {
             nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_STRING_CONSOLIDADO][columnaEtiquetas]; // Obtener el nombre del atributo
             // Obtener el dato de tipo string del consolidado actual y agregarlo al JSON bajo la llave especificada
-            jsonData[llaveConsolidado].push_back(consolidadoActual->obtenerDatoString(nombreAtributo));
+            jsonData[llaveConsolidado] += (consolidadoActual->obtenerDatoString(nombreAtributo)) + Settings::DELIMITADOR;
         }
 
         // Iterar sobre las etiquetas de tipo int
@@ -189,7 +189,7 @@ void GestorJSON::escribirConsolidadoJson(json &jsonData, Consolidado *consolidad
         {
             nombreAtributo = matrizEtiquetas[FILA_ETIQUETAS_INT_CONSOLIDADO][columnaEtiquetas]; // Obtener el nombre del atributo
             // Obtener el dato de tipo int del consolidado actual y agregarlo al JSON bajo la llave especificada
-            jsonData[llaveConsolidado].push_back(consolidadoActual->obtenerDatoInt(nombreAtributo));
+            jsonData[llaveConsolidado]+= to_string(consolidadoActual->obtenerDatoInt(nombreAtributo)) += Settings::DELIMITADOR;
         }
     }
     catch (invalid_argument &e)
@@ -352,7 +352,8 @@ void GestorJSON::crearArchivoExtra(string &ruta, vector<vector<string>> datosAIm
         for (int columna = 0; columna < datosAImprimir[fila].size(); columna++)
         {
             // Agregar cada elemento a la estructura JSON correspondiente a su fila
-            jsonData[fila].push_back(datosAImprimir[fila][columna]);
+            jsonData[fila] += (datosAImprimir[fila][columna]) + Settings::DELIMITADOR;
+
         }
     }
 
