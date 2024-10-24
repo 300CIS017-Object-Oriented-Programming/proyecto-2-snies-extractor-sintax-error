@@ -204,7 +204,7 @@ void SNIESController::procesarDatos(int anio1, int anio2)
 
         // Creamos el archivo de resultados con cada gestor de archivos
         string rutaOutput = Settings::OUTPUTS_PATH;
-        for (int gestor = 0; gestor < gestoresArchivos.size(); gestor++)
+        for (int gestor = 0; gestor < gestoresArchivos.size() - 1; gestor++)
         {
             try
             {
@@ -411,6 +411,10 @@ void SNIESController::asignarConsolidados(vector<vector<string>> &matrizArchivo,
     int semestreActual;
     ProgramaAcademico *programaAsociado;
     map<int, ProgramaAcademico *>::iterator itPrograma;
+    string femenino = "Femenino";
+    string mujer = "Mujer";
+    string hombre = "Hombre";
+    string masculino = "Masculino";
 
     // Nos saltamos la primera fila porque son las etiquetas y no necesitamos guardarlas
     for (int fila = 1; fila < matrizArchivo.size(); fila++)
@@ -448,6 +452,14 @@ void SNIESController::asignarConsolidados(vector<vector<string>> &matrizArchivo,
         {
             programaAsociado = itPrograma->second; // Obtenemos el programa
             sexoActual = consolidadoNuevo->obtenerDatoString(strSexo);
+            if (utilidadObj.minusculasSinEspacios(sexoActual) == utilidadObj.minusculasSinEspacios(femenino))
+            {
+                sexoActual = mujer;
+            }
+            else if (utilidadObj.minusculasSinEspacios(sexoActual) == utilidadObj.minusculasSinEspacios(masculino))
+            {
+                sexoActual = hombre;
+            }
             anoActual = consolidadoNuevo->obtenerDatoInt(strAno);
             semestreActual = consolidadoNuevo->obtenerDatoInt(strSemestre);
 
