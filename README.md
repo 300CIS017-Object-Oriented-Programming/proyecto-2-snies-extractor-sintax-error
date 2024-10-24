@@ -121,6 +121,11 @@ direction BT
     class Main {
         + int main()
     }
+    class Utilidad {
+       +string minusculasSinEspacios(string &);
+       +string limpiarString(string &);
+       +bool isConvertibleToInt(const string&);
+    }
 
 ProgramaAcademico o-- Consolidado : tiene varios
 View <.. Main : usa
@@ -131,4 +136,9 @@ ProgramaAcademico <.. GestorArchivos: usa
 GestorArchivos <|-- GestorTxt: es un
 GestorArchivos <|-- GestorJSON: es un
 GestorArchivos <|-- GestorCsv: es un
+Utilidad <.. View: usa
+Utilidad <.. SNIESController: usa
+Utilidad <.. ProgramaAcademico: usa
+Utilidad <.. Consolidado: usa
+Utilidad <.. GestorArchivos: usa
 ```
