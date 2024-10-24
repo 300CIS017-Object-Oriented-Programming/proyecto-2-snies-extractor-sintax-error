@@ -125,7 +125,10 @@ direction BT
 ProgramaAcademico o-- Consolidado : tiene varios
 View <.. Main : usa
 View --> SNIESController : tiene un
-SNIESController --> GestorArchivos: tiene un
+SNIESController o-- GestorArchivos: tiene varios
 SNIESController o-- Consolidado
 Consolidado <.. GestorArchivos: usa
+GestorArchivos <|-- GestorTxt: es un
+GestorArchivos <|-- GestorJSON: es un
+GestorArchivos <|-- GestorCsv: es un
 ```
