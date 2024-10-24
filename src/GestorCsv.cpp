@@ -13,8 +13,8 @@ void GestorCsv::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     }
 
     // Imprimir las etiquetas de las columnas en la primera fila
-    string strCodigoSNIES = string("Codigo SNIES del programa");
-    string strnombrePrograma = string("Programa Academico");
+    string strCodigoSNIES = string("Código SNIES del programa");
+    string strnombrePrograma = string("Programa Académico");
     string fila;
     int MIN_POS_ETIQUETAS = 0;
     int MAX_POS_ETIQUETAS = 3;
@@ -57,10 +57,10 @@ void GestorCsv::escribirEtiquetas(string &strCodigoSNIES, string &strNombreProgr
      CodigoSnies, Nombre Programa, (etiquetas Tipo String Programa), (etiquetas Tipo Int Programa)...
     ... (etiquetas Tipo String Consolidado), (etiquetas Tipo Int Consolidado)
      */
-    fila = strCodigoSNIES + delimitador + strNombrePrograma;
+    fila = strCodigoSNIES + delimitador + strNombrePrograma + delimitador;
     string nombreAtributo;
     bool etiquetaValida;
-    for (int filaEtiquetas = minPosEtiquetas; filaEtiquetas < maxPosEtiquetas; filaEtiquetas++)
+    for (int filaEtiquetas = minPosEtiquetas; filaEtiquetas <= maxPosEtiquetas; filaEtiquetas++)
     {
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[filaEtiquetas].size(); columnaEtiquetas++)
         {
@@ -72,7 +72,7 @@ void GestorCsv::escribirEtiquetas(string &strCodigoSNIES, string &strNombreProgr
             {
                 fila += nombreAtributo;
             }
-            if (columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1)
+            if ((columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1) || (filaEtiquetas != maxPosEtiquetas))
             {
                 fila += delimitador;
             }

@@ -47,3 +47,5 @@ SEMESTRE
 -Sexos Disponibles:
 Hombre
 Mujer
+Femenino
+Masculino

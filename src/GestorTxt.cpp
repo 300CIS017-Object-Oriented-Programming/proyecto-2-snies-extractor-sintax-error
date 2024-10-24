@@ -17,8 +17,8 @@ void GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
     }
 
     // Imprimimos las etiquetas de las columnas en la primera fila
-    string strCodigoSNIES = string("Codigo SNIES del programa");
-    string strnombrePrograma = string("Programa Academico");
+    string strCodigoSNIES = string("Código SNIES del programa");
+    string strnombrePrograma = string("Programa Académico");
     string fila;
     int MIN_POS_ETIQUETAS = 0;
     int MAX_POS_ETIQUETAS = 3;
@@ -63,12 +63,12 @@ void GestorTxt::crearArchivo(string &ruta, map<int, ProgramaAcademico *> &mapade
 void GestorTxt::escribirEtiquetas(string &strCodigoSNIES, string &strNombrePrograma, string &fila, string &delimitador, vector<vector<string>> &matrizEtiquetas, int minPosEtiquetas, int maxPosEtiquetas)
 {
     // Estructura de las etiquetas: CodigoSnies, Nombre Programa, etiquetas del programa y consolidados
-    fila = strCodigoSNIES + delimitador + strNombrePrograma;
+    fila = strCodigoSNIES + delimitador + strNombrePrograma + delimitador;
     string nombreAtributo;
     bool etiquetaValida;
 
     // Iteramos sobre las etiquetas y agregamos aquellas que no sean duplicadas
-    for (int filaEtiquetas = minPosEtiquetas; filaEtiquetas < maxPosEtiquetas; filaEtiquetas++)
+    for (int filaEtiquetas = minPosEtiquetas; filaEtiquetas <= maxPosEtiquetas; filaEtiquetas++)
     {
         for (int columnaEtiquetas = 0; columnaEtiquetas < matrizEtiquetas[filaEtiquetas].size(); columnaEtiquetas++)
         {
@@ -83,8 +83,8 @@ void GestorTxt::escribirEtiquetas(string &strCodigoSNIES, string &strNombreProgr
                 fila += nombreAtributo;
             }
 
-            // Agregamos el delimitador si no es la última columna
-            if (columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1)
+            // Agregamos el delimitador si no es la última columna de la última fila
+            if ((columnaEtiquetas != matrizEtiquetas[filaEtiquetas].size() - 1) || (filaEtiquetas != maxPosEtiquetas))
             {
                 fila += delimitador;
             }

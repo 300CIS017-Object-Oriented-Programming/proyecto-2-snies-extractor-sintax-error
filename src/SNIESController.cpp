@@ -287,7 +287,6 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
             // Si la etiqueta pertenece a un atributo de tipo string del programa, lo agregamos
             if (filaCorrespondiente == fAtrStrProg)
             {
-                cout << "HOLA1" << endl;
                 programaNuevo->agregarElementoTipoString(etiquetaCorrespondiente, datoString);
             }
             // Si la etiqueta pertenece a un atributo de tipo int del programa, lo agregamos
@@ -335,7 +334,6 @@ void SNIESController::crearProgramas(vector<vector<string>> &matrizArchivo, int 
     }
 }
 
-// FIXME: Este método no está generando los resultados esperados
 int SNIESController::verificarFilaEtiqueta(string &etiquetaCorrespondiente, int fAtrStrProg, int fAtrIntProg, int fAtrStrCon, int fAtrIntCon)
 {
     int filaCorrespondiente = -1;
